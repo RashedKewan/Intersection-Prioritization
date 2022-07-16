@@ -3,10 +3,16 @@ import numpy as np
 import pygame
 import time
 import os
+import concurrent.futures
 from Models.Button import Button
 from Models.Car import Car
+from Models.Directions import Directions
 from Models.Image import Image
+from Models.Intersection import Intersection
 from Models.Road import Road
+from Models.TraficSignal import TraficSignal as tf
+from Models.TraficSignalLightMode import TraficSignalLightMode
+from Models.TraficSignalPositionMode import TraficSignalPositionMode
 
 
 ############################################################
@@ -26,7 +32,7 @@ pygame.display.set_caption(WINDOW_NAME)
 ############################################################
 
 # VARS
-paused = True
+PAUSE_MODE = True
 road_map = np.zeros([1000, 1000], dtype=int)
 
 # FINALS
@@ -39,147 +45,104 @@ GRAY = ((128, 128, 128))
 FPS = 60
 
 # ROAD
-road = Road(100, 0, Image(1000, 1000, ASSETS_PACKAGE,
-            'loop road.png').create_image())
+ROAD_IMAGE = Image(1000, 1000, ASSETS_PACKAGE, 'loop road.png').create_image()
+road = Road(WIN, 100, 0, ROAD_IMAGE)
+
+
 
 # IMAGES
-START = Image(80, 80, ASSETS_PACKAGE, 'start.png').create_image()
-STOP = Image(80, 80, ASSETS_PACKAGE, 'stop.png').create_image()
+START_IMAGE = Image(80, 80, ASSETS_PACKAGE, 'start.png').create_image()
+STOP_IMAGE = Image(80, 80, ASSETS_PACKAGE, 'stop.png').create_image()
 
 # BUTTON
-start_button = Button(1100, 0, START, WIN)
-stop_button = Button(1100, 0, STOP, WIN)
+start_button = Button(1100, 0, START_IMAGE, WIN)
+stop_button = Button(1100, 0, STOP_IMAGE, WIN)
 
+# effect
+EFFECT_IMAGE = Image(16, 16, ASSETS_PACKAGE, 'black-circle.png').create_image()
+
+
+# Trafic Signals
+trafic_signals = []
+trafic_signals.append(tf(WIN,497,409,EFFECT_IMAGE,TraficSignalPositionMode.HORIZONAL,TraficSignalLightMode.RED ,Directions.LEFT))
+trafic_signals.append(tf(WIN,687,578,EFFECT_IMAGE,TraficSignalPositionMode.HORIZONAL,TraficSignalLightMode.RED ,Directions.RIGHT))
+trafic_signals.append(tf(WIN,677,397,EFFECT_IMAGE,TraficSignalPositionMode.VERTICAL,TraficSignalLightMode.RED ,Directions.UP))
+trafic_signals.append(tf(WIN,506,586,EFFECT_IMAGE,TraficSignalPositionMode.VERTICAL,TraficSignalLightMode.RED ,Directions.DOWN))
+
+# Intersection
+intersection = Intersection(WIN , trafic_signals)
 
 ############################################################
 #####################  FUNCTIONS  ##########################
 ############################################################
 
+def set_play_pause_button():
+    global PAUSE_MODE
 
-def draw_window(cars):
-    global paused
-    global stop_pressed, start_pressed
-    start_pressed, stop_pressed = False, False
-
-    WIN.fill(GRAY)
-    WIN.blit(road.image, (road.x_position, road.y_position))
-
-    for car in cars:
-        WIN.blit(car.image, (car.x_position, car.y_position))
-
-    if paused:
+    if PAUSE_MODE:
         start_pressed = start_button.draw()
         if start_pressed:
-            paused = False
+            PAUSE_MODE = False
     else:
         stop_pressed = stop_button.draw()
         if stop_pressed:
-            paused = True
+            PAUSE_MODE = True
 
-    pos = pygame.mouse.get_pos()
-    # print(pos)
+
+def draw_window(cars):
+    WIN.fill(GRAY)
+    road.build()
+    intersection.build()
+
+    for car in cars:
+        car.draw()
+
+    set_play_pause_button()
+    
+    print(pygame.mouse.get_pos())
     pygame.display.update()
 
-# counter for trafic signal
-def countdown(car, t):
-    car.can_move = False
-    while t:
-        mins, secs = divmod(t, 60)
-        timer = '{:02d}:{:02d}'.format(mins, secs)
-        print(timer, end="\r")
-        time.sleep(1)
-        t -= 1
-    car.can_move = True
 
-
-def move_car(car):
-    global paused
-    global road_map
-
-    #road_map[car.y_position-road.x_position][car.y_position-road.y_position] = 0
-
-    if not paused and car.can_move:
-        if car.y_position < 400 and car.x_position == 120:
-            car.y_position = car.y_position+car.speed
-
-        elif car.y_position >= 400 and car.y_position < 490 and car.x_position < 240:
-            car.x_position = car.x_position+5
-            car.y_position = car.y_position+5
-
-        elif car.x_position < 920 and car.y_position == 490 and not car.intersection_detected:
-            car.x_position = car.x_position + car.speed
-
-        elif car.y_position < 570 and car.x_position < 1000 and car.x_position >= 920:
-            car.x_position = car.x_position + 5
-            car.y_position = car.y_position + 5
-            car.intersection_detected = True
-
-        elif car.y_position <= 800 and car.x_position >= 1000:
-            car.y_position = car.y_position+car.speed
-
-        elif car.y_position >= 800 and car.y_position <= 900 and car.x_position > 900 and car.x_position <= 1000:
-            car.y_position = car.y_position+5
-            car.x_position = car.x_position-5
-
-        elif car.y_position > 900 and car.x_position > 700:
-            car.x_position = car.x_position-car.speed
-
-        elif car.y_position > 790 and car.x_position > 590:
-            car.x_position = car.x_position - 5
-            car.y_position = car.y_position - 5
-
-        elif car.y_position > 90 and car.intersection_detected:
-            car.y_position = car.y_position - car.speed
-
-        elif car.x_position > 520 and car.y_position > 20 and car.y_position <= 100:
-            car.x_position = car.x_position - 5
-            car.y_position = car.y_position - 5
-            car.intersection_detected = False
-
-        elif car.y_position <= 35 and car.x_position < 520 and car.x_position > 220:
-            car.x_position = car.x_position - car.speed
-        else:
-            car.y_position = car.y_position+5
-            car.x_position = car.x_position-5
-        ########### overriding cars problem
-        # if road_map[car.y_position-road.x_position + 80][car.y_position-road.y_position] == 1  and car.x_position+80 < 920:
-        #        car.speed = 5
-        #road_map[car.y_position -road.x_position][car.y_position-road.y_position] = 1
-        #print('( ', car.x_position, ' , ', car.y_position, ' )')
-
-
-    ############ detect car with red signal light
-    #if (445 == car.x_position) and (490 == car.y_position):
-    #    countdown(car, 3)      
-    return car
 
 ############################################################
 ########################  Main  ############################
 ############################################################
 
+
 def main():
+    global PAUSE_MODE
     clock = pygame.time.Clock()
     run = True
 
     # create cars
-    yellow_car = Car(120, 100, Image(40, 40, ASSETS_PACKAGE,
-                     'yellow car.png').create_image())
-    green_car = Car(830, 490, Image(40, 40, ASSETS_PACKAGE,
-                    'green car.png').create_image())
-    red_car = Car(590, 670, Image(40, 40, ASSETS_PACKAGE,
-                  'red car.png').create_image(), 15, True)
+    yellow_car_image = Image(40, 40, ASSETS_PACKAGE,'yellow car.png').create_image()
+    yellow_car = Car(WIN, 120, 100, yellow_car_image)
+
+
+    green_car_image = Image(40, 40, ASSETS_PACKAGE,'green car.png').create_image()
+    green_car = Car(WIN, 830, 490, green_car_image)
+    
+    red_car_image = Image(40, 40, ASSETS_PACKAGE,'red car.png').create_image()
+    red_car = Car(WIN, 590, 670, red_car_image , 15, True)
     cars = [yellow_car, green_car, red_car]
-
-
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        draw_window(cars)
 
+        draw_window(cars)
+   
         for car in cars:
-            car = move_car(car)
+            car = car.move_LR(PAUSE_MODE)
+
+        """
+
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = [executor.submit(car.move_LR ,[PAUSE_MODE]) for car  in cars]
+            for f in concurrent.futures.as_completed(results):
+                cars = f.result()
+        """
     pygame.quit()
 
 
