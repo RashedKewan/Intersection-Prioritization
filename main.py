@@ -1,150 +1,104 @@
-from sys import exit
-import numpy as np
+import threading
 import pygame
-import time
-import os
-import concurrent.futures
-from Models.Button import Button
-from Models.Car import Car
-from Models.Directions import Directions
-from Models.Image import Image
-from Models.Intersection import Intersection
-from Models.Road import Road
-from Models.TraficSignal import TraficSignal as tf
-from Models.TraficSignalLightMode import TraficSignalLightMode
-from Models.TraficSignalPositionMode import TraficSignalPositionMode
+import Simulation as sim
+import sys
+import GlobalData as GD
 
 
-############################################################
-########################  SETUP  ###########################
-############################################################
+class Main:
+    thread4 = threading.Thread(
+        name="simulationTime", target=sim.simulationTime, args=())
+    thread4.daemon = True
+    thread4.start()
 
+    thread2 = threading.Thread(
+        name="initialization", target=sim.initialize, args=())    # initialization
+    thread2.daemon = True
+    thread2.start()
 
-pygame.init()
-WIDTH, HEIGHT = 1200, 1000
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-WINDOW_NAME = "Signal Trafic Simulation"
-pygame.display.set_caption(WINDOW_NAME)
+    # Colours
+    black = (0, 0, 0)
+    white = (255, 255, 255)
 
+    # Screensize
+    screenWidth = 1400
+    screenHeight = 800
+    screenSize = (screenWidth, screenHeight)
 
-############################################################
-########################  VARIABLES  #######################
-############################################################
+    # Setting background image i.e. image of intersection
+    background = pygame.image.load('images/mod_int.png')
 
-# VARS
-PAUSE_MODE = True
-road_map = np.zeros([1000, 1000], dtype=int)
+    screen = pygame.display.set_mode(screenSize)
+    pygame.display.set_caption("SIMULATION")
 
-# FINALS
-ASSETS_PACKAGE = 'Assets'
+    # Loading signal images and font
+    redSignal = pygame.image.load('images/signals/red.png')
+    yellowSignal = pygame.image.load('images/signals/yellow.png')
+    greenSignal = pygame.image.load('images/signals/green.png')
+    nonSignal = pygame.image.load('images/signals/non.png')
+    font = pygame.font.Font(None, GD.fontSize)
 
-# COLORS
-GRAY = ((128, 128, 128))
+    thread3 = threading.Thread(
+        name="generateVehicles", target=sim.generateVehicles, args=())    # Generating vehicles
+    thread3.daemon = True
+    thread3.start()
 
-# frames per scond
-FPS = 60
-
-# ROAD
-ROAD_IMAGE = Image(1000, 1000, ASSETS_PACKAGE, 'loop road.png').create_image()
-road = Road(WIN, 100, 0, ROAD_IMAGE)
-
-
-
-# IMAGES
-START_IMAGE = Image(80, 80, ASSETS_PACKAGE, 'start.png').create_image()
-STOP_IMAGE = Image(80, 80, ASSETS_PACKAGE, 'stop.png').create_image()
-
-# BUTTON
-start_button = Button(1100, 0, START_IMAGE, WIN)
-stop_button = Button(1100, 0, STOP_IMAGE, WIN)
-
-# effect
-EFFECT_IMAGE = Image(16, 16, ASSETS_PACKAGE, 'black-circle.png').create_image()
-
-
-# Trafic Signals
-trafic_signals = []
-trafic_signals.append(tf(WIN,497,409,EFFECT_IMAGE,TraficSignalPositionMode.HORIZONAL,TraficSignalLightMode.RED ,Directions.LEFT))
-trafic_signals.append(tf(WIN,687,578,EFFECT_IMAGE,TraficSignalPositionMode.HORIZONAL,TraficSignalLightMode.RED ,Directions.RIGHT))
-trafic_signals.append(tf(WIN,677,397,EFFECT_IMAGE,TraficSignalPositionMode.VERTICAL,TraficSignalLightMode.RED ,Directions.UP))
-trafic_signals.append(tf(WIN,506,586,EFFECT_IMAGE,TraficSignalPositionMode.VERTICAL,TraficSignalLightMode.RED ,Directions.DOWN))
-
-# Intersection
-intersection = Intersection(WIN , trafic_signals)
-
-############################################################
-#####################  FUNCTIONS  ##########################
-############################################################
-
-def set_play_pause_button():
-    global PAUSE_MODE
-
-    if PAUSE_MODE:
-        start_pressed = start_button.draw()
-        if start_pressed:
-            PAUSE_MODE = False
-    else:
-        stop_pressed = stop_button.draw()
-        if stop_pressed:
-            PAUSE_MODE = True
-
-
-def draw_window(cars):
-    WIN.fill(GRAY)
-    road.build()
-    intersection.build()
-
-    for car in cars:
-        car.draw()
-
-    set_play_pause_button()
-    
-    print(pygame.mouse.get_pos())
-    pygame.display.update()
-
-
-
-############################################################
-########################  Main  ############################
-############################################################
-
-
-def main():
-    global PAUSE_MODE
-    clock = pygame.time.Clock()
-    run = True
-
-    # create cars
-    yellow_car_image = Image(40, 40, ASSETS_PACKAGE,'yellow car.png').create_image()
-    yellow_car = Car(WIN, 120, 100, yellow_car_image)
-
-
-    green_car_image = Image(40, 40, ASSETS_PACKAGE,'green car.png').create_image()
-    green_car = Car(WIN, 830, 490, green_car_image)
-    
-    red_car_image = Image(40, 40, ASSETS_PACKAGE,'red car.png').create_image()
-    red_car = Car(WIN, 590, 670, red_car_image , 15, True)
-    cars = [yellow_car, green_car, red_car]
-    while run:
-        clock.tick(FPS)
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                sys.exit()
 
-        draw_window(cars)
-   
-        for car in cars:
-            car = car.move_LR(PAUSE_MODE)
+        screen.blit(background, (0, 0))   # display background in simulation
+        # print(pygame.mouse.get_pos())
+        # display signal and set timer according to current status: green, yello, or red
+        for i in range(0, GD.noOfSignals):
+            if(i == GD.currentGreen):
+                if(GD.currentYellow == 1):
+                    if(GD.signals[i].yellow == 0):
+                        GD.signals[i].signalText = "STOP"
+                    else:
+                        GD.signals[i].signalText = GD.signals[i].yellow
+                    screen.blit(yellowSignal, GD.signalCoods[i])
+                else:
+                    GD.signals[i].signalText = GD.signals[i].green
+                    if(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 0):
+                        screen.blit(nonSignal, GD.signalCoods[i])
+                    elif(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 1):
+                        screen.blit(greenSignal, GD.signalCoods[i])
+                    else :
+                        if(GD.signals[i].green == 0):
+                            GD.signals[i].signalText = "SLOW"
+                        #else:
+                        #    GD.signals[i].signalText = GD.signals[i].green
+                        screen.blit(greenSignal, GD.signalCoods[i])
+            else:
+                if(GD.signals[i].red <= 10):
+                    if(GD.signals[i].red == 0):
+                        GD.signals[i].signalText = "GO"
+                    else:
+                        GD.signals[i].signalText = GD.signals[i].red
+                else:
+                    GD.signals[i].signalText = "---"
+                screen.blit(redSignal, GD.signalCoods[i])
+        signalTexts = ["", "", "", ""]
 
-        """
+        # display signal timer and vehicle count
+        for i in range(0, GD.noOfSignals):
+            signalTexts[i] = font.render(
+                str(GD.signals[i].signalText), True, white, black)
+            screen.blit(signalTexts[i], GD.signalTimerCoods[i])
+            displayText = GD.vehicles[GD.directionNumbers[i]]['crossed']
+            GD.vehicleCountTexts[i] = font.render(
+                str(displayText), True, black, white)
+            screen.blit(GD.vehicleCountTexts[i], GD.vehicleCountCoods[i])
 
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            results = [executor.submit(car.move_LR ,[PAUSE_MODE]) for car  in cars]
-            for f in concurrent.futures.as_completed(results):
-                cars = f.result()
-        """
-    pygame.quit()
+        timeElapsedText = font.render(
+            ("Time Elapsed: "+str(GD.timeElapsed)), True, black, white)
+        screen.blit(timeElapsedText, (1100, 50))
 
-
-if __name__ == "__main__":
-    main()
+        # display the vehicles
+        for vehicle in sim.simulation:
+            screen.blit(vehicle.currentImage, [vehicle.x, vehicle.y])
+            # vehicle.render(screen)
+            vehicle.move()
+        pygame.display.update()
