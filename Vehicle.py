@@ -201,7 +201,6 @@ class Vehicle(pygame.sprite.Sprite):
 
         #####################################  UP #####################################
         elif(self.direction == GD.UP):   
-         # applyMooving(self, coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight):
             coordinate = 'y'
             
             coordinate_sign_right = -1

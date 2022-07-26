@@ -29,7 +29,7 @@ def initialize():
                         GD.defaultMinimum, GD.defaultMaximum)
     GD.signals.append(ts1)
 
-    ts2 = TrafficSignal(ts1.red+ts1.yellow+ts1.green, GD.defaultYellow,
+    ts2 = TrafficSignal(ts1.red+ts1.yellow+ts1.green+2, GD.defaultYellow,
                         GD.defaultGreen, GD.defaultMinimum, GD.defaultMaximum)
     GD.signals.append(ts2)
 
@@ -110,8 +110,7 @@ def repeat():
 
     # reset stop coordinates of lanes and vehicles
     for i in range(0, 3):
-        GD.stops[GD.directionNumbers[GD.currentGreen]
-                 ][i] = GD.defaultStop[GD.directionNumbers[GD.currentGreen]]
+        GD.stops[GD.directionNumbers[GD.currentGreen]][i] = GD.defaultStop[GD.directionNumbers[GD.currentGreen]]
         for vehicle in GD.vehicles[GD.directionNumbers[GD.currentGreen]][i]:
             vehicle.stop = GD.defaultStop[GD.directionNumbers[GD.currentGreen]]
 
@@ -126,13 +125,15 @@ def repeat():
     GD.signals[GD.currentGreen].green = GD.defaultGreen
     GD.signals[GD.currentGreen].yellow = GD.defaultYellow
     GD.signals[GD.currentGreen].red = GD.defaultRed
-
-    GD.currentGreen = GD.nextGreen  # set next signal as green signal
+    
+    # set next signal as green signal
+    GD.currentGreen = GD.nextGreen  
     # set next green signal
     GD.nextGreen = (GD.currentGreen+1) % GD.noOfSignals
     # set the red time of next to next signal as (yellow time + green time) of next signal
     GD.signals[GD.nextGreen].red = GD.signals[GD.currentGreen].yellow + \
-        GD.signals[GD.currentGreen].green
+        GD.signals[GD.currentGreen].green 
+    
     repeat()
 
 # Print the signal timers on cmd

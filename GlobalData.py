@@ -31,12 +31,12 @@ redSignal = pygame.image.load('images/signals/red.png')
 yellowSignal = pygame.image.load('images/signals/yellow.png')
 greenSignal = pygame.image.load('images/signals/green.png')
 nonSignal = pygame.image.load('images/signals/non.png')
-
+background = pygame.image.load('images/mod_int.png')
 
 
 # Default values of signal times
 defaultRed = 150
-defaultYellow = 5
+defaultYellow = 3
 defaultGreen = 20
 defaultMinimum = 10
 defaultMaximum = 60
