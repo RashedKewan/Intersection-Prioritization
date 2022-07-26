@@ -1,3 +1,4 @@
+import pygame
 # vehicle typpes
 CAR = 'car'
 BUS = 'bus'
@@ -9,6 +10,29 @@ RIGHT = 'right'
 LEFT = 'left'
 UP = 'up'
 DOWN = 'down'
+
+
+# Font Size
+fontSize = 30
+
+# Colours
+black = (0, 0, 0)
+white = (255, 255, 255)
+
+# Screensize
+screenWidth = 1400
+screenHeight = 800
+screenSize = (screenWidth, screenHeight)
+
+
+
+# Loading signal images and font
+redSignal = pygame.image.load('images/signals/red.png')
+yellowSignal = pygame.image.load('images/signals/yellow.png')
+greenSignal = pygame.image.load('images/signals/green.png')
+nonSignal = pygame.image.load('images/signals/non.png')
+
+
 
 # Default values of signal times
 defaultRed = 150
@@ -84,12 +108,9 @@ mid = {RIGHT: {'x': 705, 'y': 445}, DOWN: {'x': 695, 'y': 450},
 
 rotate_factor = 70
 directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445+z}, DOWN: {'x': 695-z, 'y': 450-rotate_factor},
-       LEFT: {'x': 695+rotate_factor -20, 'y': 425-z}, UP: {'x': 695+z, 'y': 400+rotate_factor}}
+            LEFT: {'x': 695+rotate_factor - 20, 'y': 425-z}, UP: {'x': 695+z, 'y': 400+rotate_factor}}
 rotationAngle = 3
 
 # Gap between vehicles
-gap = 20    # stopping gap
-gap2 = 20   # moving gap
-
-# Font Size
-fontSize = 30
+gap = 15   # stopping gap
+gap2 = 15   # moving gap

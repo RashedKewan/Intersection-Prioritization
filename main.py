@@ -4,44 +4,22 @@ import Simulation as sim
 import sys
 import GlobalData as GD
 
+def run_thread(thread_name , thread_target):
+    thread = threading.Thread(name=thread_name, target=thread_target, args=())
+    thread.daemon = True
+    thread.start()
 
 class Main:
-    thread4 = threading.Thread(
-        name="simulationTime", target=sim.simulationTime, args=())
-    thread4.daemon = True
-    thread4.start()
-
-    thread2 = threading.Thread(
-        name="initialization", target=sim.initialize, args=())    # initialization
-    thread2.daemon = True
-    thread2.start()
-
-    # Colours
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-
-    # Screensize
-    screenWidth = 1400
-    screenHeight = 800
-    screenSize = (screenWidth, screenHeight)
-
+    run_thread("simulationTime" ,sim.simulationTime)
+    run_thread("initialization" ,sim.initialize)
+    run_thread("generateVehicles" ,sim.generateVehicles)
+   
     # Setting background image i.e. image of intersection
     background = pygame.image.load('images/mod_int.png')
-
-    screen = pygame.display.set_mode(screenSize)
+    screen = pygame.display.set_mode(GD.screenSize)
     pygame.display.set_caption("SIMULATION")
-
-    # Loading signal images and font
-    redSignal = pygame.image.load('images/signals/red.png')
-    yellowSignal = pygame.image.load('images/signals/yellow.png')
-    greenSignal = pygame.image.load('images/signals/green.png')
-    nonSignal = pygame.image.load('images/signals/non.png')
     font = pygame.font.Font(None, GD.fontSize)
-
-    thread3 = threading.Thread(
-        name="generateVehicles", target=sim.generateVehicles, args=())    # Generating vehicles
-    thread3.daemon = True
-    thread3.start()
+   
 
     while True:
         for event in pygame.event.get():
@@ -58,19 +36,17 @@ class Main:
                         GD.signals[i].signalText = "STOP"
                     else:
                         GD.signals[i].signalText = GD.signals[i].yellow
-                    screen.blit(yellowSignal, GD.signalCoods[i])
+                    screen.blit(GD.yellowSignal, GD.signalCoods[i])
                 else:
                     GD.signals[i].signalText = GD.signals[i].green
                     if(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 0):
-                        screen.blit(nonSignal, GD.signalCoods[i])
+                        screen.blit(GD.nonSignal, GD.signalCoods[i])
                     elif(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 1):
-                        screen.blit(greenSignal, GD.signalCoods[i])
+                        screen.blit(GD.greenSignal, GD.signalCoods[i])
                     else :
                         if(GD.signals[i].green == 0):
                             GD.signals[i].signalText = "SLOW"
-                        #else:
-                        #    GD.signals[i].signalText = GD.signals[i].green
-                        screen.blit(greenSignal, GD.signalCoods[i])
+                        screen.blit(GD.greenSignal, GD.signalCoods[i])
             else:
                 if(GD.signals[i].red <= 10):
                     if(GD.signals[i].red == 0):
@@ -78,22 +54,22 @@ class Main:
                     else:
                         GD.signals[i].signalText = GD.signals[i].red
                 else:
-                    GD.signals[i].signalText = "---"
-                screen.blit(redSignal, GD.signalCoods[i])
+                    GD.signals[i].signalText = ""
+                screen.blit(GD.redSignal, GD.signalCoods[i])
         signalTexts = ["", "", "", ""]
 
         # display signal timer and vehicle count
         for i in range(0, GD.noOfSignals):
             signalTexts[i] = font.render(
-                str(GD.signals[i].signalText), True, white, black)
+                str(GD.signals[i].signalText), True, GD.white, GD.black)
             screen.blit(signalTexts[i], GD.signalTimerCoods[i])
             displayText = GD.vehicles[GD.directionNumbers[i]]['crossed']
             GD.vehicleCountTexts[i] = font.render(
-                str(displayText), True, black, white)
+                str(displayText), True, GD.black, GD.white)
             screen.blit(GD.vehicleCountTexts[i], GD.vehicleCountCoods[i])
 
         timeElapsedText = font.render(
-            ("Time Elapsed: "+str(GD.timeElapsed)), True, black, white)
+            ("Time Elapsed: "+str(GD.timeElapsed)), True, GD.black, GD.white)
         screen.blit(timeElapsedText, (1100, 50))
 
         # display the vehicles
