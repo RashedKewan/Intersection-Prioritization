@@ -46,10 +46,10 @@ class Main:
         for i in range(0, GD.noOfSignals):
             if(i == GD.currentGreen):
                 if(GD.currentYellow == 1):
-                    if(GD.signals[i].yellow == 0):
-                        GD.signals[i].signalText = "STOP"
-                    else:
-                        GD.signals[i].signalText = GD.signals[i].yellow
+                    #if(GD.signals[i].yellow == 0):
+                    #    GD.signals[i].signalText = "STOP"
+                    #else:
+                    GD.signals[i].signalText = GD.signals[i].yellow
                     turn_ON(GD.yellowSignal ,i)
                     
                 else:
@@ -61,23 +61,16 @@ class Main:
                         turn_ON(GD.greenSignal ,i)
                        
                     else :
-                        if(GD.signals[i].green == 0):
-                            GD.signals[i].signalText = "SLOW"
-                      
+                        #if(GD.signals[i].green == 0):
+                        #    GD.signals[i].signalText = "SLOW"
                         turn_ON(GD.greenSignal ,i)
     
             else:
                 if(GD.signals[i].red <= 10):
-                    if(GD.signals[i].red == 0):
-                        GD.signals[i].signalText = "GO"
-                        turn_ON(GD.yellowSignal ,i)
-                        GD.signals[i].yellow
-                    else:
-                        GD.signals[i].signalText = GD.signals[i].red
-                        turn_ON(GD.redSignal ,i)
+                    GD.signals[i].signalText = GD.signals[i].red 
                 else:
                     GD.signals[i].signalText = ""
-                    turn_ON(GD.redSignal ,i)
+                turn_ON(GD.redSignal ,i)
                
         signalTexts = ["", "", "", ""]
 

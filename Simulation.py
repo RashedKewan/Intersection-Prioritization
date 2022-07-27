@@ -29,7 +29,7 @@ def initialize():
                         GD.defaultMinimum, GD.defaultMaximum)
     GD.signals.append(ts1)
 
-    ts2 = TrafficSignal(ts1.red+ts1.yellow+ts1.green+2, GD.defaultYellow,
+    ts2 = TrafficSignal(ts1.red+ts1.yellow+ts1.green, GD.defaultYellow,
                         GD.defaultGreen, GD.defaultMinimum, GD.defaultMaximum)
     GD.signals.append(ts2)
 
@@ -126,14 +126,29 @@ def repeat():
     GD.signals[GD.currentGreen].yellow = GD.defaultYellow
     GD.signals[GD.currentGreen].red = GD.defaultRed
     
+
+
     # set next signal as green signal
     GD.currentGreen = GD.nextGreen  
     # set next green signal
     GD.nextGreen = (GD.currentGreen+1) % GD.noOfSignals
+    
+    
+
+    GD.currentYellow = 1   # set yellow signal on
+    while(GD.signals[GD.currentGreen].yellow > 0):
+        updateValues()
+        time.sleep(1)
+    GD.signals[GD.currentGreen].green = GD.defaultGreen
+    GD.signals[GD.currentGreen].yellow = GD.defaultYellow
+    GD.signals[GD.currentGreen].red = GD.defaultRed
+    GD.currentYellow = 0   # set yellow signal off
+   
+
     # set the red time of next to next signal as (yellow time + green time) of next signal
     GD.signals[GD.nextGreen].red = GD.signals[GD.currentGreen].yellow + \
         GD.signals[GD.currentGreen].green 
-    
+
     repeat()
 
 # Print the signal timers on cmd
