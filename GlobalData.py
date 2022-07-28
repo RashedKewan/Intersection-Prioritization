@@ -25,7 +25,6 @@ screenHeight = 800
 screenSize = (screenWidth, screenHeight)
 
 
-
 # Loading signal images and font
 redSignal = pygame.image.load('images/signals/red.png')
 yellowSignal = pygame.image.load('images/signals/yellow.png')
@@ -109,6 +108,12 @@ mid = {RIGHT: {'x': 705, 'y': 445}, DOWN: {'x': 695, 'y': 450},
 rotate_factor = 70
 directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445+z}, DOWN: {'x': 695-z, 'y': 450-rotate_factor},
             LEFT: {'x': 695+rotate_factor - 20, 'y': 425-z}, UP: {'x': 695+z, 'y': 400+rotate_factor}}
+
+drive_orginizer = {RIGHT: x[UP][2],  # x
+                   DOWN: y[RIGHT][2],  # y
+                   LEFT: x[DOWN][2],  # x
+                   UP: y[LEFT][2]}  # y
+
 rotationAngle = 3
 
 # Gap between vehicles

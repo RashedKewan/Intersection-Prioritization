@@ -28,15 +28,13 @@ class Vehicle(pygame.sprite.Sprite):
         # Set new starting and stopping coordinate
         coordination, dimension = '', 0
         if(direction == GD.RIGHT):
-            coordination, dimension = 'x', -1 * \
-                (self.currentImage.get_rect().width + GD.gap)
+            coordination, dimension = 'x', -1 * (self.currentImage.get_rect().width + GD.gap)
 
         elif(direction == GD.LEFT):
             coordination, dimension = 'x', self.currentImage.get_rect().width + GD.gap
 
         elif(direction == GD.DOWN):
-            coordination, dimension = 'y', -1 * \
-                (self.currentImage.get_rect().height + GD.gap)
+            coordination, dimension = 'y', -1 *(self.currentImage.get_rect().height + GD.gap)
 
         elif(direction == GD.UP):
             coordination, dimension = 'y', self.currentImage.get_rect().height + GD.gap
@@ -45,9 +43,7 @@ class Vehicle(pygame.sprite.Sprite):
         # if more than 1 vehicle in the lane of vehicle before it has crossed stop line
         if(len(GD.vehicles[direction][lane]) > 1 and GD.vehicles[direction][lane][self.index-1].crossed == 0):
             # setting stop coordinate as: stop coordinate of next vehicle - width of next vehicle - gap
-            self.stop = GD.vehicles[direction][lane][self.index-1].stop - \
-                GD.vehicles[direction][lane][self.index -
-                                             1].currentImage.get_rect().width - GD.gap
+            self.stop = GD.vehicles[direction][lane][self.index-1].stop - GD.vehicles[direction][lane][self.index -1].currentImage.get_rect().width - GD.gap
         else:
             self.stop = GD.defaultStop[direction]
         sim.simulation.add(self)
@@ -62,6 +58,34 @@ class Vehicle(pygame.sprite.Sprite):
     def render(self, screen):
         screen.blit(self.currentImage, (self.x, self.y))
 
+    def turn(self, coordinate, coordinate_sign, oposit_cordinate_sign, x_steps ,y_steps,angel_sign, is_not_the_point_to_turn, is_the_environment_allows_to_move_on, the_rotation_has_end):
+            if(is_not_the_point_to_turn):
+                if(is_the_environment_allows_to_move_on):
+                    if(coordinate == 'x'):
+                        self.x += self.speed*coordinate_sign
+                    elif(coordinate == 'y'):
+                        self.y += self.speed*coordinate_sign
+            else:
+                if(self.turned == 0):
+                    self.rotateAngle += GD.rotationAngle
+                    self.currentImage = pygame.transform.rotate(self.originalImage, angel_sign*self.rotateAngle)
+                    self.x += x_steps
+                    self.y += y_steps
+                    if(self.rotateAngle == 90):
+                        self.turned = 1
+                else:
+                    if(the_rotation_has_end):
+                        if(coordinate == 'x'):
+                            self.y += self.speed*oposit_cordinate_sign
+                            #if(self.x < GD.drive_orginizer[self.direction]-20):
+                            #    self.x += -1*coordinate_sign
+                        elif(coordinate == 'y'):
+                            #if(self.y < GD.drive_orginizer[self.direction]-20):
+                            #    self.y += -1*coordinate_sign*self.speed
+                            self.x += self.speed*oposit_cordinate_sign
+                            
+
+    
     def applyMoving(self, coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight):
         if(image_has_crossed_stop_line_now):
             self.crossed = 1
@@ -69,58 +93,19 @@ class Vehicle(pygame.sprite.Sprite):
 
          ##### Turned right #####
         if(self.will_turn_right == 1):
-            if(is_not_the_point_to_turn_right):
-                if(is_the_environment_allows_to_move_on_right):
-                    if(coordinate == 'x'):
-                        self.x += self.speed*coordinate_sign_right
-                    elif(coordinate == 'y'):
-                        self.y += self.speed*coordinate_sign_right
-            else:
-                if(self.turned == 0):
-                    self.rotateAngle += GD.rotationAngle
-                    self.currentImage = pygame.transform.rotate(
-                        self.originalImage, -self.rotateAngle)
-                    self.x += x_steps_right
-                    self.y += y_steps_right
-                    if(self.rotateAngle == 90):
-                        self.turned = 1
-                else:
-                    if(the_rotation_has_end_right):
-                        if(coordinate == 'x'):
-                            self.y += self.speed*oposit_cordinate_sign_right
-                        elif(coordinate == 'y'):
-                            self.x += self.speed*oposit_cordinate_sign_right
+           self.turn( coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)
 
         ##### Turned left #####
         elif(self.will_turn_left == 1):
-            if(is_not_the_point_to_turn_left):
-                if(is_the_environment_allows_to_move_on_left):
-                    if(coordinate == 'x'):
-                        self.x += self.speed*coordinate_sign_left
-                    elif(coordinate == 'y'):
-                        self.y += self.speed*coordinate_sign_left
-            else:
-                if(self.turned == 0):
-                    self.rotateAngle += GD.rotationAngle
-                    self.currentImage = pygame.transform.rotate(
-                        self.originalImage, self.rotateAngle)
-                    self.x += x_steps_left
-                    self.y += y_steps_left
-                    if(self.rotateAngle == 90):
-                        self.turned = 1
-                else:
-                    if(the_rotation_has_end_left):
-                        if(coordinate == 'x'):
-                            self.y += self.speed*oposit_cordinate_sign_left
-                        elif(coordinate == 'y'):
-                            self.x += self.speed*oposit_cordinate_sign_left
+            self.turn( coordinate, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left ,y_steps_left,1, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left)
         else:
             if(it_can_move_straight):
                 if(coordinate == 'x'):
                     self.x += self.speed*coordinate_sign_right
+                    
                 elif(coordinate == 'y'):
                     self.y += self.speed*coordinate_sign_right
-
+                    
 
 
     def move(self):
@@ -147,10 +132,8 @@ class Vehicle(pygame.sprite.Sprite):
            
             image_has_crossed_stop_line_now = (self.crossed == 0 )and (self.x + self.currentImage.get_rect().width > GD.stopLines[self.direction])
             it_can_move_straight = ((self.x+self.currentImage.get_rect().width <= self.stop) or (self.crossed == 1 )or (GD.currentGreen == 0 and GD.currentYellow == 0)) and ((self.index == 0) or (self.x +self.currentImage.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.gap2)) or ((GD.vehicles[self.direction][self.lane][self.index-1].turned == 1)))
-            self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
-
+           
         #####################################  DOWN #####################################
-      
         elif(self.direction == GD.DOWN):
             coordinate = 'y'
             
@@ -172,9 +155,7 @@ class Vehicle(pygame.sprite.Sprite):
            
             image_has_crossed_stop_line_now = (self.crossed == 0 and self.y+self.currentImage.get_rect().height > GD.stopLines[self.direction])
             it_can_move_straight = ((self.y+self.currentImage.get_rect().height <= self.stop or self.crossed == 1 or (GD.currentGreen == 1 and GD.currentYellow == 0)) and (self.index == 0 or self.y+self.currentImage.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index-1].y - GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index-1].turned == 1)))
-            self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
-
-
+          
         #####################################  LEFT #####################################
         elif(self.direction == GD.LEFT):  
             coordinate = 'x'
@@ -197,8 +178,7 @@ class Vehicle(pygame.sprite.Sprite):
            
             image_has_crossed_stop_line_now = (self.crossed == 0 and self.x < GD.stopLines[self.direction])
             it_can_move_straight = ((self.x >= self.stop or self.crossed == 1 or (GD.currentGreen == 2 and GD.currentYellow == 0)) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].x + GD.vehicles[self.direction][self.lane][self.index-1].currentImage.get_rect().width + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index-1].turned == 1)))
-            self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
-
+          
         #####################################  UP #####################################
         elif(self.direction == GD.UP):   
             coordinate = 'y'
@@ -221,5 +201,6 @@ class Vehicle(pygame.sprite.Sprite):
            
             image_has_crossed_stop_line_now = (self.crossed == 0 and self.y < GD.stopLines[self.direction])
             it_can_move_straight =((self.y >= self.stop or self.crossed == 1 or (GD.currentGreen == 3 and GD.currentYellow == 0)) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.vehicles[self.direction][self.lane][self.index-1].currentImage.get_rect().height + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index-1].turned == 1)))
-            self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
+        
+        self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
 
