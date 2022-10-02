@@ -69,6 +69,7 @@ detectionTime = 5
 speeds = {CAR: 2.25, BUS: 1.8, TRUCK: 1.8,
           MOTORCYCLE: 2.5}  # average speeds of vehicles
 
+
 # Coordinates of start
 # x = direction : lane <- { 0 , 1 , 2 }
 """
@@ -87,7 +88,19 @@ y = {RIGHT: [348+z, 370+z, 398+z], DOWN: [0, 0, 0],
 vehicles = {RIGHT: {0: [], 1: [], 2: [], 'crossed': 0}, DOWN: {0: [], 1: [], 2: [], 'crossed': 0},
             LEFT: {0: [], 1: [], 2: [], 'crossed': 0}, UP: {0: [], 1: [], 2: [], 'crossed': 0}}
 #vehicleTypes = {0: CAR, 1: BUS, 2: TRUCK, 3: 'rickshaw', 4: MOTORCYCLE}
-vehicleTypes = {0: CAR, 1: BUS, 2: TRUCK, 3: MOTORCYCLE}
+vehicleTypes = {
+     0: CAR,
+     1: BUS, 
+     2: TRUCK, 
+     3: MOTORCYCLE
+     }
+     
+vehiclesWeight = {
+     MOTORCYCLE: 1,
+     CAR: 4,
+     TRUCK: 8,
+     BUS: 20
+     } 
 directionNumbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of signal image, timer, and vehicle count
@@ -108,11 +121,7 @@ mid = {RIGHT: {'x': 705, 'y': 445}, DOWN: {'x': 695, 'y': 450},
 rotate_factor = 70
 directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445+z}, DOWN: {'x': 695-z, 'y': 450-rotate_factor},
             LEFT: {'x': 695+rotate_factor - 20, 'y': 425-z}, UP: {'x': 695+z, 'y': 400+rotate_factor}}
-
-drive_orginizer = {RIGHT: x[UP][2],  # x
-                   DOWN: y[RIGHT][2],  # y
-                   LEFT: x[DOWN][2],  # x
-                   UP: y[LEFT][2]}  # y
+   
 
 rotationAngle = 3
 

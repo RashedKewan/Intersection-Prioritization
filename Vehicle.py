@@ -4,12 +4,13 @@ import GlobalData as GD
 
 
 class Vehicle(pygame.sprite.Sprite):
-    def __init__(self, lane, vehicleClass, direction_number, direction, will_turn_right, will_turn_left):
+    flag=False
+    def __init__(self, lane, vehicleClass, direction, will_turn_right, will_turn_left):
         pygame.sprite.Sprite.__init__(self)
         self.lane = lane
         self.vehicleClass = vehicleClass
         self.speed = GD.speeds[vehicleClass]
-        self.direction_number = direction_number
+        #self.direction_number = direction_number
         self.direction = direction
         self.x = GD.x[direction][lane]
         self.y = GD.y[direction][lane]
@@ -59,6 +60,8 @@ class Vehicle(pygame.sprite.Sprite):
         screen.blit(self.currentImage, (self.x, self.y))
 
     def turn(self, coordinate, coordinate_sign, oposit_cordinate_sign, x_steps ,y_steps,angel_sign, is_not_the_point_to_turn, is_the_environment_allows_to_move_on, the_rotation_has_end):
+            global flag
+            dir=''
             if(is_not_the_point_to_turn):
                 if(is_the_environment_allows_to_move_on):
                     if(coordinate == 'x'):
@@ -73,17 +76,91 @@ class Vehicle(pygame.sprite.Sprite):
                     self.y += y_steps
                     if(self.rotateAngle == 90):
                         self.turned = 1
+                        
                 else:
                     if(the_rotation_has_end):
+                        
+                        if angel_sign == -1:
+                            dir = self.get_direction_after_rotate('right')
+                        elif angel_sign == 1:
+                            dir = self.get_direction_after_rotate('left')
+                        #print(f'dir = {dir}')
+                        #self.get_lane_coordinate_after_rotation(dir,coordinate)
                         if(coordinate == 'x'):
                             self.y += self.speed*oposit_cordinate_sign
-                            #if(self.x < GD.drive_orginizer[self.direction]-20):
-                            #    self.x += -1*coordinate_sign
+                            #if(self.x > GD.directly[dir]['y']+20):
+                            #    self.x += -1*coordinate_sign*0.5
+                            #    print('-------------->')
                         elif(coordinate == 'y'):
-                            #if(self.y < GD.drive_orginizer[self.direction]-20):
-                            #    self.y += -1*coordinate_sign*self.speed
                             self.x += self.speed*oposit_cordinate_sign
-                            
+
+                        
+    def get_oposite_direction(self,direction):# no need
+        if direction == GD.UP:
+            return GD.DOWN
+        if direction == GD.DOWN:
+            return GD.UP
+        if direction == GD.LEFT:
+            return GD.RIGHT
+        return GD.LEFT
+
+
+    # weight of vehicle  = GD.vehiclesWeight[self.vehicleClass]
+
+    def get_lane_coordinate_after_rotation(self ,dir, coordinate ):# no need
+        direction = dir
+        print('{} == {} : {}'.format(self.direction , dir , self.direction == dir))
+        print('x befor : {}'.format(self.x))
+        if coordinate == 'x':
+            if direction == GD.UP:
+                self.x = GD.drive_orginizer[GD.DOWN]
+            elif direction == GD.DOWN:
+                self.x = GD.drive_orginizer[GD.UP]
+            elif direction == GD.LEFT:
+                self.x = GD.drive_orginizer[GD.RIGHT]
+            elif direction == GD.RIGHT:
+                self.x = GD.drive_orginizer[GD.LEFT]
+        print('x after : {}'.format(self.x))
+        if coordinate == 'y':
+            if direction == GD.UP:
+                self.y = GD.drive_orginizer[GD.DOWN]
+            elif direction == GD.DOWN:
+                self.y = GD.drive_orginizer[GD.UP]
+            elif direction == GD.LEFT:
+                self.y = GD.drive_orginizer[GD.RIGHT]
+            elif direction == GD.RIGHT:
+                self.y = GD.drive_orginizer[GD.LEFT]
+
+
+    def get_direction_after_rotate(self , rotate_to):
+        direction = self.direction
+        new_direction = ''
+
+        if direction == GD.RIGHT:
+            if rotate_to == 'left':
+                new_direction = GD.UP
+            elif rotate_to == 'right':
+                new_direction = GD.DOWN
+
+        elif direction == GD.LEFT:
+            if rotate_to == 'left':
+                new_direction = GD.DOWN
+            elif rotate_to == 'right':
+                new_direction = GD.UP
+
+        elif direction == GD.DOWN:
+            if rotate_to == 'left':
+                new_direction = GD.RIGHT
+            elif rotate_to == 'right':
+                new_direction = GD.LEFT
+
+        elif direction == GD.UP:
+            if rotate_to == 'left':
+                new_direction = GD.LEFT
+            elif rotate_to == 'right':
+                new_direction = GD.RIGHT
+
+        return new_direction
 
     
     def applyMoving(self, coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight):

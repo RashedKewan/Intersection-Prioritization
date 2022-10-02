@@ -71,14 +71,25 @@ def setTime():
     #readTextWithVoice(text,language)
     #os.system("say detecting vehicles, " + GD.directionNumbers[(GD.currentGreen+1) % GD.noOfSignals])
     GD.noOfCars, GD.noOfBuses, GD.noOfTrucks, GD.noOfMotorcycle = 0, 0, 0, 0
-
+    
     for i in range(1, 3):
         for j in range(len(GD.vehicles[GD.directionNumbers[GD.nextGreen]][i])):
             vehicle = GD.vehicles[GD.directionNumbers[GD.nextGreen]][i][j]
             increasVehicleCounter(vehicle)
 
-    greenTime = math.ceil(((GD.noOfCars*GD.carTime) + (GD.noOfMotorcycle*GD.MotorcycleTime) + (
-        GD.noOfBuses*GD.busTime) + (GD.noOfTrucks*GD.truckTime) + (GD.noOfMotorcycle*GD.MotorcycleTime))/(GD.noOfLanes+1))
+    
+    greenTime = math.ceil(
+        (
+        (GD.noOfCars*GD.vehiclesWeight[GD.CAR]) + 
+        (GD.noOfMotorcycle*GD.vehiclesWeight[GD.MOTORCYCLE]) + 
+        (GD.noOfBuses*GD.vehiclesWeight[GD.BUS]) + 
+        (GD.noOfTrucks*GD.vehiclesWeight[GD.TRUCK])  
+        #(GD.noOfMotorcycle*GD.vehiclesWeight[GD.MOTORCYCLE])
+        )
+        #/(GD.noOfLanes+1)
+        )
+   
+
     # greenTime = math.ceil((noOfVehicles)/noOfLanes)
     print('Green Time: ', greenTime)
     if(greenTime < GD.defaultMinimum):
@@ -139,7 +150,7 @@ def repeat():
     while(GD.signals[GD.currentGreen].yellow > 0):
         updateValues()
         time.sleep(1)
-    GD.signals[GD.currentGreen].green = GD.defaultGreen
+   
     GD.signals[GD.currentGreen].yellow = GD.defaultYellow
     GD.signals[GD.currentGreen].red = GD.defaultRed
     GD.currentYellow = 0   # set yellow signal off
@@ -218,7 +229,7 @@ def generateVehicles():
             will_turn_left = checkIfWillTurn()
 
         direction_number = chooseDirection()
-        Vehicle(lane_number, GD.vehicleTypes[vehicle_type], direction_number,
+        Vehicle(lane_number, GD.vehicleTypes[vehicle_type],
                 GD.directionNumbers[direction_number], will_turn_right, will_turn_left)
         time.sleep(0.75)
 
