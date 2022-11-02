@@ -15,9 +15,8 @@ import pygame
 from gtts import gTTS
 import os
 from TrafficSignal import TrafficSignal
-from Vehicle import Vehicle
 import GlobalData as GD
-
+from Vehicle import VehicleClass
 
 pygame.init()
 simulation = pygame.sprite.Group()
@@ -25,20 +24,20 @@ simulation = pygame.sprite.Group()
 
 # Initialization of signals with default values
 def initialize():
-    ts1 = TrafficSignal(0, GD.defaultYellow, GD.defaultGreen,
-                        GD.defaultMinimum, GD.defaultMaximum)
+    ts1 = TrafficSignal(0, GD.default_yellow, GD.default_green,
+                        GD.default_minimum, GD.default_maximum)
     GD.signals.append(ts1)
 
-    ts2 = TrafficSignal(ts1.red+ts1.yellow+ts1.green, GD.defaultYellow,
-                        GD.defaultGreen, GD.defaultMinimum, GD.defaultMaximum)
+    ts2 = TrafficSignal(ts1.red + ts1.yellow + ts1.green, GD.default_yellow,
+                        GD.default_green, GD.default_minimum, GD.default_maximum)
     GD.signals.append(ts2)
 
-    ts3 = TrafficSignal(GD.defaultRed, GD.defaultYellow,
-                        GD.defaultGreen, GD.defaultMinimum, GD.defaultMaximum)
+    ts3 = TrafficSignal(GD.default_red, GD.default_yellow,
+                        GD.default_green, GD.default_minimum, GD.default_maximum)
     GD.signals.append(ts3)
 
-    ts4 = TrafficSignal(GD.defaultRed, GD.defaultYellow,
-                        GD.defaultGreen, GD.defaultMinimum, GD.defaultMaximum)
+    ts4 = TrafficSignal(GD.default_red, GD.default_yellow,
+                        GD.default_green, GD.default_minimum, GD.default_maximum)
     GD.signals.append(ts4)
     repeat()
 
@@ -66,15 +65,15 @@ def readTextWithVoice(text, language):
 
 def setTime():
     text = "detecting vehicles, " + \
-        GD.directionNumbers[(GD.currentGreen+1) % GD.noOfSignals]
+        GD.directionNumbers[(GD.current_green + 1) % GD.no_of_signals]
     language = 'en'
     #readTextWithVoice(text,language)
     #os.system("say detecting vehicles, " + GD.directionNumbers[(GD.currentGreen+1) % GD.noOfSignals])
     GD.noOfCars, GD.noOfBuses, GD.noOfTrucks, GD.noOfMotorcycle = 0, 0, 0, 0
     
     for i in range(1, 3):
-        for j in range(len(GD.vehicles[GD.directionNumbers[GD.nextGreen]][i])):
-            vehicle = GD.vehicles[GD.directionNumbers[GD.nextGreen]][i][j]
+        for j in range(len(GD.vehicles[GD.directionNumbers[GD.next_green]][i])):
+            vehicle = GD.vehicles[GD.directionNumbers[GD.next_green]][i][j]
             increasVehicleCounter(vehicle)
 
     
@@ -92,22 +91,22 @@ def setTime():
 
     # greenTime = math.ceil((noOfVehicles)/noOfLanes)
     print('Green Time: ', greenTime)
-    if(greenTime < GD.defaultMinimum):
-        greenTime = GD.defaultMinimum
-    elif(greenTime > GD.defaultMaximum):
-        greenTime = GD.defaultMaximum
+    if(greenTime < GD.default_minimum):
+        greenTime = GD.default_minimum
+    elif(greenTime > GD.default_maximum):
+        greenTime = GD.default_maximum
     # greenTime = random.randint(15,50)
-    GD.signals[(GD.currentGreen+1) % (GD.noOfSignals)].green = greenTime
+    GD.signals[(GD.current_green + 1) % (GD.no_of_signals)].green = greenTime
 
 
 def repeat():
     # while the timer of current green signal is not zero
-    while(GD.signals[GD.currentGreen].green > 0):
+    while(GD.signals[GD.current_green].green > 0):
         # printStatus()
         updateValues()
 
         # set time of next green signal
-        if(GD.signals[(GD.currentGreen+1) % (GD.noOfSignals)].red == GD.detectionTime):
+        if(GD.signals[(GD.current_green + 1) % (GD.no_of_signals)].red == GD.detectionTime):
             thread = threading.Thread(
                 name="detection", target=setTime, args=())
             thread.daemon = True
@@ -116,49 +115,49 @@ def repeat():
         time.sleep(1)
         
 
-    GD.currentYellow = 1   # set yellow signal on
-    GD.vehicleCountTexts[GD.currentGreen] = "0"
+    GD.current_yellow = 1   # set yellow signal on
+    GD.vehicleCountTexts[GD.current_green] = "0"
 
     # reset stop coordinates of lanes and vehicles
     for i in range(0, 3):
-        GD.stops[GD.directionNumbers[GD.currentGreen]][i] = GD.defaultStop[GD.directionNumbers[GD.currentGreen]]
-        for vehicle in GD.vehicles[GD.directionNumbers[GD.currentGreen]][i]:
-            vehicle.stop = GD.defaultStop[GD.directionNumbers[GD.currentGreen]]
+        GD.stops[GD.directionNumbers[GD.current_green]][i] = GD.defaultStop[GD.directionNumbers[GD.current_green]]
+        for vehicle in GD.vehicles[GD.directionNumbers[GD.current_green]][i]:
+            vehicle.stop = GD.defaultStop[GD.directionNumbers[GD.current_green]]
 
     # while the timer of current yellow signal is not zero
-    while(GD.signals[GD.currentGreen].yellow > 0):
+    while(GD.signals[GD.current_green].yellow > 0):
         # printStatus()
         updateValues()
         time.sleep(1)
-    GD.currentYellow = 0   # set yellow signal off
+    GD.current_yellow = 0   # set yellow signal off
 
     # reset all signal times of current signal to default times
-    GD.signals[GD.currentGreen].green = GD.defaultGreen
-    GD.signals[GD.currentGreen].yellow = GD.defaultYellow
-    GD.signals[GD.currentGreen].red = GD.defaultRed
+    GD.signals[GD.current_green].green = GD.default_green
+    GD.signals[GD.current_green].yellow = GD.default_yellow
+    GD.signals[GD.current_green].red = GD.default_red
     
 
 
     # set next signal as green signal
-    GD.currentGreen = GD.nextGreen  
+    GD.current_green = GD.next_green
     # set next green signal
-    GD.nextGreen = (GD.currentGreen+1) % GD.noOfSignals
+    GD.next_green = (GD.current_green + 1) % GD.no_of_signals
     
     
 
-    GD.currentYellow = 1   # set yellow signal on
-    while(GD.signals[GD.currentGreen].yellow > 0):
+    GD.current_yellow = 1   # set yellow signal on
+    while(GD.signals[GD.current_green].yellow > 0):
         updateValues()
         time.sleep(1)
    
-    GD.signals[GD.currentGreen].yellow = GD.defaultYellow
-    GD.signals[GD.currentGreen].red = GD.defaultRed
-    GD.currentYellow = 0   # set yellow signal off
+    GD.signals[GD.current_green].yellow = GD.default_yellow
+    GD.signals[GD.current_green].red = GD.default_red
+    GD.current_yellow = 0   # set yellow signal off
    
 
     # set the red time of next to next signal as (yellow time + green time) of next signal
-    GD.signals[GD.nextGreen].red = GD.signals[GD.currentGreen].yellow + \
-        GD.signals[GD.currentGreen].green 
+    GD.signals[GD.next_green].red = GD.signals[GD.current_green].yellow + \
+                                    GD.signals[GD.current_green].green
 
     repeat()
 
@@ -166,9 +165,9 @@ def repeat():
 
 
 def printStatus():
-    for i in range(0, GD.noOfSignals):
-        if(i == GD.currentGreen):
-            if(GD.currentYellow == 0):
+    for i in range(0, GD.no_of_signals):
+        if(i == GD.current_green):
+            if(GD.current_yellow == 0):
                 print(" GREEN TS", i+1, "-> r:",
                       GD.signals[i].red, " y:", GD.signals[i].yellow, " g:", GD.signals[i].green)
             else:
@@ -183,11 +182,11 @@ def printStatus():
 
 
 def updateValues():
-    for i in range(0, GD.noOfSignals):
-        if(i == GD.currentGreen):
-            if(GD.currentYellow == 0):
+    for i in range(0, GD.no_of_signals):
+        if(i == GD.current_green):
+            if(GD.current_yellow == 0):
                 GD.signals[i].green -= 1
-                GD.signals[i].totalGreenTime += 1
+                GD.signals[i].totalg_reen_time += 1
             else:
                 GD.signals[i].yellow -= 1
         else:
@@ -229,8 +228,8 @@ def generateVehicles():
             will_turn_left = checkIfWillTurn()
 
         direction_number = chooseDirection()
-        Vehicle(lane_number, GD.vehicleTypes[vehicle_type],
-                GD.directionNumbers[direction_number], will_turn_right, will_turn_left)
+        VehicleClass(lane_number, GD.vehicleTypes[vehicle_type],
+                     GD.directionNumbers[direction_number], will_turn_right, will_turn_left)
         time.sleep(0.75)
 
 
@@ -243,17 +242,19 @@ def checkIfWillTurn():
 
 def simulationTime():
     while(True):
-        GD.timeElapsed += 1
+        GD.time_elapsed += 1
         time.sleep(1)
-        if(GD.timeElapsed == GD.simTime):
+        if(GD.time_elapsed == GD.sim_time):
             totalVehicles = 0
             print('Lane-wise Vehicle Counts')
-            for i in range(GD.noOfSignals):
+            for i in range(GD.no_of_signals):
                 print('Lane', i+1, ':',
                       GD.vehicles[GD.directionNumbers[i]]['crossed'])
                 totalVehicles += GD.vehicles[GD.directionNumbers[i]]['crossed']
             print('Total vehicles passed: ', totalVehicles)
-            print('Total time passed: ', GD.timeElapsed)
+            print('Total time passed: ', GD.time_elapsed)
             print('No. of vehicles passed per unit time: ',
-                  (float(totalVehicles)/float(GD.timeElapsed)))
+                  (float(totalVehicles) / float(GD.time_elapsed)))
             os._exit(1)
+
+
