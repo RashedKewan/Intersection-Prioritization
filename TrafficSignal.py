@@ -7,4 +7,4 @@ class TrafficSignal:
         self.minimum = minimum
         self.maximum = maximum
         self.signalText = "30"
-        self.totalGreenTime = 0
+        self.totalg_reen_time = 0

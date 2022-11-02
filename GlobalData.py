@@ -1,3 +1,5 @@
+from typing import List
+import TrafficSignal
 import pygame
 # vehicle typpes
 CAR = 'car'
@@ -24,39 +26,40 @@ screenWidth = 1400
 screenHeight = 800
 screenSize = (screenWidth, screenHeight)
 
-
 # Loading signal images and font
-redSignal = pygame.image.load('images/signals/red.png')
-yellowSignal = pygame.image.load('images/signals/yellow.png')
+#ronen change all image type to be with the image name , like this
+red_signal_img = pygame.image.load('images/signals/red.png')
+yellow_signal_img = pygame.image.load('images/signals/yellow.png')
 greenSignal = pygame.image.load('images/signals/green.png')
 nonSignal = pygame.image.load('images/signals/non.png')
 background = pygame.image.load('images/mod_int.png')
 
 
 # Default values of signal times
-defaultRed = 150
-defaultYellow = 3
-defaultGreen = 20
-defaultMinimum = 10
-defaultMaximum = 60
+default_red :int = 150
+default_yellow:int = 3
+default_green:int = 20
+default_minimum:int = 10
+default_maximum:int = 60
 
-signals = []
-noOfSignals = 4
-simTime = 300       # change this to change time of simulation
-timeElapsed = 0
+signals =[]
+#signals =[]
+no_of_signals :int= 4
+sim_time :int= 300       # change this to change time of simulation
+time_elapsed :int= 0
 
-currentGreen = 0   # Indicates which signal is green
-nextGreen = (currentGreen+1) % noOfSignals
-currentYellow = 0   # Indicates whether yellow signal is on or off
+current_green :int= 0   # Indicates which signal is green
+next_green :int= (current_green + 1) % no_of_signals
+current_yellow :int= 0   # Indicates whether yellow signal is on or off
 
 # Average times for vehicles to pass the intersection
-carTime = 2
-MotorcycleTime = 1
-busTime = 2.5
-truckTime = 2.5
+car_time :int= 2
+MotorcycleTime :int= 1
+busTime :float= 2.5
+truckTime :float= 2.5
 
 # Count of cars at a traffic signal
-noOfCars = 0
+noOfCars :int= 0
 noOfBuses = 0
 noOfTrucks = 0
 noOfMotorcycle = 0
