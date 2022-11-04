@@ -1,10 +1,10 @@
 
 class TrafficSignal:
-    def __init__(self, red, yellow, green, minimum, maximum):
-        self.red = red
-        self.yellow = yellow
-        self.green = green
-        self.minimum = minimum
-        self.maximum = maximum
-        self.signalText = "30"
-        self.totalg_reen_time = 0
+    def __init__(self, red:int, yellow:int, green:int, minimum:int, maximum:int):
+        self.red :int= red
+        self.yellow:int = yellow
+        self.green:int = green
+        self.minimum:int = minimum
+        self.maximum:int = maximum
+        self.signal_text:str = "30"
+        self.total_green_time:int = 0
