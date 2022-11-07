@@ -258,7 +258,7 @@ def generate_vehicle():
 
         VehicleClass(
             lane            = lane_number, 
-            vehicle_class    = GD.vehicle_types[vehicle_type], 
+            vehicle_class   = GD.vehicle_types[vehicle_type], 
             direction       = GD.direction_numbers[direction_number], 
             will_turn_right = will_turn_right, 
             will_turn_left  = will_turn_left
