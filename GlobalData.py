@@ -51,6 +51,134 @@ points = {
      'X' : { 'x' : 1275 , 'y' : 745 }
 }
 
+path = {
+     1:[],
+     2:[]
+}
+
+street_class = {
+     RIGHT:0,
+     LEFT:1,
+     UP:2,
+     DOWN:3
+}
+#lane_number = 
+
+streets = {
+     
+     0,{         # RIGHT
+          'CD':{
+               'x':[300,500],
+               'y':[175] # y max
+          },
+          'IJ':{
+               'x':[300,500],
+               'y':[365] # y max
+          },
+          'KL':{
+               'x':[625,825],
+               'y':[365] # y max
+          },
+          'ST':{
+               'x':[950,1150],
+               'y':[555] # y max
+          },
+          'QR':{
+               'x':[500,825],
+               'y':[555] # y max
+          },
+          'WX':{
+               'x':[950,1150],
+               'y':[745] # y max
+          }
+     },
+     1,{         # LEFT
+          'BA':{
+               'x':[500,300],
+               'y':[50] # y min
+          },
+          'FE':{
+               'x':[500,300],
+               'y':[240] # y min
+          },
+          'HG':{
+               'x':[825,625],
+               'y':[240] # y min
+          },
+          'NM':{
+               'x':[825,625],
+               'y':[430] # y min
+          },
+          'PO':{
+               'x':[1150,950],
+               'y':[430] # y min
+          },
+          'VU':{
+               'x':[1150,950],
+               'y':[620] # y min
+          }
+     },
+     2,{         # UP
+          'EC':{
+               'x':[300], # x max
+               'y':[240,175] 
+          },
+          'GB':{
+               'x':[300], # x max
+               'y':[240,175] 
+          },
+          'MK':{
+               'x':[625], # x max
+               'y':[430,365] 
+          },
+          'OH':{
+               'x':[950], # x max
+               'y':[430,365] 
+          },
+          'XP':{
+               'x':[1275], # x max
+               'y':[620,555] 
+          },
+          'US':{
+               'x':[950], # x max
+               'y':[620,555] 
+          }
+     },
+     3,{         # DOWN
+          'AI':{
+               'x':[175], # x min
+               'y':[175,240] 
+          },
+          'DF':{
+               'x':[500], # x min
+               'y':[175,240] 
+          },
+          'JQ':{
+               'x':[625], # x min
+               'y':[365,430] 
+          },
+          'LN':{
+               'x':[825], # x min
+               'y':[365,430] 
+          },
+          'RW':{
+               'x':[825,885], # x min
+               'y':[555,685] 
+          },
+          'TV':{
+               'x':[1150,1215], # x min
+               'y':[555,620] 
+          }
+     }
+}
+
+
+
+# define for each  'maslol'  it ' netev ' number
+# random :select direction {R,L,U,D}
+# select street vector .For EX: AI
+# Random : select 'netev' number in choosen street vector
+
 
 
 # Font Size
