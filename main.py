@@ -35,7 +35,7 @@ def display_the_vehicles():
 
 def display_time_elapsed():
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)
-    screen.blit(time_elapsed_text, (1100, 50))
+    screen.blit(time_elapsed_text, (800, 50))
 
 
 class Main:

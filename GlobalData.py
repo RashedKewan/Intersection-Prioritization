@@ -275,9 +275,9 @@ vehicles_weight = {
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of signal image, timer, and vehicle count
-signal_coordinates:list = [(546, 550), (546, 250), (794, 250), (794, 550)]
-signal_timer_coordinates:list = [(560, 530), (560, 230), (810, 230), (810, 530)]
-vehicle_count_coordinates:list = [(495, 530), (495, 230), (880, 230), (880, 530)]
+signal_coordinates:list = [(350, 358), (350, 230), (440, 230), (440, 358)]
+signal_timer_coordinates:list = [(355, 338), (355, 210), (445, 210), (445, 338)]
+vehicle_count_coordinates:list = [(325, 338), (325, 210), (475, 210), (475, 338)]
 vehicle_count_texts:list = ["0", "0", "0", "0"]
 
 # Coordinates of stop lines
