@@ -190,8 +190,8 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 
 # Screensize
-screen_width:int = 1400
-screen_height:int = 800
+screen_width:int = 1100
+screen_height:int = 900 #800
 screen_size = (screen_width, screen_height)
 
 # Loading signal images and font
@@ -200,7 +200,8 @@ red_signal_img= pygame.image.load('images/signals/red.png')
 yellow_signal_img = pygame.image.load('images/signals/yellow.png')
 green_signal = pygame.image.load('images/signals/green.png')
 non_signal = pygame.image.load('images/signals/non.png')
-background = pygame.image.load('images/mod_int.png')
+background = pygame.image.load('images/street_900.png')
+background_white = pygame.image.load('images/bg-white.png')
 
 
 # Default values of signal times
@@ -249,7 +250,7 @@ y = {RIGHT: [348, 370, 398], DOWN: [0, 0, 0],
      LEFT: [498, 466, 436], UP: [800, 800, 800]}
 """
 z = 66
-x:dict = {RIGHT: [0, 0, 0], DOWN: [755-z, 727-z, 697-z],
+x:dict = {RIGHT: [0, 0, 0], DOWN: [755-z-245, 727-z-245, 697-z-245],
      LEFT: [1400, 1400, 1400], UP: [602+z, 627+z, 657+z]}
 y:dict = {RIGHT: [348+z, 370+z, 398+z], DOWN: [0, 0, 0],
      LEFT: [498-z, 466-z, 436-z], UP: [800, 800, 800]}
