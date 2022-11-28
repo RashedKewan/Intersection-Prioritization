@@ -15,27 +15,27 @@ pygame.display.set_caption("SIMULATION")
 font = pygame.font.Font(None, GD.font_size)
 
 def turn_signal_on(signal_img, index:int):
-    screen.blit(signal_img, GD.signal_coordinates[index])
+    #screen.blit(signal_img, GD.signal_coordinates[index])
     var = 0 
 
 
 
 def display_signal_timer_and_vehicle_count_for_each_signal(signal_number:int , signal_texts : list ):
         signal_texts[signal_number] = font.render(str(GD.signals[signal_number].signal_text), True, GD.white, GD.black)
-        screen.blit(signal_texts[signal_number], GD.signal_timer_coordinates[signal_number])
+     #   screen.blit(signal_texts[signal_number], GD.signal_timer_coordinates[signal_number])
         displayText = GD.vehicles[GD.direction_numbers[signal_number]]['crossed']
         GD.vehicle_count_texts[signal_number] = font.render(str(displayText), True, GD.black, GD.white)
-        screen.blit(GD.vehicle_count_texts[signal_number], GD.vehicle_count_coordinates[signal_number])
+      #  screen.blit(GD.vehicle_count_texts[signal_number], GD.vehicle_count_coordinates[signal_number])
 
 
 def display_the_vehicles():
     for vehicle in sim.simulation:
-        screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
+    #    screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
         vehicle.move()
 
 def display_time_elapsed():
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)
-    screen.blit(time_elapsed_text, (800, 50))
+   # screen.blit(time_elapsed_text, (800, 50))
 
 
 class Main:
@@ -56,7 +56,7 @@ class Main:
     #######################################      Display Background In Simulation     #######################################
     #########################################################################################################################
         screen.blit(GD.background_white, (0, 0))  
-        screen.blit(GD.background, (100, 0))   
+        screen.blit(GD.background, (150, 0))   
 
         mousex, mousey = pygame.mouse.get_pos()
         print(f"{mousex} , {mousey}")
