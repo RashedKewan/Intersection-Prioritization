@@ -220,6 +220,16 @@ def update_values():
             GD.signals[i].red -= 1
 
 
+def decide_if_will_turn(lane_number : int):
+    will_turn_right = 0
+    will_turn_left = 0
+    if(lane_number == 2):
+        will_turn_right = check_if_will_turn()
+    elif (lane_number == 1):
+        will_turn_left = check_if_will_turn()
+    return will_turn_left , will_turn_right
+
+
 def choose_direction():
     temp = random.randint(0, 999)
     direction_number = 0
@@ -234,37 +244,86 @@ def choose_direction():
         direction_number = 3
     return direction_number
 
+
+
+
+
+
+
 # Generating vehicles in the simulation
 
-def decide_if_will_turn(lane_number : int):
-    will_turn_right = 0
-    will_turn_left = 0
-    if(lane_number == 2):
-        will_turn_right = check_if_will_turn()
-    elif (lane_number == 1):
-        will_turn_left = check_if_will_turn()
-    return will_turn_left , will_turn_right
+
+def f(direction : str , image_dimention : int , s1 : str , s2 : str ):
+    lane_number = random.randint(0, 5)
+    
+    lean_length = GD.streets[direction][lane_number][s1][1] -GD.streets[direction][lane_number][s1][0]
+    vehicle_legel_len = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
+    '''
+    while( vehicle_legel_len > lean_length): #right and left 
+        lane_number = random.randint(0, 5)
+        lean_length = GD.streets[direction][lane_number][s1][1] -GD.streets[direction][lane_number][s1][0]
+        vehicle_legel_len = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
+    '''        
+    #GD.lanes_quantity[direction][lane_number] += image_dimention + GD.gap
+
+    vehicle_x=GD.lanes_quantity[direction][lane_number] + GD.streets[direction][lane_number][s1][0]
+    vehicle_y=GD.streets[direction][lane_number][s2][0]
+
+    return lane_number,vehicle_x,vehicle_y
+
+
+
+
+
+
+
+
+def choose_lane(direction_number:str,vehicle:str):
+    path = f"images//{direction_number}//{vehicle}.png"
+    image = pygame.image.load(path)
+    #each lane's size is approximately 140
+    #bus width/height is 58+gap 
+  
+    if(direction_number in [0,2]):
+        return f(direction_number,image.get_rect().width,'x','y')
+    return f(direction_number,image.get_rect().height,'y','x')
+
+
+
+
+
+
+
+
+
+
 
 def generate_vehicle():
-    while(True):
-        vehicle_type = random.randint(0, 3)
+   
+    for generation_number , vehicle in GD.vehicles_generating.items():
+        for i in range(generation_number):
 
-        # 0 in the white line
-        # 1 street
-        # 2 beside the yellow line
-        lane_number = random.randint(0, 1)+1
-        will_turn_left , will_turn_right = decide_if_will_turn(lane_number = lane_number)
-        direction_number = choose_direction()
-
-        VehicleClass(
-            lane            = lane_number, 
-            vehicle_class   = GD.vehicle_types[vehicle_type], 
-            direction       = GD.direction_numbers[direction_number], 
-            will_turn_right = will_turn_right, 
-            will_turn_left  = will_turn_left
-            )
+    #while(True):
+        
+            #vehicle_type = random.randint(0, 3)
+            direction_number = random.randint(0,3)
+            #lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],GD.vehicle_types[vehicle_type]) 
+            lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],vehicle)
+            will_turn_left , will_turn_right = decide_if_will_turn(lane_number = lane_number)
+    
+            VehicleClass(
+                lane            = lane_number, 
+                #vehicle_class   = GD.vehicle_types[vehicle_type], 
+                vehicle_class   = vehicle, 
+                direction       = GD.direction_numbers[direction_number], 
+                will_turn_right = will_turn_right, 
+                will_turn_left  = will_turn_left,
+                x               = vehicle_x,
+                y               = vehicle_y
+                )
 
         time.sleep(0.75)
+       
 
 
 def check_if_will_turn():

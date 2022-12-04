@@ -31,7 +31,7 @@ def display_signal_timer_and_vehicle_count_for_each_signal(signal_number:int , s
 def display_the_vehicles():
     for vehicle in sim.simulation:
         screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
-        vehicle.move()
+        #vehicle.move()
 
 def display_time_elapsed():
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)

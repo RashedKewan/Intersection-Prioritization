@@ -5,33 +5,33 @@ import GlobalData as GD
 
 class VehicleClass(pygame.sprite.Sprite):
     flag=False
-    def __init__(self, lane : int , vehicle_class : str, direction : str, will_turn_right : bool , will_turn_left : bool ):
+    def __init__(self, lane : int , vehicle_class : str, direction : str, will_turn_right : bool , will_turn_left : bool ,x:int,y:int):
         pygame.sprite.Sprite.__init__(self)
         self.lane = lane
         self.vehicle_class = vehicle_class
         self.speed = GD.speeds[vehicle_class]
         self.direction = direction
-        self.x = GD.x[direction][lane]
-        self.y = GD.y[direction][lane]
+        self.x = x #GD.streets[direction][lane]['x'][0]#GD.x[direction][lane]
+        self.y = y #GD.streets[direction][lane]['y'][0]#GD.y[direction][lane]
         self.crossed = 0
         self.will_turn_right = will_turn_right
         self.will_turn_left = will_turn_left
         self.turned = 0
         self.rotate_angle = 0
-        GD.vehicles[direction][lane].append(self)
-        self.index = len(GD.vehicles[direction][lane]) - 1
+        GD.vehicles_[direction][lane].append(self)
+        self.index = len(GD.vehicles_[direction][lane]) - 1
         path = f"images//{direction}//{vehicle_class}.png"
         self.original_image = pygame.image.load(path)
         self.current_image = pygame.image.load(path)
 
         # Set new starting and stopping coordinate
         coordination, dimension = self.get_coordination_dimension_accorfing_to_direction(self.direction)
-        self.set_new_starting_and_stopping_coordinate(coordination, dimension)
+        #self.set_new_starting_and_stopping_coordinate(coordination, dimension)
 
         # if more than 1 vehicle in the lane of vehicle before it has crossed stop line
-        if(len(GD.vehicles[direction][lane]) > 1 and GD.vehicles[direction][lane][self.index-1].crossed == 0):
+        if(len(GD.vehicles_[direction][lane]) > 1 and GD.vehicles_[direction][lane][self.index-1].crossed == 0):
             # setting stop coordinate as: stop coordinate of next vehicle - width of next vehicle - gap
-            self.stop = GD.vehicles[direction][lane][self.index-1].stop - GD.vehicles[direction][lane][self.index -1].current_image.get_rect().width - GD.gap
+            self.stop = GD.vehicles_[direction][lane][self.index-1].stop - GD.vehicles_[direction][lane][self.index -1].current_image.get_rect().width - GD.gap
         else:
             self.stop = GD.default_stop[direction]
         sim.simulation.add(self)
@@ -40,9 +40,11 @@ class VehicleClass(pygame.sprite.Sprite):
 
     def set_new_starting_and_stopping_coordinate(self, coordination : str, new_dimension:int):
         if(coordination == 'x'):
-            GD.x[self.direction][self.lane] += new_dimension
+            #GD.x[self.direction][self.lane] += new_dimension
+            GD.streets[self.direction][self.lane]['x'][0]+= new_dimension
         else:
-            GD.y[self.direction][self.lane] += new_dimension
+            #GD.y[self.direction][self.lane] += new_dimension
+            GD.streets[self.direction][self.lane]['y'][0]+= new_dimension
         GD.stops[self.direction][self.lane] += new_dimension
 
 
@@ -175,7 +177,7 @@ class VehicleClass(pygame.sprite.Sprite):
     def applyMoving(self, coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight):
         if(image_has_crossed_stop_line_now):
             self.crossed = 1
-            GD.vehicles[self.direction]['crossed'] += 1
+            GD.vehicles_[self.direction]['crossed'] += 1
 
          ##### Turned right #####
         if(self.will_turn_right == 1):
@@ -288,5 +290,5 @@ class VehicleClass(pygame.sprite.Sprite):
             image_has_crossed_stop_line_now = (self.crossed == 0 and self.y < GD.stop_lines[self.direction])
             it_can_move_straight =((self.y >= self.stop or self.crossed == 1 or (GD.current_green == 3 and GD.current_yellow == 0)) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
         
-        self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
+        #self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
 
