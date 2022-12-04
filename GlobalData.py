@@ -261,7 +261,7 @@ white = (255, 255, 255)
 
 # Screensize
 screen_width:int = 1100
-screen_height:int = 900 #800
+screen_height:int = 800 #800
 screen_size = (screen_width, screen_height)
 
 # Loading signal images and font
@@ -270,7 +270,7 @@ red_signal_img= pygame.image.load('images/signals/red.png')
 yellow_signal_img = pygame.image.load('images/signals/yellow.png')
 green_signal = pygame.image.load('images/signals/green.png')
 non_signal = pygame.image.load('images/signals/non.png')
-background = pygame.image.load('images/street_900.png')
+background = pygame.image.load('images/street.png')
 background_white = pygame.image.load('images/bg-white.png')
 
 
@@ -283,7 +283,7 @@ default_maximum:int = 60
 
 signals =[]
 number_of_signals :int = 4
-sim_time :int = 300       # change this to change time of simulation
+sim_time :int = 9999999       # change this to change time of simulation
 time_elapsed :int = 0
 
 current_green :int = 0   # Indicates which signal is green
