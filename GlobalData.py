@@ -122,6 +122,9 @@ points = {
      'V_' : { 'x' : 915 , 'y' : 715 },
      'W_' : { 'x' : 660 , 'y' : 715 },
      'X_' : { 'x' : 930 , 'y' : 715 }
+
+
+     
 }
 
 
@@ -324,11 +327,11 @@ x:dict = {RIGHT: [0, 0, 0], DOWN: [755-z-245, 727-z-245, 697-z-245],
 y:dict = {RIGHT: [348+z, 370+z, 398+z], DOWN: [0, 0, 0],
      LEFT: [498-z, 466-z, 436-z], UP: [800, 800, 800]}
 
-"""
 vehicles:dict = {RIGHT: {0: [], 1: [], 2: [], 'crossed': 0}, DOWN: {0: [], 1: [], 2: [], 'crossed': 0},
             LEFT: {0: [], 1: [], 2: [], 'crossed': 0}, UP: {0: [], 1: [], 2: [], 'crossed': 0}}
 #vehicleTypes = {0: CAR, 1: BUS, 2: TRUCK, 3: 'rickshaw', 4: MOTORCYCLE}
 
+"""
 
 vehicles_ = {
      
@@ -424,10 +427,10 @@ vehicles_ = {
 
 
 vehicles_generating:dict = {
-     6: CAR,
-     4: BUS, 
-     2: TRUCK, 
-     5: MOTORCYCLE
+     4: CAR,
+     0: BUS, 
+     0: TRUCK, 
+     0: MOTORCYCLE
      }
 
 
@@ -447,10 +450,13 @@ vehicles_weight = {
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of signal image, timer, and vehicle count
-signal_coordinates:list = [(350, 358), (350, 230), (440, 230), (440, 358)]
-signal_timer_coordinates:list = [(355, 338), (355, 210), (445, 210), (445, 338)]
-vehicle_count_coordinates:list = [(325, 338), (325, 210), (475, 210), (475, 338)]
+temp = 15
+signal_coordinates:list = [(365, 328), (365, 200), (455,200), (455, 328)]
+signal_timer_coordinates:list = [(370, 308), (370, 180), (460, 180), (460, 308)] 
+vehicle_count_coordinates:list = [(330, 308), (330, 180), (500, 180), (500, 308)]
 vehicle_count_texts:list = ["0", "0", "0", "0"]
+
+
 
 # Coordinates of stop lines
 stop_lines:dict = {RIGHT: 590, DOWN: 330, LEFT: 800, UP: 535}
@@ -458,15 +464,100 @@ default_stop:dict = {RIGHT: 580, DOWN: 320, LEFT: 810, UP: 545}
 stops:dict = {RIGHT: [580, 580, 580], DOWN: [320, 320, 320],
          LEFT: [810, 810, 810], UP: [545, 545, 545]}
 
-mid:dict = {RIGHT: {'x': 705, 'y': 445}, DOWN: {'x': 695, 'y': 450},
-       LEFT: {'x': 695, 'y': 425}, UP: {'x': 695, 'y': 450}}
+mid:dict = {
+     RIGHT: {
+          IJ:{
+               'x': 407, 
+               'y': 290
+               },
+          QR:{
+               'x': 680, 
+               'y': 525
+               }    
+          }, 
+     DOWN: {
+          IJ:{'x': 407, 'y': 290},
+          QR:{'x': 680, 'y': 525}    
+          }, 
+     LEFT: {
+          IJ:{'x': 407, 'y': 290},
+          QR:{'x': 680, 'y': 525}    
+          }, 
+     UP: {
+          IJ:{'x': 407, 'y': 290},
+          QR:{'x': 680, 'y': 525}    
+          },
+     }
 
-rotate_factor = 70
-directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445}, DOWN: {'x': 695, 'y': 450-rotate_factor},
-            LEFT: {'x': 695+rotate_factor - 20, 'y': 425}, UP: {'x': 695, 'y': 400+rotate_factor}}
+# rotate_factor = 70
+# directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445}, DOWN: {'x': 695, 'y': 450-rotate_factor},
+#             LEFT: {'x': 695+rotate_factor - 20, 'y': 425}, UP: {'x': 695, 'y': 400+rotate_factor}}
+
+rotate_point:dict = {
+     RIGHT: { 
+          # odd  represents short rotation
+          # even represents long  rotation
+          CD:365,
+          KL:615,
+          ST:870,
+          WX:895 #
+     },
+     DOWN: {
+     # odd  represents short rotation
+          # even represents long  rotation
+          A_I_:245, #
+          J_Q_:490, #
+          R_W_:740, #
+          T_V_:715
+     },
+     LEFT: {
+          # odd  represents short rotation
+          # even represents long  rotation
+          BA:205, #
+          FE:225,
+          NM:475,
+          VU:725
+     }, 
+     UP: {
+          # odd  represents short rotation
+          # even represents long  rotation
+          X_P_:570, #
+          O_H_:320, #
+          G_B_:65, #
+          E_C_:90
+     }
+     }
    
-
 rotation_angle = 3
+next_lane_of = {
+     
+     RIGHT:{        
+          CD:[ DOWN , D_F_ ],
+          KL:[ DOWN , L_N_ ],
+          ST:[ DOWN , T_V_ ],
+          WX:[ UP   , X_P_ ]    
+     },
+     LEFT:{        
+          BA:[ DOWN , A_I_ ],
+          FE:[ UP   , E_C_ ],
+          NM:[ UP   , M_K_ ],
+          VU:[ UP   , U_S_ ]
+     },
+     UP:{       
+          E_C_:[ RIGHT , CD ],
+          G_B_:[ LEFT  , BA ],
+          O_H_:[ LEFT  , HG ],
+          X_P_:[ LEFT  , PO ]
+          
+     },
+     DOWN:{        
+          A_I_:[ RIGHT , IJ ],
+          J_Q_:[ RIGHT , QR ],
+          R_W_:[ RIGHT , WX ],
+          T_V_:[ LEFT  , VU ]
+     }
+}
+
 
 # Gap between vehicles
 gap = 15   # stopping gap

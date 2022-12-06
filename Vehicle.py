@@ -25,19 +25,20 @@ class VehicleClass(pygame.sprite.Sprite):
         self.current_image = pygame.image.load(path)
         
 
-        # Set new starting and stopping coordinate
-        coordination, dimension = self.get_coordination_dimension_accorfing_to_direction(self.direction)
-        #self.set_new_starting_and_stopping_coordinate(coordination, dimension)
+        # # Set new starting and stopping coordinate
+        # coordination, dimension = self.get_coordination_dimension_accorfing_to_direction(self.direction)
+        # #self.set_new_starting_and_stopping_coordinate(coordination, dimension)
 
-        # if more than 1 vehicle in the lane of vehicle before it has crossed stop line
-        if(len(GD.vehicles_[direction][lane]) > 1 and GD.vehicles_[direction][lane][self.index-1].crossed == 0):
-            # setting stop coordinate as: stop coordinate of next vehicle - width of next vehicle - gap
-            self.stop = GD.vehicles_[direction][lane][self.index-1].stop - GD.vehicles_[direction][lane][self.index -1].current_image.get_rect().width - GD.gap
-        else:
-            self.stop = GD.default_stop[direction]
+        # # if more than 1 vehicle in the lane of vehicle before it has crossed stop line
+        # if(len(GD.vehicles_[direction][lane]) > 1 and GD.vehicles_[direction][lane][self.index-1].crossed == 0):
+        #     # setting stop coordinate as: stop coordinate of next vehicle - width of next vehicle - gap
+        #     self.stop = GD.vehicles_[direction][lane][self.index-1].stop - GD.vehicles_[direction][lane][self.index -1].current_image.get_rect().width - GD.gap
+        # else:
+        #     self.stop = GD.default_stop[direction]
         sim.simulation.add(self)
 
-
+#############################################################################################################################
+   
     def print(self):
         print(f"\
             *********************************************\n \
@@ -50,6 +51,9 @@ class VehicleClass(pygame.sprite.Sprite):
             y               : {self.y}\n \
             *********************************************\n\n")
 
+#############################################################################################################################
+   
+
     def set_new_starting_and_stopping_coordinate(self, coordination : str, new_dimension:int):
         if(coordination == 'x'):
             #GD.x[self.direction][self.lane] += new_dimension
@@ -60,7 +64,9 @@ class VehicleClass(pygame.sprite.Sprite):
         GD.stops[self.direction][self.lane] += new_dimension
 
 
-
+#############################################################################################################################
+   
+   
     def get_coordination_dimension_accorfing_to_direction(self,direction:str):
         coordination, dimension = '', 0
         if(direction == GD.RIGHT):
@@ -76,14 +82,18 @@ class VehicleClass(pygame.sprite.Sprite):
             coordination, dimension = 'y', self.current_image.get_rect().height + GD.gap
         return coordination, dimension
 
-    def render(self, screen):
-        screen.blit(self.current_image, (self.x, self.y))
+
+#############################################################################################################################
 
 
+    # def render(self, screen):
+    #     screen.blit(self.current_image, (self.x, self.y))
 
-    def turn(self, coordinate : str , coordinate_sign : int , oposit_cordinate_sign : int, x_steps : int ,y_steps : int ,angel_sign : int, is_not_the_point_to_turn : bool, is_the_environment_allows_to_move_on : bool , the_rotation_has_end : bool):
-            global flag
-            dir=''
+
+#############################################################################################################################
+
+
+    def turn(self, coordinate : str , coordinate_sign : int , oposit_cordinate_sign : int, x_steps : int ,y_steps : int ,angel_sign : int, is_not_the_point_to_turn : bool, is_the_environment_allows_to_move_on : bool , the_rotation_has_end : bool)->bool:
             if(is_not_the_point_to_turn):
                 if(is_the_environment_allows_to_move_on):
                     if(coordinate == 'x'):
@@ -93,22 +103,27 @@ class VehicleClass(pygame.sprite.Sprite):
             else:
                 if(self.turned == 0):
                     self.handle_turned_equal_zero(angel_sign = angel_sign, x_steps = x_steps, y_steps = y_steps)
-
                 else:
                     if(the_rotation_has_end):
-                        if angel_sign == -1:
-                            dir = self.get_direction_after_rotate('right')
-                        elif angel_sign == 1:
-                            dir = self.get_direction_after_rotate('left')
-                        #print(f'dir = {dir}')
-                        #self.get_lane_coordinate_after_rotation(dir,coordinate)
-                        if(coordinate == 'x'):
-                            self.y += self.speed*oposit_cordinate_sign
-                            #if(self.x > GD.directly[dir]['y']+20):
-                            #    self.x += -1*coordinate_sign*0.5
-                            #    print('-------------->')
-                        elif(coordinate == 'y'):
-                            self.x += self.speed*oposit_cordinate_sign
+                        # if(coordinate == 'x'):
+                        #     self.y += self.speed*oposit_cordinate_sign
+                        # elif(coordinate == 'y'):
+                        #     self.x += self.speed*oposit_cordinate_sign
+                        self.direction = GD.DOWN
+                        if(self.lane == GD.CD):
+                            self.lane = GD.D_F_
+                        elif(self.lane == GD.KL):
+                            self.lane = GD.L_N_
+                        elif(self.lane == GD.ST):
+                            self.lane = GD.T_V_
+                        print('ooooooooo')
+                        if( (self.direction == GD.DOWN) and (self.lane == GD.T_V_) ):
+                            print('-------------------------              ---------------------------------')
+                            #if(self.y < GD.rotate_point[self.direction][self.lane]):
+                            self.y += self.speed
+
+#############################################################################################################################
+
 
     def handle_turned_equal_zero(self, angel_sign:int, x_steps:int, y_steps:int):
         self.rotate_angle += GD.rotation_angle
@@ -118,189 +133,506 @@ class VehicleClass(pygame.sprite.Sprite):
         if (self.rotate_angle == 90):
             self.turned = 1
 
-    def get_oposite_direction(self,direction:str)->str:# no need
-        if direction == GD.UP:
-            return GD.DOWN
-        if direction == GD.DOWN:
-            return GD.UP
-        if direction == GD.LEFT:
-            return GD.RIGHT
-        return GD.LEFT
 
-
-    # weight of vehicle  = GD.vehiclesWeight[self.vehicleClass]
-
-    def get_lane_coordinate_after_rotation(self ,dir, coordinate ):# no need
-        direction = dir
-        print('{} == {} : {}'.format(self.direction , dir , self.direction == dir))
-        print('x befor : {}'.format(self.x))
-        if coordinate == 'x':
-            if direction == GD.UP:
-                self.x = GD.drive_orginizer[GD.DOWN]
-            elif direction == GD.DOWN:
-                self.x = GD.drive_orginizer[GD.UP]
-            elif direction == GD.LEFT:
-                self.x = GD.drive_orginizer[GD.RIGHT]
-            elif direction == GD.RIGHT:
-                self.x = GD.drive_orginizer[GD.LEFT]
-        print('x after : {}'.format(self.x))
-        if coordinate == 'y':
-            if direction == GD.UP:
-                self.y = GD.drive_orginizer[GD.DOWN]
-            elif direction == GD.DOWN:
-                self.y = GD.drive_orginizer[GD.UP]
-            elif direction == GD.LEFT:
-                self.y = GD.drive_orginizer[GD.RIGHT]
-            elif direction == GD.RIGHT:
-                self.y = GD.drive_orginizer[GD.LEFT]
-
-
-    def get_direction_after_rotate(self , rotate_to : str) -> str:
-        direction = self.direction
-        new_direction = ''
-
-        if direction == GD.RIGHT:
-            if rotate_to == 'left':
-                new_direction = GD.UP
-            elif rotate_to == 'right':
-                new_direction = GD.DOWN
-
-        elif direction == GD.LEFT:
-            if rotate_to == 'left':
-                new_direction = GD.DOWN
-            elif rotate_to == 'right':
-                new_direction = GD.UP
-
-        elif direction == GD.DOWN:
-            if rotate_to == 'left':
-                new_direction = GD.RIGHT
-            elif rotate_to == 'right':
-                new_direction = GD.LEFT
-
-        elif direction == GD.UP:
-            if rotate_to == 'left':
-                new_direction = GD.LEFT
-            elif rotate_to == 'right':
-                new_direction = GD.RIGHT
-
-        return new_direction
-
+#############################################################################################################################
+    
     
     def applyMoving(self, coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight):
         if(image_has_crossed_stop_line_now):
             self.crossed = 1
             GD.vehicles_[self.direction]['crossed'] += 1
+            # x
+            if(self.lane == GD.IJ and self.x >= GD.points['K']['x']):
+                self.lane = GD.KL
+            elif(self.lane == GD.QR and self.x >= GD.points['S']['x']):
+                self.lane = GD.ST
+            elif(self.lane == GD.HG and self.x <= GD.points['F']['x']):
+                self.lane = GD.FE
+            elif(self.lane == GD.PO and self.x <= GD.points['N']['x']):
+                self.lane = GD.NM
+            # y
+            elif(self.lane == GD.D_F_ and self.y >= GD.points['J_']['y']):
+                self.lane = GD.J_Q_
+            elif(self.lane == GD.L_N_ and self.y >= GD.points['R_']['y']):
+                self.lane = GD.R_W_
+            elif(self.lane == GD.M_K_ and self.y <= GD.points['G_']['y']):
+                self.lane = GD.G_B_
+            elif(self.lane == GD.U_S_ and self.y <= GD.points['O_']['y']):
+                self.lane = GD.O_H_
 
          ##### Turned right #####
         if(self.will_turn_right == 1):
-           self.turn( coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)
-
+            self.turn( coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)
+            if( (self.direction == GD.DOWN) and (self.lane == GD.T_V_) ):
+                    print('-------------------------              ---------------------------------')
+                    #if(self.y < GD.rotate_point[self.direction][self.lane]):
+                    self.y += self.speed*coordinate_sign_right
+                    # else:
+                    #     if(self.turn( 'y', coordinate_sign_right, -1, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)):
+                    #         self.direction = GD.LEFT
+                    #         self.lsne = GD.VU
         ##### Turned left #####
         elif(self.will_turn_left == 1):
             self.turn( coordinate, coordinate_sign_left, oposit_cordinate_sign_left, x_steps_left ,y_steps_left,1, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left)
         else:
             if(it_can_move_straight):
-                if(coordinate == 'x'):
-                    self.x += self.speed*coordinate_sign_right
+                # if(coordinate == 'x'):
+                #     self.x += self.speed*coordinate_sign_right
                     
-                elif(coordinate == 'y'):
+                # elif(coordinate == 'y'):
+                #     self.y += self.speed*coordinate_sign_right
+                if(self.direction == GD.RIGHT and self.lane in [ GD.CD , GD.KL ,GD.ST]):
+                    if(self.x < GD.rotate_point[self.direction][self.lane]):
+                        self.x += self.speed*coordinate_sign_right
+                    else:
+                        if(self.turn( coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)):
+                            # self.direction = GD.DOWN
+                            # if(self.lane == GD.CD):
+                            #     self.lane = GD.D_F_
+                            # elif(self.lane == GD.KL):
+                            #     self.lane = GD.L_N_
+                            # elif(self.lane == GD.ST):
+                            #     self.lane = GD.T_V_
+                            print('-------------------------iiiiiii---------------------------------')
+                        
+                # elif(self.lane in [ GD.BA , GD.KL ,GD.ST]):
+                #     if(self.x < GD.rotate_point[self.direction][self.lane]):
+                #         self.x += self.speed*coordinate_sign_right
+                #     else:
+                #         self.turn( coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)
+                            
+                print(f"self.direction = {self.direction}    self.lane = {self.lane}       {self.direction == GD.DOWN and self.lane == GD.T_V_ }")
+                print(f"x = {self.x}  y = {self.y}")
+                if( (self.direction == GD.DOWN) and (self.lane == GD.T_V_) ):
+                    print('-------------------------              ---------------------------------')
+                    #if(self.y < GD.rotate_point[self.direction][self.lane]):
                     self.y += self.speed*coordinate_sign_right
+                    # else:
+                    #     if(self.turn( 'y', coordinate_sign_right, -1, x_steps_right ,y_steps_right,-1, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right)):
+                    #         self.direction = GD.LEFT
+                    #         self.lsne = GD.VU
+            print('-------------------------ddddddddddd---------------------------------')
+        
                     
+
+#############################################################################################################################
+
+    def move_(self):
+
+        # RIGHT
+        if(self.direction == GD.RIGHT):
+            # For Right Rotation
+            x_steps_right = 1
+            y_steps_right = 1
+            # For Left Rotation
+            x_steps_right = 1.5
+            y_steps_right = -1
+
+            current_position   = self.x + 5#self.current_image.get_rect().width
+            
+            if(self.lane in [ GD.CD , GD.KL , GD.ST , GD.WX ]):
+                print(f"self.lane = {self.lane}  direction = {self.direction}  {GD.rotate_point[self.direction][self.lane]}")
+                rotation_point     = GD.rotate_point[self.direction][self.lane]
+                rotation_available = current_position >= rotation_point
+    
+                if(rotation_available):
+                    self.rotate_angle += GD.rotation_angle
+                    self.x += x_steps_right
+                    self.y -= y_steps_right
+
+                    if(self.lane == GD.WX):
+                        self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
+                    else:
+                        self.current_image = pygame.transform.rotate(self.original_image, -1 * self.rotate_angle)
+
+                    if (self.rotate_angle == 90):
+                        next_direction = GD.next_lane_of[self.direction][self.lane][0]
+                        next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        self.direction = next_direction
+                        self.lane      = next_lane
+                        self.rotate_angle = 0
+                        self.original_image = self.current_image
+                 
+                else:
+                    self.x = self.x + self.speed
+                    
+                
+            # free choise weather to turn right/left or to keep streight
+            elif(self.lane in [ GD.IJ , GD.QR ]):
+                    self.x = self.x + self.speed
+                    print(f" lane  =  {self.lane}")
+                    image_has_crossed_stop_line_now =  current_position > GD.streets[self.direction][self.lane]['x'][1] #GD.stop_lines[self.direction])
+                    if(image_has_crossed_stop_line_now):
+                        self.crossed = 1
+                        GD.vehicles_[self.direction]['crossed'] += 1
+                        if(self.lane == GD.IJ ):
+                            self.lane = GD.KL
+                        elif(self.lane == GD.QR ):
+                            self.lane = GD.ST
+
+
+
+
+
+
+
+
+        # DOWN                    
+        if(self.direction == GD.DOWN):
+            self.y += self.speed
+            # For Right Rotation
+            x_steps_right = 1
+            y_steps_right = 0.1
+            # For Left Rotation
+            x_steps_right = 1.5
+            y_steps_right = -1
+
+            current_position   = self.y + self.current_image.get_rect().height -15
+            
+            if(self.lane in [ GD.A_I_ , GD.J_Q_ , GD.R_W_ , GD.T_V_ ]):
+                print(f"self.lane = {self.lane}  direction = {self.direction}  {GD.rotate_point[self.direction][self.lane]}")
+                rotation_point     = GD.rotate_point[self.direction][self.lane]
+                rotation_available = current_position >= rotation_point
+    
+                if(rotation_available):
+                    self.rotate_angle += GD.rotation_angle
+                    self.x -= x_steps_right
+                    #self.y -= y_steps_right
+
+                    
+                    if(self.lane != GD.T_V_):
+                        self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
+                    else:
+                        self.current_image = pygame.transform.rotate(self.original_image, -1 * self.rotate_angle)
+
+                    if (self.rotate_angle == 90):
+                        next_direction = GD.next_lane_of[self.direction][self.lane][0]
+                        next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        self.direction = next_direction
+                        self.lane      = next_lane
+                        self.rotate_angle = 0
+                        self.original_image = self.current_image
+                 
+                else:
+                    self.y = self.y + self.speed
+                    
+                
+            # free choise weather to turn right/left or to keep streight
+            elif(self.lane in [ GD.D_F_ , GD.L_N_ ]):
+                    self.y = self.y + self.speed
+                    print(f" lane  =  {self.lane}")
+                    image_has_crossed_stop_line_now =  current_position > GD.streets[self.direction][self.lane]['y'][1] #GD.stop_lines[self.direction])
+                    if(image_has_crossed_stop_line_now):
+                        self.crossed = 1
+                        GD.vehicles_[self.direction]['crossed'] += 1
+                        if(self.lane == GD.D_F_ ):
+                            self.lane = GD.J_Q_
+                        elif(self.lane == GD.L_N_ ):
+                            self.lane = GD.R_W_
+
+
+
+
+
+
+
+
+
+
+
+        # LEFT   
+        if(self.direction == GD.LEFT):
+             # For Right Rotation
+            x_steps_right = 1
+            y_steps_right = 1
+            # For Left Rotation
+            x_steps_right = 1.5
+            y_steps_right = -1
+
+            current_position   = self.x #self.current_image.get_rect().width
+            
+            if(self.lane in [ GD.BA , GD.FE , GD.NM , GD.VU ]):
+                print(f"self.lane = {self.lane}  direction = {self.direction}  {GD.rotate_point[self.direction][self.lane]}")
+                rotation_point     = GD.rotate_point[self.direction][self.lane]
+                rotation_available = current_position <= rotation_point
+    
+                if(rotation_available):
+                    self.rotate_angle += GD.rotation_angle
+                    self.x -= x_steps_right
+                    self.y += y_steps_right
+                    
+                    if(self.lane == GD.BA):
+                        self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
+                    else:
+                        self.current_image = pygame.transform.rotate(self.original_image, -1 * self.rotate_angle)
+
+                    if (self.rotate_angle == 90):
+                        next_direction = GD.next_lane_of[self.direction][self.lane][0]
+                        next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        self.direction = next_direction
+                        self.lane      = next_lane
+                        self.rotate_angle = 0
+                        self.original_image = self.current_image
+                 
+                else:
+                    self.x = self.x - self.speed
+                    
+                
+            # free choise weather to turn right/left or to keep streight
+            elif(self.lane in [ GD.PO , GD.HG ]):
+                    self.x = self.x - self.speed
+                    print(f" lane  =  {self.lane}")
+                    image_has_crossed_stop_line_now =  current_position < GD.streets[self.direction][self.lane]['x'][1] #GD.stop_lines[self.direction])
+                    if(image_has_crossed_stop_line_now):
+                        self.crossed = 1
+                        # WE MUST ADD THE LANE ALSO AS PARAM
+                        GD.vehicles_[self.direction]['crossed'] += 1
+                        if(self.lane == GD.PO ):
+                            self.lane = GD.NM
+                        elif(self.lane == GD.HG ):
+                            self.lane = GD.FE
+
+
+
+
+
+
+        # UP   
+        if(self.direction == GD.UP):
+            # For Right Rotation
+            x_steps_right = 1
+            y_steps_right = 0.1
+            # For Left Rotation
+            x_steps_right = 1.5
+            y_steps_right = -1
+
+            current_position   = self.y + self.current_image.get_rect().height -15
+            
+            if(self.lane in [ GD.E_C_ , GD.G_B_ , GD.O_H_ , GD.X_P_]):
+                print(f"self.lane = {self.lane}  direction = {self.direction}  {GD.rotate_point[self.direction][self.lane]}")
+                rotation_point     = GD.rotate_point[self.direction][self.lane]
+                rotation_available = current_position <= rotation_point
+    
+                if(rotation_available):
+                    self.rotate_angle += GD.rotation_angle
+                    self.x -= x_steps_right
+                    self.y += y_steps_right
+                    
+                    if(self.lane != GD.E_C_):
+                        self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
+                    else:
+                        self.current_image = pygame.transform.rotate(self.original_image, -1 * self.rotate_angle)
+
+                    if (self.rotate_angle == 90):
+                        next_direction = GD.next_lane_of[self.direction][self.lane][0]
+                        next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        self.direction = next_direction
+                        self.lane      = next_lane
+                        self.rotate_angle = 0
+                        self.original_image = self.current_image
+                 
+                else:
+                    self.y = self.y - self.speed
+                    
+                
+            # free choise weather to turn right/left or to keep streight
+            elif(self.lane in [ GD.M_K_ , GD.U_S_ ]):
+                    self.y = self.y - self.speed
+                    print(f" lane  =  {self.lane}")
+                    image_has_crossed_stop_line_now =  current_position < GD.streets[self.direction][self.lane]['y'][1] #GD.stop_lines[self.direction])
+                    if(image_has_crossed_stop_line_now):
+                        self.crossed = 1
+                        GD.vehicles_[self.direction]['crossed'] += 1
+                        if(self.lane == GD.M_K_ ):
+                            self.lane = GD.G_B_
+                        elif(self.lane == GD.U_S_ ):
+                            self.lane = GD.O_H_
+
+#############################################################################################################################
+
 
 
     def move(self):
         #####################################  RIGHT #####################################
-        
+       
         if(self.direction == GD.RIGHT):
             coordinate = 'x'
             
             coordinate_sign_right = 1
             oposit_cordinate_sign_right = 1
-            x_steps_right = 2.2
-            y_steps_right = 1.8
-            is_not_the_point_to_turn_right = (self.crossed == 0) or (self.x + self.current_image.get_rect().width < GD.directly[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_right = (self.x + self.current_image.get_rect().width <= self.stop or (GD.current_green == 0 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x + self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index - 1].x - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)
-            the_rotation_has_end_right = self.index == 0 or self.y+self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index-1].y - GD.gap2) or self.x+self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.gap2)
+            x_steps_right = 1.5#2.2
+            y_steps_right = 1#1.8
+           
+            is_not_the_point_to_turn_right = False
+            if(self.lane in [ GD.IJ , GD.QR , GD.CD , GD.KL , GD.ST]):
+                is_not_the_point_to_turn_right = (self.x + self.current_image.get_rect().width) < GD.rotate_point[self.direction][self.lane]
+            
+            
+            
+            is_the_environment_allows_to_move_on_right = True#(self.x + self.current_image.get_rect().width <= self.stop or (GD.current_green == 0 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x + self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index - 1].x - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)
+            the_rotation_has_end_right = self.index == 0 or self.y+self.current_image.get_rect().height < (GD.vehicles_[self.direction][self.lane][self.index-1].y - GD.gap2) or self.x+self.current_image.get_rect().width < (GD.vehicles_[self.direction][self.lane][self.index-1].x - GD.gap2)
            
             coordinate_sign_left = 1
             oposit_cordinate_sign_left = -1
             x_steps_left = 2.2
             y_steps_left = -1.8
-            is_not_the_point_to_turn_left = (self.crossed == 0) or (self.x + self.current_image.get_rect().width < GD.mid[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_left = (self.x + self.current_image.get_rect().width <= self.stop or (GD.current_green == 0 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x + self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index - 1].x - GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_left = (self.index == 0 )or (self.y+self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.gap2)) or (self.x+self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index-1].y - GD.gap2))
-           
-            image_has_crossed_stop_line_now = (self.crossed == 0 )and (self.x + self.current_image.get_rect().width > GD.stop_lines[self.direction])
-            it_can_move_straight = ((self.x+self.current_image.get_rect().width <= self.stop) or (self.crossed == 1 ) or (GD.current_green == 0 and GD.current_yellow == 0)) and ((self.index == 0) or (self.x + self.current_image.get_rect().width < (GD.vehicles[self.direction][self.lane][self.index - 1].x - GD.gap2)) or ((GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
-           
-        #####################################  DOWN #####################################
-        elif(self.direction == GD.DOWN):
-            coordinate = 'y'
             
-            coordinate_sign_right = 1
-            oposit_cordinate_sign_right = -1
-            x_steps_right = -2.5
-            y_steps_right = 2.2
-            is_not_the_point_to_turn_right = (self.crossed == 0) or (self.y+self.current_image.get_rect().height < GD.directly[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_right = ((self.y + self.current_image.get_rect().height <= self.stop or (GD.current_green == 1 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_right = (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].x + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.y < (GD.vehicles[self.direction][self.lane][self.index-1].y - GD.gap2))
-           
-            coordinate_sign_left = 1
-            oposit_cordinate_sign_left = 1
-            x_steps_left = 2.5
-            y_steps_left = 2
-            is_not_the_point_to_turn_left = (self.crossed == 0) or (self.y+self.current_image.get_rect().height  < GD.mid[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_left = ((self.y + self.current_image.get_rect().height <= self.stop or (GD.current_green == 1 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_left = (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.y < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.gap2))
-           
-            image_has_crossed_stop_line_now = (self.crossed == 0 and self.y+self.current_image.get_rect().height > GD.stop_lines[self.direction])
-            it_can_move_straight = ((self.y + self.current_image.get_rect().height <= self.stop or self.crossed == 1 or (GD.current_green == 1 and GD.current_yellow == 0)) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
-          
-        #####################################  LEFT #####################################
-        elif(self.direction == GD.LEFT):  
-            coordinate = 'x'
-            
-            coordinate_sign_right = -1
-            oposit_cordinate_sign_right = -1
-            x_steps_right = -1.5
-            y_steps_right = -2.5
-            is_not_the_point_to_turn_right = (self.crossed == 0) or (self.x > GD.directly[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_right =((self.x >= self.stop or (GD.current_green == 2 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_right = (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].x + GD.gap2))
-           
-            coordinate_sign_left = -1
-            oposit_cordinate_sign_left = 1
-            x_steps_left = -1.8
-            y_steps_left = 2.5
-            is_not_the_point_to_turn_left = (self.crossed == 0) or (self.x > GD.mid[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_left = ((self.x >= self.stop or (GD.current_green == 2 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_left = True
-           
-            image_has_crossed_stop_line_now = (self.crossed == 0 and self.x < GD.stop_lines[self.direction])
-            it_can_move_straight = ((self.x >= self.stop or self.crossed == 1 or (GD.current_green == 2 and GD.current_yellow == 0)) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
-          
-        #####################################  UP #####################################
-        elif(self.direction == GD.UP):   
-            coordinate = 'y'
-            
-            coordinate_sign_right = -1
-            oposit_cordinate_sign_right = 1
-            x_steps_right = 1
-            y_steps_right = -1
-            is_not_the_point_to_turn_right = (self.crossed == 0) or (self.y > GD.directly[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_right =((self.y >= self.stop or (GD.current_green == 3 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_right = (self.index == 0 or self.x < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width - GD.gap2) or self.y > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.gap2))
-           
-            coordinate_sign_left = -1
-            oposit_cordinate_sign_left = -1
-            x_steps_left = -1.8
-            y_steps_left = -2.5
-            is_not_the_point_to_turn_left = (self.crossed == 0) or (self.y > GD.mid[self.direction][coordinate])
-            is_the_environment_allows_to_move_on_left = ((self.y >= self.stop or (GD.current_green == 3 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
-            the_rotation_has_end_left = True
-           
-            image_has_crossed_stop_line_now = (self.crossed == 0 and self.y < GD.stop_lines[self.direction])
-            it_can_move_straight =((self.y >= self.stop or self.crossed == 1 or (GD.current_green == 3 and GD.current_yellow == 0)) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
-        
-        self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
+            #is_not_the_point_to_turn_left = (self.crossed == 0) or (self.x + self.current_image.get_rect().width < GD.mid[self.direction][self.lane][coordinate])
+            is_not_the_point_to_turn_left = False
+            if(self.lane in [ GD.IJ , GD.QR]):
+                is_not_the_point_to_turn_left = (self.x + self.current_image.get_rect().width ) < GD.mid.get(self.direction)[self.lane]['x']
 
+
+            is_the_environment_allows_to_move_on_left = True #(self.x + self.current_image.get_rect().width <= self.stop or (GD.current_green == 0 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x + self.current_image.get_rect().width < (GD.vehicles_[self.direction][self.lane][self.index - 1].x - GD.gap2) or (GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1))
+            the_rotation_has_end_left = (self.index == 0 )or (self.y+self.current_image.get_rect().height < (GD.vehicles_[self.direction][self.lane][self.index-1].x - GD.gap2)) or (self.x+self.current_image.get_rect().width < (GD.vehicles_[self.direction][self.lane][self.index-1].y - GD.gap2))
+           
+            image_has_crossed_stop_line_now = True#(self.crossed == 0 )and (self.x + self.current_image.get_rect().width > GD.stop_lines[self.direction])
+            it_can_move_straight = True#((self.x+self.current_image.get_rect().width <= self.stop) or (self.crossed == 1 ) or (GD.current_green == 0 and GD.current_yellow == 0)) and ((self.index == 0) or (self.x + self.current_image.get_rect().width < (GD.vehicles_[self.direction][self.lane][self.index - 1].x - GD.gap2)) or ((GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1)))
+           
+        # #####################################  DOWN #####################################
+        # elif(self.direction == GD.DOWN):
+        #     coordinate = 'y'
+            
+        #     coordinate_sign_right = 1
+        #     oposit_cordinate_sign_right = -1
+        #     x_steps_right = -2.5
+        #     y_steps_right = 2.2
+        #     is_not_the_point_to_turn_right = (self.crossed == 0) or (self.y+self.current_image.get_rect().height < GD.directly[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_right = ((self.y + self.current_image.get_rect().height <= self.stop or (GD.current_green == 1 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_right = (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].x + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.y < (GD.vehicles[self.direction][self.lane][self.index-1].y - GD.gap2))
+           
+        #     coordinate_sign_left = 1
+        #     oposit_cordinate_sign_left = 1
+        #     x_steps_left = 2.5
+        #     y_steps_left = 2
+        #     is_not_the_point_to_turn_left = (self.crossed == 0) or (self.y+self.current_image.get_rect().height  < GD.mid[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_left = ((self.y + self.current_image.get_rect().height <= self.stop or (GD.current_green == 1 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_left = (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.y < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.gap2))
+           
+        #     image_has_crossed_stop_line_now = (self.crossed == 0 and self.y+self.current_image.get_rect().height > GD.stop_lines[self.direction])
+        #     it_can_move_straight = ((self.y + self.current_image.get_rect().height <= self.stop or self.crossed == 1 or (GD.current_green == 1 and GD.current_yellow == 0)) and (self.index == 0 or self.y + self.current_image.get_rect().height < (GD.vehicles[self.direction][self.lane][self.index - 1].y - GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
+          
+        # #####################################  LEFT #####################################
+        # elif(self.direction == GD.LEFT):  
+        #     coordinate = 'x'
+            
+        #     coordinate_sign_right = -1
+        #     oposit_cordinate_sign_right = -1
+        #     x_steps_right = -1.5
+        #     y_steps_right = -2.5
+        #     is_not_the_point_to_turn_right = (self.crossed == 0) or (self.x > GD.directly[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_right =((self.x >= self.stop or (GD.current_green == 2 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_right = (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width + GD.gap2) or self.x > (GD.vehicles[self.direction][self.lane][self.index-1].x + GD.gap2))
+           
+        #     coordinate_sign_left = -1
+        #     oposit_cordinate_sign_left = 1
+        #     x_steps_left = -1.8
+        #     y_steps_left = 2.5
+        #     is_not_the_point_to_turn_left = (self.crossed == 0) or (self.x > GD.mid[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_left = ((self.x >= self.stop or (GD.current_green == 2 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_left = True
+           
+        #     image_has_crossed_stop_line_now = (self.crossed == 0 and self.x < GD.stop_lines[self.direction])
+        #     it_can_move_straight = ((self.x >= self.stop or self.crossed == 1 or (GD.current_green == 2 and GD.current_yellow == 0)) and (self.index == 0 or self.x > (GD.vehicles[self.direction][self.lane][self.index - 1].x + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().width + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
+          
+        # #####################################  UP #####################################
+        # elif(self.direction == GD.UP):   
+        #     coordinate = 'y'
+            
+        #     coordinate_sign_right = -1
+        #     oposit_cordinate_sign_right = 1
+        #     x_steps_right = 1
+        #     y_steps_right = -1
+        #     is_not_the_point_to_turn_right = (self.crossed == 0) or (self.y > GD.directly[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_right =((self.y >= self.stop or (GD.current_green == 3 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_right = (self.index == 0 or self.x < (GD.vehicles[self.direction][self.lane][self.index-1].x - GD.vehicles[self.direction][self.lane][self.index-1].current_image.get_rect().width - GD.gap2) or self.y > (GD.vehicles[self.direction][self.lane][self.index-1].y + GD.gap2))
+           
+        #     coordinate_sign_left = -1
+        #     oposit_cordinate_sign_left = -1
+        #     x_steps_left = -1.8
+        #     y_steps_left = -2.5
+        #     is_not_the_point_to_turn_left = (self.crossed == 0) or (self.y > GD.mid[self.direction][coordinate])
+        #     is_the_environment_allows_to_move_on_left = ((self.y >= self.stop or (GD.current_green == 3 and GD.current_yellow == 0) or self.crossed == 1) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1))
+        #     the_rotation_has_end_left = True
+           
+        #     image_has_crossed_stop_line_now = (self.crossed == 0 and self.y < GD.stop_lines[self.direction])
+        #     it_can_move_straight =((self.y >= self.stop or self.crossed == 1 or (GD.current_green == 3 and GD.current_yellow == 0)) and (self.index == 0 or self.y > (GD.vehicles[self.direction][self.lane][self.index - 1].y + GD.vehicles[self.direction][self.lane][self.index - 1].current_image.get_rect().height + GD.gap2) or (GD.vehicles[self.direction][self.lane][self.index - 1].turned == 1)))
+        
+            self.applyMoving(coordinate, coordinate_sign_right, oposit_cordinate_sign_right, x_steps_right, y_steps_right, is_not_the_point_to_turn_right, is_the_environment_allows_to_move_on_right, the_rotation_has_end_right, coordinate_sign_left,oposit_cordinate_sign_left, x_steps_left, y_steps_left, is_not_the_point_to_turn_left, is_the_environment_allows_to_move_on_left, the_rotation_has_end_left, image_has_crossed_stop_line_now, it_can_move_straight)
+
+
+
+
+
+
+
+
+
+
+
+    # def get_direction_after_rotate(self , rotate_to : str) -> str:
+    #     direction = self.direction
+    #     new_direction = ''
+
+    #     if direction == GD.RIGHT:
+    #         if rotate_to == 'left':
+    #             new_direction = GD.UP
+    #         elif rotate_to == 'right':
+    #             new_direction = GD.DOWN
+
+    #     elif direction == GD.LEFT:
+    #         if rotate_to == 'left':
+    #             new_direction = GD.DOWN
+    #         elif rotate_to == 'right':
+    #             new_direction = GD.UP
+
+    #     elif direction == GD.DOWN:
+    #         if rotate_to == 'left':
+    #             new_direction = GD.RIGHT
+    #         elif rotate_to == 'right':
+    #             new_direction = GD.LEFT
+
+    #     elif direction == GD.UP:
+    #         if rotate_to == 'left':
+    #             new_direction = GD.LEFT
+    #         elif rotate_to == 'right':
+    #             new_direction = GD.RIGHT
+
+    #     return new_direction
+
+    
+    # def get_oposite_direction(self,direction:str)->str:# no need
+    #     if direction == GD.UP:
+    #         return GD.DOWN
+    #     if direction == GD.DOWN:
+    #         return GD.UP
+    #     if direction == GD.LEFT:
+    #         return GD.RIGHT
+    #     return GD.LEFT
+
+
+    # weight of vehicle  = GD.vehiclesWeight[self.vehicleClass]
+
+    # def get_lane_coordinate_after_rotation(self ,dir, coordinate ):# no need
+    #     direction = dir
+    #     print('{} == {} : {}'.format(self.direction , dir , self.direction == dir))
+    #     print('x befor : {}'.format(self.x))
+    #     if coordinate == 'x':
+    #         if direction == GD.UP:
+    #             self.x = GD.drive_orginizer[GD.DOWN]
+    #         elif direction == GD.DOWN:
+    #             self.x = GD.drive_orginizer[GD.UP]
+    #         elif direction == GD.LEFT:
+    #             self.x = GD.drive_orginizer[GD.RIGHT]
+    #         elif direction == GD.RIGHT:
+    #             self.x = GD.drive_orginizer[GD.LEFT]
+    #     print('x after : {}'.format(self.x))
+    #     if coordinate == 'y':
+    #         if direction == GD.UP:
+    #             self.y = GD.drive_orginizer[GD.DOWN]
+    #         elif direction == GD.DOWN:
+    #             self.y = GD.drive_orginizer[GD.UP]
+    #         elif direction == GD.LEFT:
+    #             self.y = GD.drive_orginizer[GD.RIGHT]
+    #         elif direction == GD.RIGHT:
+    #             self.y = GD.drive_orginizer[GD.LEFT]

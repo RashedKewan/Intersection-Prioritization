@@ -15,23 +15,23 @@ pygame.display.set_caption("SIMULATION")
 font = pygame.font.Font(None, GD.font_size)
 
 def turn_signal_on(signal_img, index:int):
-    #screen.blit(signal_img, GD.signal_coordinates[index])
-    var=0
+    screen.blit(signal_img, GD.signal_coordinates[index])
+
 
 
 
 def display_signal_timer_and_vehicle_count_for_each_signal(signal_number:int , signal_texts : list ):
         signal_texts[signal_number] = font.render(str(GD.signals[signal_number].signal_text), True, GD.white, GD.black)
-     #   screen.blit(signal_texts[signal_number], GD.signal_timer_coordinates[signal_number])
-        displayText = GD.vehicles[GD.direction_numbers[signal_number]]['crossed']
+        screen.blit(signal_texts[signal_number], GD.signal_timer_coordinates[signal_number])
+        displayText = GD.vehicles_[GD.direction_numbers[signal_number]]['crossed']
         GD.vehicle_count_texts[signal_number] = font.render(str(displayText), True, GD.black, GD.white)
-      #  screen.blit(GD.vehicle_count_texts[signal_number], GD.vehicle_count_coordinates[signal_number])
+        screen.blit(GD.vehicle_count_texts[signal_number], GD.vehicle_count_coordinates[signal_number])
 
 
 def display_the_vehicles():
     for vehicle in sim.simulation:
         screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
-        #vehicle.move()
+        vehicle.move_()
 
 
 def display_time_elapsed():
@@ -58,7 +58,7 @@ class Main:
     #########################################################################################################################
         screen.blit(GD.background_white, (0, 0))  
         screen.blit(GD.background, (150, 0))   
-
+        #mouse coordination
         mousex, mousey = pygame.mouse.get_pos()
         print(f"{mousex} , {mousey}")
 

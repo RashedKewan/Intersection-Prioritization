@@ -101,9 +101,9 @@ def set_time():
     GD.number_of_motorcycle :int = 0
     
     for i in range(1, 3):
-        number_of_vehicles_in_next_green:int = len(GD.vehicles[GD.direction_numbers[GD.next_green]][i])
+        number_of_vehicles_in_next_green:int = len(GD.vehicles_[GD.direction_numbers[GD.next_green]][i])
         for j in range(number_of_vehicles_in_next_green):
-            vehicle = GD.vehicles[GD.direction_numbers[GD.next_green]][i][j]
+            vehicle = GD.vehicles_[GD.direction_numbers[GD.next_green]][i][j]
             increase_vehicle_counter(vehicle)
 
     
@@ -148,7 +148,7 @@ def repeat():
     # reset stop coordinates of lanes and vehicles
     for i in range(0, 3):
         GD.stops[GD.direction_numbers[GD.current_green]][i] = GD.default_stop[GD.direction_numbers[GD.current_green]]
-        for vehicle in GD.vehicles[GD.direction_numbers[GD.current_green]][i]:
+        for vehicle in GD.vehicles_[GD.direction_numbers[GD.current_green]][i]:
             vehicle.stop = GD.default_stop[GD.direction_numbers[GD.current_green]]
 
     # while the timer of current yellow signal is not zero
@@ -260,7 +260,7 @@ def get_lane_length(direction : str , lane_number : int , c_x : str , c_y : str 
 def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):  
     c_x = 'x' # coordinate x
     c_y = 'y' # coordinate x
-    lane_number = random.randint(0, 5)
+    lane_number =  random.randint(0, 5)
     # Initialize vehicle_x , vehicle_y
     vehicle_x = GD.streets[direction][lane_number][c_x][0]
     vehicle_y = GD.streets[direction][lane_number][c_y][0]
@@ -293,17 +293,18 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
         lane_length = get_lane_length(direction = direction ,lane_number = lane_number , c_x = c_x , c_y = c_y )
         vehicle_legel_len = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
     # if the vehicle the first vehicle at the lane in [ left , right]
-    if(vehicle_x == GD.streets[direction][lane_number][c_x][0]):
-        if(direction == GD.RIGHT ):
-            vehicle_x+=image_dimention
-        elif(direction == GD.LEFT ):
-            vehicle_x-=image_dimention
-    # if the vehicle the first vehicle at the lane in [ up , down ]
-    elif(vehicle_y == GD.streets[direction][lane_number][c_y][0]):
-        if(direction == GD.DOWN ):
-            vehicle_y+=image_dimention
-        elif(direction == GD.UP ):
-            vehicle_y-=image_dimention
+    if(GD.lanes_quantity[direction][lane_number] == 0):
+        if(vehicle_x == GD.streets[direction][lane_number][c_x][0]):
+            if(direction == GD.RIGHT ):
+                vehicle_x+=image_dimention
+            elif(direction == GD.LEFT ):
+                vehicle_x-=image_dimention
+        # if the vehicle the first vehicle at the lane in [ up , down ]
+        elif(vehicle_y == GD.streets[direction][lane_number][c_y][0]):
+            if(direction == GD.DOWN ):
+                vehicle_y+=image_dimention
+            elif(direction == GD.UP ):
+                vehicle_y-=image_dimention
     else:
         # not the first 
         if(direction == GD.RIGHT ):
@@ -315,20 +316,6 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
         elif(direction == GD.UP ):
             vehicle_y-=vehicle_legel_len
 
-
-    # if(direction  == GD.RIGHT):
-    #     vehicle_x=GD.streets[direction][lane_number][c_x][0] + GD.lanes_quantity[direction][lane_number] 
-    #     vehicle_y=GD.streets[direction][lane_number][c_y][0]
-    # elif(direction  == GD.LEFT):
-    #     vehicle_x=GD.streets[direction][lane_number][c_x][0] - GD.lanes_quantity[direction][lane_number] 
-    #     vehicle_y=GD.streets[direction][lane_number][c_y][0]
-    # elif(direction  == GD.UP):
-    #     vehicle_x=GD.streets[direction][lane_number][c_y][0] - GD.lanes_quantity[direction][lane_number] 
-    #     vehicle_y=GD.streets[direction][lane_number][c_x][0]
-    # elif(direction  == GD.DOWN):
-    #     vehicle_x=GD.streets[direction][lane_number][c_y][0] + GD.lanes_quantity[direction][lane_number] 
-    #     vehicle_y=GD.streets[direction][lane_number][c_x][0]
-
     GD.lanes_quantity[direction][lane_number] = vehicle_legel_len
 
     return lane_number,vehicle_x,vehicle_y
@@ -338,7 +325,10 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
 def choose_lane(direction_number:str,vehicle:str):
     path = f"images//{direction_number}//{vehicle}.png"
     image = pygame.image.load(path)
-    return coordinate_vehicle_on_screen(direction_number,image.get_rect().width)
+    image_dimention = image.get_rect().height
+    if(direction_number in [GD.RIGHT , GD.LEFT]):
+        image_dimention = image.get_rect().width
+    return coordinate_vehicle_on_screen(direction_number,image_dimention)
    
 
 
@@ -363,7 +353,7 @@ def generate_vehicle():
                 y               = vehicle_y
                 )
             vehicle.print()
-            time.sleep(0.75)
+            time.sleep(0.3)
        
 
 
