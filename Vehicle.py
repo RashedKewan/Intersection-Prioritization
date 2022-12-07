@@ -143,22 +143,61 @@ class VehicleClass(pygame.sprite.Sprite):
             GD.vehicles_[self.direction]['crossed'] += 1
             # x
             if(self.lane == GD.IJ and self.x >= GD.points['K']['x']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.KL
+              #  GD.vehicles_[self.direction][self.lane].append[self]
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
             elif(self.lane == GD.QR and self.x >= GD.points['S']['x']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.ST
+                #GD.vehicles_[self.direction][self.lane].append[self]
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
             elif(self.lane == GD.HG and self.x <= GD.points['F']['x']):
+               # del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.FE
+                #GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
             elif(self.lane == GD.PO and self.x <= GD.points['N']['x']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.NM
+               # GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
             # y
             elif(self.lane == GD.D_F_ and self.y >= GD.points['J_']['y']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.J_Q_
+               # GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
+
             elif(self.lane == GD.L_N_ and self.y >= GD.points['R_']['y']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.R_W_
+                #GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
+
             elif(self.lane == GD.M_K_ and self.y <= GD.points['G_']['y']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.G_B_
+                #GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+
             elif(self.lane == GD.U_S_ and self.y <= GD.points['O_']['y']):
+                #del GD.vehicles_[self.direction][self.lane][0]
                 self.lane = GD.O_H_
+                #GD.vehicles_[self.direction][self.lane].append[self]
+                len(GD.vehicles_[self.direction][self.lane]) - 1
+                self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
 
          ##### Turned right #####
         if(self.will_turn_right == 1):
@@ -248,13 +287,19 @@ class VehicleClass(pygame.sprite.Sprite):
                     if (self.rotate_angle == 90):
                         next_direction = GD.next_lane_of[self.direction][self.lane][0]
                         next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+             ##############################################################
+                       # del GD.vehicles_[self.direction][self.lane][0]
                         self.direction = next_direction
                         self.lane      = next_lane
+                        #GD.vehicles_[self.direction][self.lane].append[self] #add the car to the next lane
+                        self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
+             #########################################################################3
                         self.rotate_angle = 0
                         self.original_image = self.current_image
                  
                 else:
-                    self.x = self.x + self.speed
+                   # if(self.index == 0 or self.x + self.current_image.get_rect().width < GD.vehicles_[self.direction][self.lane][self.index - 1].x - GD.gap2):
+                     self.x = self.x + self.speed 
                     
                 
             # free choise weather to turn right/left or to keep streight
@@ -308,12 +353,17 @@ class VehicleClass(pygame.sprite.Sprite):
                     if (self.rotate_angle == 90):
                         next_direction = GD.next_lane_of[self.direction][self.lane][0]
                         next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        #del GD.vehicles_[self.direction][self.lane][0]
                         self.direction = next_direction
                         self.lane      = next_lane
+                        #GD.vehicles_[self.direction][self.lane].append[self] #add the car to the next lane
+                        self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
                         self.rotate_angle = 0
                         self.original_image = self.current_image
                  
                 else:
+                 #if(self.index == 0 or self.y + self.current_image.get_rect().height < GD.vehicles_[self.direction][self.lane][self.index - 1].y -
+                  #  GD.vehicles_[self.direction][self.lane][self.index - 1].current_image.get_rect().height -GD.gap2):
                     self.y = self.y + self.speed
                     
                 
@@ -369,13 +419,18 @@ class VehicleClass(pygame.sprite.Sprite):
                     if (self.rotate_angle == 90):
                         next_direction = GD.next_lane_of[self.direction][self.lane][0]
                         next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                        #del GD.vehicles_[self.direction][self.lane][0]
                         self.direction = next_direction
                         self.lane      = next_lane
+                       # GD.vehicles_[self.direction][self.lane].append[self] #add the car to the next lane
+                        self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
                         self.rotate_angle = 0
                         self.original_image = self.current_image
                  
                 else:
-                    self.x = self.x - self.speed
+                  #  if(self.index == 0 or self.x + self.current_image.get_rect().width > GD.vehicles_[self.direction][self.lane][self.index - 1].x +
+                   # GD.vehicles_[self.direction][self.lane][self.index - 1].current_image.get_rect().width +GD.gap2):
+                     self.x = self.x - self.speed
                     
                 
             # free choise weather to turn right/left or to keep streight
@@ -426,12 +481,17 @@ class VehicleClass(pygame.sprite.Sprite):
                     if (self.rotate_angle == 90):
                         next_direction = GD.next_lane_of[self.direction][self.lane][0]
                         next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+                       # del GD.vehicles_[self.direction][self.lane][0]
                         self.direction = next_direction
                         self.lane      = next_lane
+                     #   GD.vehicles_[self.direction][self.lane].append[self] #add the car to the next lane
+                        self.index=len(GD.vehicles_[self.direction][self.lane]) - 1
                         self.rotate_angle = 0
                         self.original_image = self.current_image
                  
                 else:
+                 #if(self.index == 0 or self.y + self.current_image.get_rect().height > GD.vehicles_[self.direction][self.lane][self.index - 1].y +
+                    #GD.vehicles_[self.direction][self.lane][self.index - 1].current_image.get_rect().height +GD.gap2):
                     self.y = self.y - self.speed
                     
                 
