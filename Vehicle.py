@@ -260,12 +260,12 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # RIGHT
         if(self.direction == GD.RIGHT):
-            # For Right Rotation
-            x_steps_right = 1
-            y_steps_right = 1
             # For Left Rotation
-            x_steps_right = 1.5
-            y_steps_right = -1
+            x_steps_left =GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][0]
+            y_steps_left = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][1]
+            # For Right Rotation
+            x_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][0]
+            y_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][1]
 
             current_position   = self.x + 5#self.current_image.get_rect().width
             
@@ -276,8 +276,12 @@ class VehicleClass(pygame.sprite.Sprite):
     
                 if(rotation_available):
                     self.rotate_angle += GD.rotation_angle
-                    self.x += x_steps_right
-                    self.y -= y_steps_right
+                    if(self.lane!=GD.WX):
+                        self.x += x_steps_right
+                        self.y -= y_steps_right
+                    else:
+                        self.x += x_steps_left
+                        self.y -= y_steps_left
 
                     if(self.lane == GD.WX):
                         self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
@@ -324,13 +328,13 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # DOWN                    
         if(self.direction == GD.DOWN):
-            self.y += self.speed
-            # For Right Rotation
-            x_steps_right = 1
-            y_steps_right = 0.1
+            #self.y += self.speed
             # For Left Rotation
-            x_steps_right = 1.5
-            y_steps_right = -1
+            x_steps_left =GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][0]
+            y_steps_left = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][1]
+            # For Right Rotation
+            x_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][0]
+            y_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][1]
 
             current_position   = self.y + self.current_image.get_rect().height -15
             
@@ -341,7 +345,12 @@ class VehicleClass(pygame.sprite.Sprite):
     
                 if(rotation_available):
                     self.rotate_angle += GD.rotation_angle
-                    self.x -= x_steps_right
+                    if(self.lane == GD.T_V_):
+                        self.x -= x_steps_right
+                        self.y += y_steps_right
+                    else:
+                        self.x-=x_steps_left
+                        self.y +=y_steps_left
                     #self.y -= y_steps_right
 
                     
@@ -392,12 +401,12 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # LEFT   
         if(self.direction == GD.LEFT):
-             # For Right Rotation
-            x_steps_right = 1
-            y_steps_right = 1
-            # For Left Rotation
-            x_steps_right = 1.5
-            y_steps_right = -1
+             # For Left Rotation
+            x_steps_left =GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][0]
+            y_steps_left = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][1]
+            # For Right Rotation
+            x_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][0]
+            y_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][1]
 
             current_position   = self.x #self.current_image.get_rect().width
             
@@ -408,9 +417,16 @@ class VehicleClass(pygame.sprite.Sprite):
     
                 if(rotation_available):
                     self.rotate_angle += GD.rotation_angle
-                    self.x -= x_steps_right
-                    self.y += y_steps_right
+                    if(self.lane != GD.BA):
+                        self.x -= x_steps_right
+                        self.y += y_steps_right
+                    else:
+                        self.x -= x_steps_left
+                        self.y += y_steps_left
+
                     
+
+
                     if(self.lane == GD.BA):
                         self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)
                     else:
@@ -454,12 +470,12 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # UP   
         if(self.direction == GD.UP):
-            # For Right Rotation
-            x_steps_right = 1
-            y_steps_right = 0.1
             # For Left Rotation
-            x_steps_right = 1.5
-            y_steps_right = -1
+            x_steps_left =GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][0]
+            y_steps_left = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['left'][1]
+            # For Right Rotation
+            x_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][0]
+            y_steps_right = GD.steps_turning_vehicle[self.vehicle_class][self.direction]['right'][1]
 
             current_position   = self.y + self.current_image.get_rect().height -15
             
@@ -470,8 +486,12 @@ class VehicleClass(pygame.sprite.Sprite):
     
                 if(rotation_available):
                     self.rotate_angle += GD.rotation_angle
-                    self.x -= x_steps_right
-                    self.y += y_steps_right
+                    if(self.lane== GD.E_C_):
+                        self.x -= x_steps_right
+                        self.y += y_steps_right
+                    else:
+                        self.x -= x_steps_left
+                        self.y += y_steps_left
                     
                     if(self.lane != GD.E_C_):
                         self.current_image = pygame.transform.rotate(self.original_image, 1 * self.rotate_angle)

@@ -424,7 +424,83 @@ vehicles_ = {
 
 
 
+steps_turning_vehicle:dict={
+    
+     CAR:{         
+          RIGHT:{
+               'left':[1.5,3],
+               'right':[1.5,-1] 
+          },
+          DOWN:{
+               'left':[-1,2.2],
+               'right':[1.5,2.2] 
+          },
+          LEFT:{
+               'left':[1.8,0.8],
+               'right':[1.5,-1] 
+          },
+          UP:{
+               'left':[3,-1],
+               'right':[-0.5,-1] 
+          }
+     },
+     BUS:{         
+          RIGHT:{
+               'left':[1.5,3],
+               'right':[1.5,-1] 
+          },
+          DOWN:{
+               'left':[-2,2.5],
+               'right':[1,2.5] 
+          },
+          LEFT:{
+               'left':[1.8,0.8],
+               'right':[1.5,-1] 
+          },
+          UP:{
+               'left':[3,-0.5],
+               'right':[-0.5,-0.5] 
+          }
+     },
+     TRUCK:{         
+          RIGHT:{
+               'left':[1.5,3],
+               'right':[1.5,-1] 
+          },
+          DOWN:{
+               'left':[-2,2.2],
+               'right':[1,2.2] 
+          },
+          LEFT:{
+               'left':[1.8,0.8],
+               'right':[1.5,-1] 
+          },
+          UP:{
+               'left':[3,-1],
+               'right':[-0.5,-1] 
+          }
+     },
+     MOTORCYCLE:{         
+          RIGHT:{
+               'left':[1.5,3],
+               'right':[1.5,-1] 
+          },
+          DOWN:{
+               'left':[-2,1.8],
+               'right':[1,1.8] 
+          },
+          LEFT:{
+               'left':[1.5,0.8],
+               'right':[1.3,-1] 
+          },
+          UP:{
+               'left':[3,-1.5],
+               'right':[-0.5,-1.2] 
+          }
+     }
 
+
+}
 
 vehicles_generating:dict = {
      4: CAR,
