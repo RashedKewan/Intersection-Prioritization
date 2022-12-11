@@ -7,8 +7,8 @@ import GlobalData as GD
 from Vehicle import VehicleClass
 
 class Intersection:
-    def __init__(self,start_coordinate:int , current_green:int = 0):
-                
+    def __init__(self, intersection : int , start_coordinate : int , current_green : int = 0):
+        self.intersection = intersection       
         self.signals =[]
         self.number_of_signals :int = 4
 
@@ -23,10 +23,10 @@ class Intersection:
         self.number_of_motorcycle:int = 0
       
         x = start_coordinate
-        self.traffic_sign_arrow_coordinates:list    = [( x+5  , x-55), (x+5  , x-185), (x+95  ,x-185), (x+95   , x-55)]
-        self.signal_coordinates:list                = [( x    , x-35), (x    , x-165), (x+90  ,x-165), (x+90   , x-35)]
-        self.signal_timer_coordinates:list          = [( x-35 , x-15), (x-35 , x-145), (x+145 , x-145), (x+145 , x-15)] 
-        self.vehicle_count_coordinates:list         = [( x-35 , x-45), (x-35 , x-185), (x+145 , x-185), (x+145 , x-45)]
+        self.traffic_sign_arrow_coordinates:list    = [( x+5  , x-55), (x+5  , x-185), (x+95  , x-185), (x+95   , x-55)]
+        self.signal_coordinates:list                = [( x    , x-35), (x    , x-165), (x+90  , x-165), (x+90   , x-35)]
+        self.signal_timer_coordinates:list          = [( x-35 , x-15), (x-35 , x-145), (x+145 , x-145), (x+145  , x-15)] 
+        self.vehicle_count_coordinates:list         = [( x-35 , x-45), (x-35 , x-185), (x+145 , x-185), (x+145  , x-45)]
         
         self.vehicle_count_texts:list = ["0", "0", "0", "0"]
 
@@ -66,22 +66,20 @@ class Intersection:
             self.number_of_trucks     :int = 0
             self.number_of_motorcycle :int = 0
             
-            for i in range(1, 3):
-                number_of_vehicles_in_next_green:int = len(GD.vehicles_[GD.direction_numbers[self.next_green]][i])
-                for j in range(number_of_vehicles_in_next_green):
-                    vehicle = GD.vehicles_[GD.direction_numbers[self.next_green]][i][j]
-                    self.increase_vehicle_counter(vehicle)
+            next_green_direction = GD.direction_numbers[self.next_green]
+            next_green_lane      = GD.intersection_lanes[self.intersection][next_green_direction][0]
+            number_of_vehicles_in_next_green:int = len(GD.vehicles_[next_green_direction][next_green_lane])
+
+            for j in range(number_of_vehicles_in_next_green):
+                vehicle = GD.vehicles_[GD.direction_numbers[self.next_green]][next_green_lane][j]
+                self.increase_vehicle_counter(vehicle)
 
             
             green_time = math.ceil(
-                (
                 (self.number_of_cars*GD.vehicles_weight[GD.CAR]) + 
                 (self.number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
                 (self.number_of_buses*GD.vehicles_weight[GD.BUS]) + 
-                (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK])  
-                )
-                #/(GD.number_of_lanes)
-                )
+                (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK]))
 
             print('Green Time: ', green_time)
             if(green_time < GD.default_minimum):

@@ -359,7 +359,6 @@ vehicles_ = {
           WX:
               []
           
-          ,'crossed': 0
      },
      LEFT:{         # LEFT
           BA:
@@ -380,7 +379,6 @@ vehicles_ = {
           VU:
                []
           
-          ,'crossed': 0
      },
      UP:{         # UP
           E_C_:
@@ -401,7 +399,6 @@ vehicles_ = {
           U_S_:
                []
           
-          ,'crossed': 0
      },
      DOWN:{         # DOWN
           A_I_:
@@ -422,7 +419,6 @@ vehicles_ = {
           T_V_:
                []
           
-          ,'crossed': 0
      }
 }
 
@@ -507,10 +503,10 @@ steps_turning_vehicle:dict={
 }
 
 vehicles_generating:dict = {
-     CAR        : 3,
-     BUS        : 3, 
-     TRUCK      : 3, 
-     MOTORCYCLE : 3
+     CAR        : 1,
+     BUS        : 0, 
+     TRUCK      : 0, 
+     MOTORCYCLE : 0
      }
 
 
@@ -638,7 +634,55 @@ next_lane_of = {
      }
 }
 
+intersection_lanes = {
+     FGKJ : {
+          
+          RIGHT :[IJ  ],
+          DOWN  :[D_F_],
+          LEFT  :[M_K_],
+          UP    :[HG  ],
+     },
+     NOSR:{
+          RIGHT :[QR  ],
+          DOWN  :[L_N_],
+          LEFT  :[PO  ],
+          UP    :[U_S_],
+     }
+}
 
+
+crossed = {
+     FGKJ : {
+
+          RIGHT :{
+               'crossed': 0
+          },
+          DOWN  :{
+               'crossed': 0
+          },
+          LEFT  :
+          {
+               'crossed': 0
+          },
+          UP    :{
+               'crossed': 0
+          }
+     },
+     NOSR:{
+          RIGHT :{
+               'crossed': 0
+          },
+          DOWN  :{
+               'crossed': 0
+          },
+          LEFT  :{
+               'crossed': 0
+          },
+          UP    :{
+               'crossed': 0
+          }
+     }
+}
 # Gap between vehicles
 gap = 15   # stopping gap
 gap2 = 15   # moving gap

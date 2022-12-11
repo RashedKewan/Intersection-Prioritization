@@ -32,8 +32,8 @@ def run_thread(thread_name:str , thread_target):
     thread.start()
 
 def initialize():
-    FGKJ_intersection = Intersection(start_coordinate=365 , current_green=0)
-    NOSR_intersection = Intersection(start_coordinate=615 , current_green=1)
+    FGKJ_intersection = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=0)
+    NOSR_intersection = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=1)
     
 
     ts1 = TrafficSignal(
@@ -427,10 +427,12 @@ def simulation_time():
         if(GD.time_elapsed == GD.sim_time):
             total_vehicles = 0
             print('Lane-wise Vehicle Counts')
-            for i in range(GD.intersections[0].number_of_signals):
-                print('Lane', i+1, ':',
-                      GD.vehicles[GD.direction_numbers[i]]['crossed'])
-                total_vehicles += GD.vehicles[GD.direction_numbers[i]]['crossed']
+    #         for intersection in GD.intersections.keys():
+    #             for i in range(4):
+    #                 print('Lane', i+1, ':',GD.intersection_lanes[intersection][GD.direction_numbers[i]]['crossed'])
+    # #GD.vehicles[GD.direction_numbers[i]]['crossed'])
+    #                 total_vehicles += GD.vehicles[GD.direction_numbers[i]]['crossed']
+                
             print('Total vehicles passed: ', total_vehicles)
             print('Total time passed: ', GD.time_elapsed)
             print('No. of vehicles passed per unit time: ',

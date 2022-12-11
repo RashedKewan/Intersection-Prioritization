@@ -27,7 +27,9 @@ def turn_signal_on(intersection :int, signal_img, index:int):
 def display_signal_timer_and_vehicle_count_for_each_signal(intersection :int, signal_number:int , signal_texts : list ):
         signal_texts[signal_number] = font.render(str(GD.intersections[intersection].signals[signal_number].signal_text), True, GD.white, GD.black)
         screen.blit(signal_texts[signal_number], GD.intersections[intersection].signal_timer_coordinates[signal_number])
-        displayText = GD.vehicles_[GD.direction_numbers[signal_number]]['crossed']
+        
+        displayText = GD.crossed[intersection][GD.direction_numbers[signal_number]]['crossed']
+        #displayText = GD.vehicles_[GD.direction_numbers[signal_number]]['crossed']
         GD.intersections[intersection].vehicle_count_texts[signal_number] = font.render(str(displayText), True, GD.black, GD.white)
         screen.blit(GD.intersections[intersection].vehicle_count_texts[signal_number], GD.intersections[intersection].vehicle_count_coordinates[signal_number])
         
