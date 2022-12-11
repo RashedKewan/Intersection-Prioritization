@@ -1,5 +1,9 @@
 import pygame
+from Intersection import Intersection
 
+FGKJ:int  = 0
+NOSR:int  = 1
+intersections = {}
 # vehicle typpes
 CAR:str = 'car'
 BUS:str = 'bus'
@@ -283,14 +287,14 @@ default_green:int = 20
 default_minimum:int = 10
 default_maximum:int = 60
 
-signals =[]
-number_of_signals :int = 4
+# FGKJ_intersection.signals =[]
+# FGKJ_intersection.number_of_signals :int = 4
 sim_time :int = 9999999       # change this to change time of simulation
 time_elapsed :int = 0
 
-current_green :int = 0   # Indicates which signal is green
-next_green :int = (current_green + 1) % number_of_signals
-current_yellow :int = 0   # Indicates whether yellow signal is on or off
+# FGKJ_intersection.current_green :int = 0   # Indicates which signal is green
+# FGKJ_intersection.next_green :int = (FGKJ_intersection.current_green + 1) % FGKJ_intersection.number_of_signals
+# FGKJ_intersection.current_yellow :int = 0   # Indicates whether yellow signal is on or off
 
 # Average times for vehicles to pass the intersection
 car_time :int = 2
@@ -298,12 +302,12 @@ motorcycle_time :int = 1
 bus_time :float = 2.5
 truck_time :float = 2.5
 
-# Count of cars at a traffic signal
-number_of_cars :int= 0
-number_of_buses:int = 0
-number_of_trucks :int= 0
-number_of_motorcycle:int = 0
-number_of_lanes:int = 2
+# # Count of cars at a traffic signal
+# FGKJ_intersection.number_of_cars :int= 0
+# FGKJ_intersection.number_of_buses:int = 0
+# FGKJ_intersection.number_of_trucks :int= 0
+# FGKJ_intersection.number_of_motorcycle:int = 0
+# #number_of_lanes:int = 2
 
 
 # Red signal time at which cars will be detected at a signal
@@ -526,11 +530,11 @@ vehicles_weight = {
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of signal image, timer, and vehicle count
-temp = 15
-signal_coordinates:list = [(365, 328), (365, 200), (455,200), (455, 328)]
-signal_timer_coordinates:list = [(370, 308), (370, 180), (460, 180), (460, 308)] 
-vehicle_count_coordinates:list = [(330, 308), (330, 180), (500, 180), (500, 308)]
-vehicle_count_texts:list = ["0", "0", "0", "0"]
+
+# FGKJ_intersection.signal_coordinates:list = [(365, 328), (365, 200), (455,200), (455, 328)]
+# signal_timer_coordinates:list = [(370, 308), (370, 180), (460, 180), (460, 308)] 
+# vehicle_count_coordinates:list = [(330, 308), (330, 180), (500, 180), (500, 308)]
+# FGKJ_intersection.vehicle_count_texts:list = ["0", "0", "0", "0"]
 
 
 

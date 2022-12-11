@@ -4,29 +4,33 @@ import Simulation as sim
 import sys
 import GlobalData as GD
 
-def run_thread(thread_name:str , thread_target):
-    thread = threading.Thread(name=thread_name, target=thread_target, args=())
+def run_thread(thread_name:str , thread_target,args=()):
+    thread = threading.Thread(name=thread_name, target=thread_target, args=args)
     thread.daemon = True
     thread.start()
+    return thread
+
+
+
 
 
 screen = pygame.display.set_mode(GD.screen_size)
 pygame.display.set_caption("SIMULATION")
 font = pygame.font.Font(None, GD.font_size)
 
-def turn_signal_on(signal_img, index:int):
-    screen.blit(signal_img, GD.signal_coordinates[index])
+def turn_signal_on(intersection :int, signal_img, index:int):
+    screen.blit(signal_img, GD.intersections[intersection].signal_coordinates[index])
 
 
 
 
-def display_signal_timer_and_vehicle_count_for_each_signal(signal_number:int , signal_texts : list ):
-        signal_texts[signal_number] = font.render(str(GD.signals[signal_number].signal_text), True, GD.white, GD.black)
-        screen.blit(signal_texts[signal_number], GD.signal_timer_coordinates[signal_number])
+def display_signal_timer_and_vehicle_count_for_each_signal(intersection :int, signal_number:int , signal_texts : list ):
+        signal_texts[signal_number] = font.render(str(GD.intersections[intersection].signals[signal_number].signal_text), True, GD.white, GD.black)
+        screen.blit(signal_texts[signal_number], GD.intersections[intersection].signal_timer_coordinates[signal_number])
         displayText = GD.vehicles_[GD.direction_numbers[signal_number]]['crossed']
-        GD.vehicle_count_texts[signal_number] = font.render(str(displayText), True, GD.black, GD.white)
-        screen.blit(GD.vehicle_count_texts[signal_number], GD.vehicle_count_coordinates[signal_number])
-
+        GD.intersections[intersection].vehicle_count_texts[signal_number] = font.render(str(displayText), True, GD.black, GD.white)
+        screen.blit(GD.intersections[intersection].vehicle_count_texts[signal_number], GD.intersections[intersection].vehicle_count_coordinates[signal_number])
+        
 
 def display_the_vehicles():
     for vehicle in sim.simulation:
@@ -37,6 +41,47 @@ def display_the_vehicles():
 def display_time_elapsed():
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)
     screen.blit(time_elapsed_text, (800, 50))
+
+def signals_conroller(intersection):
+            traffic_sign_arrow_images = []
+
+            for dir in GD.direction_numbers.values():
+                traffic_sign_arrow_images.append(pygame.image.load(f'images/traffic_signs/{dir}.png'))
+            
+            for i,coordinate in enumerate(GD.intersections[intersection].traffic_sign_arrow_coordinates):
+                screen.blit(traffic_sign_arrow_images[i], (coordinate[0], coordinate[1]))
+
+
+
+            for i in range(0, GD.intersections[intersection].number_of_signals):
+                if(i == GD.intersections[intersection].current_green):
+                    if(GD.intersections[intersection].current_yellow == 1):
+                        GD.intersections[intersection].signals[i].signal_text = GD.intersections[intersection].signals[i].yellow
+                        turn_signal_on(intersection ,signal_img=GD.yellow_signal_img, index=i)
+
+                        
+                    else:
+                        GD.intersections[intersection].signals[i].signal_text = GD.intersections[intersection].signals[i].green
+                        if(GD.intersections[intersection].signals[i].green <= 6 and GD.intersections[intersection].signals[i].green > 0 and GD.intersections[intersection].signals[i].green % 2 == 0):
+                            turn_signal_on(intersection ,signal_img = GD.non_signal, index=i)
+                            
+                        elif(GD.intersections[intersection].signals[i].green <= 6 and GD.intersections[intersection].signals[i].green > 0 and GD.intersections[intersection].signals[i].green % 2 == 1):
+                            turn_signal_on(intersection ,signal_img = GD.green_signal, index=i)
+                        
+                        else :
+                            turn_signal_on(intersection ,signal_img = GD.green_signal, index=i)
+        
+                else:
+                    if(GD.intersections[intersection].signals[i].red <= 10):
+                        GD.intersections[intersection].signals[i].signal_text = GD.intersections[intersection].signals[i].red 
+                    else:
+                        GD.intersections[intersection].signals[i].signal_text = ""
+                    turn_signal_on(intersection , signal_img = GD.red_signal_img, index=i)
+                
+
+            signal_texts = ["", "", "", ""]
+            for i in range(0, GD.intersections[intersection].number_of_signals):
+                display_signal_timer_and_vehicle_count_for_each_signal(intersection ,signal_number = i , signal_texts = signal_texts)
 
 
 class Main:
@@ -66,39 +111,12 @@ class Main:
     #######################################  display signal and set timer according   #######################################
     #######################################  to current status: green, yello, or red  #######################################
     #########################################################################################################################
-
-        for i in range(0, GD.number_of_signals):
-            if(i == GD.current_green):
-                if(GD.current_yellow == 1):
-                    GD.signals[i].signal_text = GD.signals[i].yellow
-                    turn_signal_on(signal_img=GD.yellow_signal_img, index=i)
-
-                    
-                else:
-                    GD.signals[i].signal_text = GD.signals[i].green
-                    if(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 0):
-                        turn_signal_on(signal_img = GD.non_signal, index=i)
-                        
-                    elif(GD.signals[i].green <= 6 and GD.signals[i].green > 0 and GD.signals[i].green % 2 == 1):
-                        turn_signal_on(signal_img = GD.green_signal, index=i)
-                       
-                    else :
-                        turn_signal_on(signal_img = GD.green_signal, index=i)
-    
-            else:
-                if(GD.signals[i].red <= 10):
-                    GD.signals[i].signal_text = GD.signals[i].red 
-                else:
-                    GD.signals[i].signal_text = ""
-                turn_signal_on(signal_img = GD.red_signal_img, index=i)
-               
-
-        signal_texts = ["", "", "", ""]
-        for i in range(0, GD.number_of_signals):
-            display_signal_timer_and_vehicle_count_for_each_signal(signal_number = i , signal_texts = signal_texts)
-
+        run_thread(thread_name="FGKJ signals_conroller" ,thread_target=signals_conroller,args=(GD.FGKJ,)).join()
+        run_thread(thread_name="NOSR signals_conroller" ,thread_target=signals_conroller,args=(GD.NOSR,)).join()
+       
+        
         display_time_elapsed()
 
         display_the_vehicles()
-
         pygame.display.update()
+    
