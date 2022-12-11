@@ -503,10 +503,10 @@ steps_turning_vehicle:dict={
 }
 
 vehicles_generating:dict = {
-     4: CAR,
-     0: BUS, 
-     0: TRUCK, 
-     0: MOTORCYCLE
+     CAR        : 3,
+     BUS        : 3, 
+     TRUCK      : 3, 
+     MOTORCYCLE : 3
      }
 
 

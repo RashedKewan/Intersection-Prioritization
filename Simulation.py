@@ -335,7 +335,7 @@ def choose_lane(direction_number:str,vehicle:str):
 
 def generate_vehicle():
    
-    for generation_number , vehicle_ in GD.vehicles_generating.items():
+    for vehicle_ , generation_number  in GD.vehicles_generating.items():
         for _ in range(generation_number):
             #vehicle_type = random.randint(0, 3)
             direction_number = random.randint(0,3)
