@@ -503,10 +503,10 @@ steps_turning_vehicle:dict={
 }
 
 vehicles_generating:dict = {
-     CAR        : 1,
-     BUS        : 0, 
-     TRUCK      : 0, 
-     MOTORCYCLE : 0
+     CAR:4 ,
+     BUS:3, 
+     TRUCK:0, 
+     MOTORCYCLE:0
      }
 
 
@@ -684,5 +684,5 @@ crossed = {
      }
 }
 # Gap between vehicles
-gap = 15   # stopping gap
-gap2 = 15   # moving gap
+gap = 20   # stopping gap
+gap2 = 20   # moving gap
