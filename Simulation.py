@@ -408,6 +408,7 @@ def generate_vehicle():
                 x               = vehicle_x,
                 y               = vehicle_y
                 )
+            GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].insert(0,vehicle)
             vehicle.print()
             time.sleep(0.3)
        
