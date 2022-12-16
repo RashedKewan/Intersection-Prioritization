@@ -1,16 +1,6 @@
-# LAG
-# NO. OF VEHICLES IN SIGNAL CLASS
-# stops not used
-# DISTRIBUTION
-# BUS TOUCHING ON TURNS
-# Distribution using python class
-
-# *** IMAGE XY COOD IS TOP LEFT
 import random
-import math
 import time
 import threading
-# from vehicle_detection import detection
 import pygame
 from gtts import gTTS
 import os
@@ -23,19 +13,16 @@ pygame.init()
 simulation = pygame.sprite.Group()
 
 
-# Initialization of signals with default values
-
 
 def run_thread(thread_name:str , thread_target):
     thread = threading.Thread(name=thread_name, target=thread_target, args=())
     thread.daemon = True
     thread.start()
 
-def initialize():
-    FGKJ_intersection = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=0)
-    NOSR_intersection = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=1)
-    
 
+def create_intersction_signals( intersection: int = GD.FGKJ  ):
+    signals = []
+    current_green = GD.intersections[ intersection ].current_green
     ts1 = TrafficSignal(
         red     = 0, 
         yellow  = GD.default_yellow, 
@@ -43,9 +30,6 @@ def initialize():
         minimum = GD.default_minimum, 
         maximum = GD.default_maximum
         )
-
-    FGKJ_intersection.signals.append(ts1)
-
     ts2 = TrafficSignal(
         red     = ts1.red + ts1.yellow + ts1.green, 
         yellow  = GD.default_yellow,
@@ -53,9 +37,6 @@ def initialize():
         minimum = GD.default_minimum,
         maximum = GD.default_maximum
         )
-
-    FGKJ_intersection.signals.append(ts2)
-
     ts3 = TrafficSignal(
         red     = GD.default_red, 
         yellow  = GD.default_yellow,
@@ -63,218 +44,34 @@ def initialize():
         minimum = GD.default_minimum,
         maximum = GD.default_maximum
         )
-
-    FGKJ_intersection.signals.append(ts3)
-
     ts4 = TrafficSignal(
         red     = GD.default_red, 
         yellow  = GD.default_yellow, 
         green   = GD.default_green, 
         minimum = GD.default_minimum,
         maximum = GD.default_maximum
-        )
-    FGKJ_intersection.signals.append(ts4)
+        )               
+    # list the signals
+    signals.append(ts1) 
+    signals.append(ts2)
+    signals.append(ts3)
+    signals.append(ts4)
 
-    ts3_ = TrafficSignal(
-        red     = GD.default_red, 
-        yellow  = GD.default_yellow,
-        green   = GD.default_green,
-        minimum = GD.default_minimum,
-        maximum = GD.default_maximum
-        )
+    # shift signals current_green times
+    while(current_green > 0):
+        signals.insert(0,signals.pop())
+        current_green -= 1
+  
+    GD.intersections[ intersection ].signals = signals
 
-    NOSR_intersection.signals.append(ts3_)
-
-    ts1_ = TrafficSignal(
-        red     = 0, 
-        yellow  = GD.default_yellow, 
-        green   = GD.default_green,
-        minimum = GD.default_minimum, 
-        maximum = GD.default_maximum
-        )
-
-    NOSR_intersection.signals.append(ts1_)
-
-    ts2_ = TrafficSignal(
-        red     = ts1_.red + ts1_.yellow + ts1_.green, 
-        yellow  = GD.default_yellow,
-        green   = GD.default_green,
-        minimum = GD.default_minimum,
-        maximum = GD.default_maximum
-        )
-
-    NOSR_intersection.signals.append(ts2_)
-
-   
-
-    ts4_ = TrafficSignal(
-        red     = GD.default_red, 
-        yellow  = GD.default_yellow, 
-        green   = GD.default_green, 
-        minimum = GD.default_minimum,
-        maximum = GD.default_maximum
-        )
-    NOSR_intersection.signals.append(ts4_)
-
-
-    GD.intersections[GD.NOSR] = NOSR_intersection
-    GD.intersections[GD.FGKJ] = FGKJ_intersection
+def initialize():
+    GD.intersections[GD.FGKJ] = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=3)
+    GD.intersections[GD.NOSR] = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=3)
+    create_intersction_signals(intersection = GD.FGKJ )
+    create_intersction_signals(intersection = GD.NOSR )
     run_thread(thread_name="NOSR" ,thread_target=GD.intersections[GD.NOSR].repeat)
     run_thread(thread_name="FGKJ" ,thread_target=GD.intersections[GD.FGKJ].repeat)
    
- 
-# def increase_vehicle_counter(vehicle : VehicleClass , intersection : int):
-#     if(vehicle.crossed == 0):
-#         vclass = vehicle.vehicle_class
-#         if(vclass == GD.CAR):
-#             GD.intersections[intersection].number_of_cars += 1
-#         elif(vclass == GD.BUS):
-#             GD.intersections[intersection].number_of_buses += 1
-#         elif(vclass == GD.TRUCK):
-#             GD.intersections[intersection].number_of_trucks += 1
-#         elif(vclass == GD.MOTORCYCLE):
-#             GD.intersections[intersection].number_of_motorcycle += 1
-
-
-# def read_text_with_voice(text:str, language:str):
-#     myobj = gTTS(text=text, lang=language, slow=False)
-#     myobj.save("detectingVehiclesSound.mp3")
-#     os.system("start detectingVehiclesSound.mp3")
-
-
-# def set_time():
-#     for intersection in range(2):
-#         text = "detecting vehicles, " + \
-#             GD.direction_numbers[(GD.intersections[intersection].current_green + 1) % GD.intersections[intersection].number_of_signals]
-#         language = 'en'
-#         #readTextWithVoice(text,language)
-#         #os.system("say detecting vehicles, " + GD.directionNumbers[(GD.currentGreen+1) % GD.noOfSignals])
-#         GD.intersections[intersection].number_of_cars       :int = 0
-#         GD.intersections[intersection].number_of_buses      :int = 0
-#         GD.intersections[intersection].number_of_trucks     :int = 0
-#         GD.intersections[intersection].number_of_motorcycle :int = 0
-        
-#         for i in range(1, 3):
-#             number_of_vehicles_in_next_green:int = len(GD.vehicles_[GD.direction_numbers[GD.intersections[intersection].next_green]][i])
-#             for j in range(number_of_vehicles_in_next_green):
-#                 vehicle = GD.vehicles_[GD.direction_numbers[GD.intersections[intersection].next_green]][i][j]
-#                 increase_vehicle_counter(vehicle,intersection)
-
-        
-#         green_time = math.ceil(
-#             (
-#             (GD.intersections[intersection].number_of_cars*GD.vehicles_weight[GD.CAR]) + 
-#             (GD.intersections[intersection].number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
-#             (GD.intersections[intersection].number_of_buses*GD.vehicles_weight[GD.BUS]) + 
-#             (GD.intersections[intersection].number_of_trucks*GD.vehicles_weight[GD.TRUCK])  
-#             )
-#             #/(GD.number_of_lanes)
-#             )
-
-#         print('Green Time: ', green_time)
-#         if(green_time < GD.default_minimum):
-#             green_time = GD.default_minimum
-#         elif(green_time > GD.default_maximum):
-#             green_time = GD.default_maximum
-    
-#         GD.intersections[intersection].signals[(GD.intersections[intersection].current_green + 1) % (GD.intersections[intersection].number_of_signals)].green = green_time
-
-
-# def repeat():
-#     for intersection in range(2):
-#         # while the timer of current green signal is not zero
-#         while(GD.intersections[intersection].signals[GD.intersections[intersection].current_green].green > 0):
-#             # printStatus()
-#             update_values(intersection)
-
-#             # set time of next green signal
-#             if(GD.intersections[intersection].signals[(GD.intersections[intersection].current_green + 1) % (GD.intersections[intersection].number_of_signals)].red == GD.detection_time):
-#                 thread = threading.Thread(
-#                     name="detection", target=set_time, args=())
-#                 thread.daemon = True
-#                 thread.start()
-#                 # setTime()
-#             time.sleep(1)
-            
-
-#         GD.intersections[intersection].current_yellow = 1   # set yellow signal on
-#         GD.intersections[intersection].vehicle_count_texts[GD.intersections[intersection].current_green] = "0"
-
-#         # reset stop coordinates of lanes and vehicles
-#         for i in range(0, 3):
-#             GD.stops[GD.direction_numbers[GD.intersections[intersection].current_green]][i] = GD.default_stop[GD.direction_numbers[GD.intersections[intersection].current_green]]
-#             for vehicle in GD.vehicles_[GD.direction_numbers[GD.intersections[intersection].current_green]][i]:
-#                 vehicle.stop = GD.default_stop[GD.direction_numbers[GD.intersections[intersection].current_green]]
-
-#         # while the timer of current yellow signal is not zero
-#         while(GD.intersections[intersection].signals[GD.intersections[intersection].current_green].yellow > 0):
-#             # printStatus()
-#             update_values(intersection)
-#             time.sleep(1)
-#         GD.intersections[intersection].current_yellow = 0   # set yellow signal off
-
-#         # reset all signal times of current signal to default times
-#         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].green = GD.default_green
-#         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].yellow = GD.default_yellow
-#         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].red = GD.default_red
-        
-
-
-#         # set next signal as green signal
-#         GD.intersections[intersection].current_green = GD.intersections[intersection].next_green
-#         # set next green signal
-#         GD.intersections[intersection].next_green = (GD.intersections[intersection].current_green + 1) % GD.intersections[intersection].number_of_signals
-        
-        
-
-#         GD.intersections[intersection].current_yellow = 1   # set yellow signal on
-#         while(GD.intersections[intersection].signals[GD.intersections[intersection].current_green].yellow > 0):
-#             update_values(intersection)
-#             time.sleep(1)
-    
-#         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].yellow = GD.default_yellow
-#         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].red = GD.default_red
-#         GD.intersections[intersection].current_yellow = 0   # set yellow signal off
-    
-
-#         # set the red time of next to next signal as (yellow time + green time) of next signal
-#         GD.intersections[intersection].signals[GD.intersections[intersection].next_green].red = GD.intersections[intersection].signals[GD.intersections[intersection].current_green].yellow + \
-#                                         GD.intersections[intersection].signals[GD.intersections[intersection].current_green].green
-
-#     repeat()
-
-# Print the signal timers on cmd
-
-
-# def printStatus():
-#     for intersection in range(2):
-#         for i in range(0, GD.intersections[intersection].number_of_signals):
-#             if(i == GD.intersections[intersection].current_green):
-#                 if(GD.intersections[intersection].current_yellow == 0):
-#                     print(" GREEN TS", i+1, "-> r:",
-#                         GD.intersections[intersection].signals[i].red, " y:", GD.intersections[intersection].signals[i].yellow, " g:", GD.intersections[intersection].signals[i].green)
-#                 else:
-#                     print("YELLOW TS", i+1, "-> r:",
-#                         GD.intersections[intersection].signals[i].red, " y:", GD.intersections[intersection].signals[i].yellow, " g:", GD.intersections[intersection].signals[i].green)
-#             else:
-#                 print("   RED TS", i+1, "-> r:",
-#                     GD.intersections[intersection].signals[i].red, " y:", GD.intersections[intersection].signals[i].yellow, " g:", GD.intersections[intersection].signals[i].green)
-#         print()
-
-# Update values of the signal timers after every second
-
-
-# def update_values(intersection:int):
-#     for i in range(0, GD.intersections[intersection].number_of_signals):
-#         if(i == GD.intersections[intersection].current_green):
-#             if(GD.intersections[intersection].current_yellow == 0):
-#                 GD.intersections[intersection].signals[i].green -= 1
-#                 GD.intersections[intersection].signals[i].total_green_time += 1
-#             else:
-#                 GD.intersections[intersection].signals[i].yellow -= 1
-#         else:
-#             GD.intersections[intersection].signals[i].red -= 1
-
 
 def decide_if_will_turn(lane_number : int):
     will_turn_right = 0
@@ -299,10 +96,6 @@ def choose_direction():
     elif(temp < a[3]):
         direction_number = 3
     return direction_number
-
-
-
-
 
 
 
