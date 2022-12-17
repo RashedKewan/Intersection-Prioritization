@@ -3,7 +3,7 @@ from Intersection import Intersection
 
 FGKJ:int  = 0
 NOSR:int  = 1
-intersections = {}
+intersections:Intersection = {}
 # vehicle typpes
 CAR:str = 'car'
 BUS:str = 'bus'
@@ -98,7 +98,7 @@ points = {
 
      'A_' : { 'x' : 155 , 'y' : 80 },
      'B_' : { 'x' : 430 , 'y' : 80 },
-     'C_' : { 'x' : 210 , 'y' : 80 },
+     'C_' : { 'x' : 180 , 'y' : 80 },
      'D_' : { 'x' : 405 , 'y' : 80 },
 
      
@@ -115,7 +115,7 @@ points = {
      'O_' : { 'x' : 680  , 'y' : 430 },
      'M_' : { 'x' : 430  , 'y' : 430 },
      'N_' : { 'x' : 660  , 'y' : 430 },
-     'Q_' : { 'x' : 405 , 'y' : 555 },
+     'Q_' : { 'x' : 405 , 'y' : 460 },
 
      'P_' : { 'x' : 930 , 'y' : 590 },
      'R_' : { 'x' : 660 , 'y' : 590 },
@@ -315,7 +315,8 @@ detection_time:int = 5
 
 speeds:dict = {CAR: 2.25, BUS: 1.8, TRUCK: 1.8,
           MOTORCYCLE: 2.5}  # average speeds of vehicles
-
+#speeds:dict = {CAR: 1.8, BUS: 1.8, TRUCK: 1.8,
+ #         MOTORCYCLE: 1.8}  # average speeds of vehicles
 
 # Coordinates of start
 # x = direction : lane <- { 0 , 1 , 2 }
@@ -422,7 +423,163 @@ vehicles_ = {
      }
 }
 
-
+generating_coordinates = {
+     
+     RIGHT:{         # RIGHT
+          CD: 
+          {
+               '0':[243,False],
+               '1':[312,False],
+          }
+               
+          ,
+          IJ:
+              {
+               '0':[235,False],
+               '1':[295,False],
+          }
+          ,
+          KL:
+               {
+               '0':[500,False],
+               '1':[583,False],
+          }
+          ,
+          ST:
+              {
+               '0':[750,False],
+               '1':[810,False],
+          }
+          ,
+          QR:
+               {
+               '0':[490,False],
+               '1':[560,False],
+          }
+          
+          ,
+          WX:
+              {
+               '0':[745,False],
+               '1':[820,False],
+          }
+          
+     },
+     LEFT:{         # LEFT
+          BA:
+             {
+               '0':[360,False],
+               '1':[250,False],
+          }
+          ,
+          FE:
+              {
+               '0':[356,False],
+               '1':[250,False],
+          }
+          ,
+          HG:
+               {
+               '0':[610,False],
+               '1':[540,False],
+          }
+          ,
+          NM:
+              {
+               '0':[610,False],
+               '1':[515,False],
+          }
+          ,
+          PO:
+               {
+               '0':[865,False],
+               '1':[790,False],
+          }
+          ,
+          VU:
+               {
+               '0':[865,False],
+               '1':[790,False],
+          }
+          
+     },
+     UP:{         # UP
+          E_C_:
+              {
+               '0':[205,False],
+               '1':[130,False],
+          }
+          ,
+          G_B_:
+               {
+               '0':[204,False],
+               '1':[145,False],
+          }
+          ,
+          M_K_:
+               {
+               '0':[460,False],
+               '1':[400,False],
+          }
+          ,
+          O_H_:
+               {
+               '0':[453,False],
+               '1':[376,False],
+          }
+          ,
+          X_P_:
+              {
+               '0':[715,False],
+               '1':[647,False],
+          }
+          ,
+          U_S_:
+               {
+               '0':[718,False],
+               '1':[649,False],
+          }
+          
+     },
+     DOWN:{         # DOWN
+          A_I_:
+             {
+               '0':[100,False],
+               '1':[170,False],
+          }
+          ,
+          D_F_:
+               {
+               '0':[100,False],
+               '1':[170,False],
+          }
+          ,
+          J_Q_:
+               {
+               '0':[350,False],
+               '1':[425,False],
+          }
+          ,
+          L_N_:
+              {
+               '0':[350,False],
+               '1':[405,False],
+          }
+          ,
+          R_W_:
+              {
+               '0':[600,False],
+               '1':[680,False],
+          }
+          ,
+          T_V_:
+               {
+               '0':[243,False],
+               '1':[670,False],
+          }
+          
+     }
+}
 
 steps_turning_vehicle:dict={
     
@@ -501,12 +658,12 @@ steps_turning_vehicle:dict={
 
 
 }
-
+cars_number:int = 10
 vehicles_generating:dict = {
      CAR:4 ,
-     BUS:3, 
-     TRUCK:0, 
-     MOTORCYCLE:0
+     BUS:5, 
+     TRUCK:5, 
+     MOTORCYCLE:5
      }
 
 
@@ -535,7 +692,13 @@ direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 
 # Coordinates of stop lines
-stop_lines:dict = {RIGHT: 590, DOWN: 330, LEFT: 800, UP: 535}
+stop_lines:dict = {
+     RIGHT: [357,611], DOWN: [205,455], LEFT: [493,745], UP: [340,592]}
+
+
+
+
+
 default_stop:dict = {RIGHT: 580, DOWN: 320, LEFT: 810, UP: 545}
 stops:dict = {RIGHT: [580, 580, 580], DOWN: [320, 320, 320],
          LEFT: [810, 810, 810], UP: [545, 545, 545]}
@@ -684,5 +847,5 @@ crossed = {
      }
 }
 # Gap between vehicles
-gap = 20   # stopping gap
-gap2 = 20   # moving gap
+gap = 30   # stopping gap
+gap2 = 30   # moving gap
