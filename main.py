@@ -94,6 +94,11 @@ class Main:
     run_thread("initialization" ,sim.initialize)
     run_thread("generateVehicles" ,sim.generate_vehicle)
 
+    cars_number:int = 0
+    for v in GD.vehicles_generating.values():
+        cars_number += v
+    GD.cars_number = cars_number
+
 
     while True:
         for event in pygame.event.get():

@@ -660,10 +660,10 @@ steps_turning_vehicle:dict={
 }
 cars_number:int = 10
 vehicles_generating:dict = {
-     CAR:4 ,
-     BUS:5, 
-     TRUCK:5, 
-     MOTORCYCLE:5
+     CAR:5 ,
+     BUS:2, 
+     TRUCK:2, 
+     MOTORCYCLE:2
      }
 
 
@@ -693,7 +693,11 @@ direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of stop lines
 stop_lines:dict = {
-     RIGHT: [357,611], DOWN: [205,455], LEFT: [493,745], UP: [340,592]}
+     RIGHT: [357,611], 
+     DOWN : [205,455], 
+     LEFT : [493-50,745-50], 
+     UP   : [340-50,592-50]
+     }
 
 
 
@@ -813,7 +817,7 @@ intersection_lanes = {
      }
 }
 
-
+# how many vehicles crossed in each signal
 crossed = {
      FGKJ : {
 
@@ -847,5 +851,6 @@ crossed = {
      }
 }
 # Gap between vehicles
-gap = 30   # stopping gap
-gap2 = 30   # moving gap
+gap = 15   # stopping gap
+gap2 = 15   # moving gap
+
