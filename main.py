@@ -36,8 +36,8 @@ def display_signal_timer_and_vehicle_count_for_each_signal(intersection :int, si
 
 def display_the_vehicles():
     for vehicle in sim.simulation:
-        screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
-        vehicle.move_()
+        #screen.blit(vehicle.current_image, [vehicle.x, vehicle.y])
+        vehicle.move_(screen)
 
 
 def display_time_elapsed():

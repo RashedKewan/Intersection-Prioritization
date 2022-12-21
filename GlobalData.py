@@ -574,7 +574,7 @@ generating_coordinates = {
           ,
           T_V_:
                {
-               '0':[243,False],
+               '0':[594,False],
                '1':[670,False],
           }
           
@@ -660,10 +660,10 @@ steps_turning_vehicle:dict={
 }
 cars_number:int = 10
 vehicles_generating:dict = {
-     CAR:5 ,
-     BUS:2, 
-     TRUCK:2, 
-     MOTORCYCLE:2
+     CAR:3 ,
+     BUS:0, 
+     TRUCK:1, 
+     MOTORCYCLE:1
      }
 
 
@@ -740,34 +740,34 @@ rotate_point:dict = {
      RIGHT: { 
           # odd  represents short rotation
           # even represents long  rotation
-          CD:365,
-          KL:615,
-          ST:870,
-          WX:895 #
+          CD:350,
+          KL:605,
+          ST:850,
+          WX:860 #
      },
      DOWN: {
      # odd  represents short rotation
           # even represents long  rotation
-          A_I_:245, #
-          J_Q_:490, #
-          R_W_:740, #
-          T_V_:715
+          A_I_:210, #
+          J_Q_:438, #
+          R_W_:700, #
+          T_V_:685
      },
      LEFT: {
           # odd  represents short rotation
           # even represents long  rotation
           BA:205, #
           FE:225,
-          NM:475,
+          NM:480,
           VU:725
      }, 
      UP: {
           # odd  represents short rotation
           # even represents long  rotation
-          X_P_:570, #
-          O_H_:320, #
-          G_B_:65, #
-          E_C_:90
+          X_P_:590, #
+          O_H_:350, #
+          G_B_:95, #
+          E_C_:100
      }
      }
    
@@ -854,3 +854,272 @@ crossed = {
 gap = 15   # stopping gap
 gap2 = 15   # moving gap
 
+
+
+# left-down  (-self.radius , -self.angle)  self.angle |  % 90
+# left-up    ( self.radius ,  self.angle) -self.angle |  % 90
+# right-down (-self.radius ,  self.angle) -self.angle |  % 90
+# right-up   ( self.radius , -self.angle)  self.angle |  % 90
+             
+# right-down (- , +) | -self.angle |  % 90
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
+# left-up    (+ , +) | -self.angle |  % 90 
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0,self.radius).rotate(self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
+# left-down  (- , -) | self.angle  |  % 90 
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(-self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, self.angle)
+# right-up   (+ , -) | self.angle  |  % 90 
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, self.radius).rotate(-self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, self.angle)
+
+
+# up-left    (-self.radius , -self.angle)  self.angle |  % -90
+# down-left  ( self.radius ,  self.angle) -self.angle |  % -90
+# up-right   (-self.radius ,  self.angle) -self.angle |  % -90
+# down-right ( self.radius , -self.angle)  self.angle |  % -90
+# down-right (+ , -) | self.angle  |  % -90  
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, self.radius).rotate(-self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, self.angle)
+# down-left    (+ , +) | -self.angle |  % 90 
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0,self.radius).rotate(self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
+# up-left    (- , -) | self.angle  |  % -90  
+    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(-self.angle) 
+    # self.image = pygame.transform.rotate(self.original_image, self.angle)
+
+
+# up-right   (- , +) | -self.angle |  % 90
+     # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(self.angle) 
+     # self.image = pygame.transform.rotate(self.original_image, -self.angle)
+
+
+
+
+# left-down  (-self.radius , -self.angle)  self.angle |  % 90
+# left-up    ( self.radius ,  self.angle) -self.angle |  % 90
+# right-down (-self.radius ,  self.angle) -self.angle |  % 90
+# right-up   ( self.radius , -self.angle)  self.angle |  % 90
+
+# up-left    (-self.radius , -self.angle)  self.angle |  % -90
+# down-left  ( self.radius ,  self.angle) -self.angle |  % -90
+# up-right   (-self.radius ,  self.angle) -self.angle |  % -90
+# down-right ( self.radius , -self.angle)  self.angle |  % -90
+
+
+
+
+
+circle_params_for_rotation = {
+     RIGHT:{         # RIGHT
+            CD:[0,-1, 1,-1],
+            KL:[0,-1, 1,-1],
+            ST:[0,-1, 1,-1],
+            WX:[0, 1,-1, 1]
+     },
+     LEFT:{  
+            BA:[0,-1,-1, 1],
+            FE:[0, 1, 1,-1],
+            NM:[0, 1, 1,-1],
+            VU:[0, 1, 1,-1]
+     },
+     UP:{     
+          E_C_:[-1,0, 1,-1],
+          G_B_:[ 1,0,-1, 1],
+          O_H_:[ 1,0,-1, 1],
+          X_P_:[ 1,0,-1, 1]
+     },
+     DOWN:{   
+          A_I_:[-1,0,-1, 1],  
+          J_Q_:[-1,0,-1, 1],
+          R_W_:[-1,0,-1, 1],
+          T_V_:[ 1,0, 1,-1]      
+     }
+}
+
+
+
+circle_coordinates = {
+     
+     RIGHT:{ #        # RIGHT
+          CD: 
+          {
+               'pos':(370,83),
+               'radius':45
+          }
+               
+          ,
+          KL:{
+               'pos':(623,328),
+               'radius':43
+          }
+          ,
+          ST:{
+               'pos':(873,581),
+               'radius':46
+          }
+          
+          ,
+          WX:{
+               'pos':(880,722),
+               'radius':63
+          }
+          
+     },
+     LEFT:{ #        # LEFT
+          BA:
+             {
+               'pos':(225,80),
+               'radius':63
+          }
+          ,
+          FE:
+              {
+               'pos':(237,217),
+               'radius':42
+          }
+          ,
+         
+          NM:
+              {
+               'pos':(500,449),
+               'radius':61
+          }
+          ,
+          VU:
+               {
+              'pos':(742,715),
+               'radius':45
+          }
+          
+     },
+     UP:{         # UP
+          E_C_:
+              {
+               'pos':(249,90),
+               'radius':58
+          }
+          ,
+          G_B_:
+               {
+               'pos':(375,80),
+               'radius':65
+          }
+          ,
+          
+          O_H_:
+               {
+               'pos':(625,328),
+               'radius':65
+          }
+          ,
+          X_P_:
+              {
+               'pos':(872,573),
+               'radius':65
+          }
+          
+     },
+     DOWN:{         # DOWN
+          A_I_:
+             {
+               'pos':(237,225),
+               'radius':60
+          }
+          ,
+          
+          J_Q_:
+               {
+               'pos':(500,453),
+               'radius':83
+          }
+          ,
+          R_W_:
+              {
+               'pos':(735,720),
+               'radius':65
+          }
+          ,
+          T_V_:
+               {
+               'pos':(870,705),
+               'radius':52
+          }
+          
+     }
+}
+
+
+
+
+
+# left_down  = 0
+# left_up    = 1
+# right_down = 2
+# right_up   = 3
+# up_left    = 4
+# down_left  = 5
+# up_right   = 6
+# down_right = 7
+
+
+
+# circle_coordinates = {
+#      left_down  :{
+#           'pos':{
+#                'x':227,
+#                'y':80
+#           },
+#           'radius':68
+#      },
+#      left_up    :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      right_down :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      right_up   :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      up_left    :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      down_left  :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      up_right   :{
+#           'pos':{
+#                'x':0,
+#                'y':0
+#           },
+#           'radius':0
+#      },
+#      down_right :{
+#                'pos':{
+#                     'x':0,
+#                     'y':0
+#                },
+#                'radius':0
+#      }
+# }

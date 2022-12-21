@@ -65,7 +65,7 @@ def create_intersction_signals( intersection: int = GD.FGKJ  ):
     GD.intersections[ intersection ].signals = signals
 
 def initialize():
-    GD.intersections[GD.FGKJ] = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=3)
+    GD.intersections[GD.FGKJ] = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=0)
     GD.intersections[GD.NOSR] = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=3)
     create_intersction_signals(intersection = GD.FGKJ )
     create_intersction_signals(intersection = GD.NOSR )
@@ -110,22 +110,8 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
     c_x = 'x' # coordinate x
     c_y = 'y' # coordinate x
     lane_number =  random.randint(0, 5)
-    # Initialize vehicle_x , vehicle_y
-    #vehicle_x = GD.streets[direction][lane_number][c_x][1]
-    #vehicle_y = GD.streets[direction][lane_number][c_y][1]
     lanes=[0,1,2,3,4,5]
    
-    # Calculate lane length
-    lane_length = get_lane_length(direction = direction ,lane_number = lane_number , c_x = c_x , c_y = c_y )
-    
-    # Calculate the remaining place for given lane with wehicle length and the gap
-    vehicle_legel_len = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
-    #print(f" \
-     #                    {GD.lanes_quantity} \n\
-      #  lanes_quantity    : {GD.lanes_quantity[direction][lane_number]} \n\
-       # vehicle_legel_len : {vehicle_legel_len} \n\
-        #lane_length       : {lane_length}")
-    # In case the lane is full with vehicles
     while( GD.generating_coordinates[direction][lane_number]['0'][1] and GD.generating_coordinates[direction][lane_number]['1'][1]):
         # remove the selected lane from lanes list 
         lanes.remove(lane_number)
@@ -156,42 +142,6 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
             GD.generating_coordinates[direction][lane_number]['0'][1]=True
         vehicle_x=GD.streets[direction][lane_number][c_x][0]
     GD.cars_number=GD.cars_number-1
-                #vehicle_x-=image_dimention
-                #print(f"->{vehicle_x}" )
-            #elif(direction == GD.LEFT ):
-                #vehicle_x+=image_dimention
-    #lane_length = get_lane_length(direction = direction ,lane_number = lane_number , c_x = c_x , c_y = c_y )
-    #vehicle_legel_len = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
-    # if the vehicle the first vehicle at the lane in [ left , right]
-    #if(GD.lanes_quantity[direction][lane_number] == 0):
-        #if(vehicle_x == GD.streets[direction][lane_number][c_x][1]):
-            #if(direction == GD.RIGHT ):
-                #vehicle_x-=image_dimention
-                #print(f"->{vehicle_x}" )
-            #elif(direction == GD.LEFT ):
-                #vehicle_x+=image_dimention
-        # if the vehicle the first vehicle at the lane in [ up , down ]
-        #elif(vehicle_y == GD.streets[direction][lane_number][c_y][1]):
-            #if(direction == GD.DOWN ):
-                #vehicle_y-=image_dimention
-            #elif(direction == GD.UP ):
-                #vehicle_y+=image_dimention
-    #else:
-        # not the first 
-        #print(f"enter the else->{vehicle_x}" )
-        #if(direction == GD.RIGHT ):
-            #vehicle_x-=vehicle_legel_len
-           # print(f"->{vehicle_x}" )
-
-        #elif(direction == GD.LEFT ):
-            #vehicle_x+=vehicle_legel_len
-        #if(direction == GD.DOWN ):
-            #vehicle_y-=vehicle_legel_len
-        #elif(direction == GD.UP ):
-            #vehicle_y+=vehicle_legel_len
-
-    #GD.lanes_quantity[direction][lane_number] = GD.lanes_quantity[direction][lane_number] + image_dimention + GD.gap 
-
     return lane_number,vehicle_x,vehicle_y
 
 
