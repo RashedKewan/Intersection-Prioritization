@@ -93,33 +93,21 @@ def signals_conroller(intersection):
 
 
 def prepare_output_environment():
-    # Check if the directory exists
-    if os.path.exists("output"):
-        # Delete the directory and all of its contents
-        shutil.rmtree("output")
-        print("Directory deleted")
-    else:
-        # Print an error message
-        print("Directory does not exist")
+    fc.remove_directory(directory="output")
 
-    # # Change to the "output" directory
-    # os.chdir("output")
-
-    # # Output 
-    # fc.remove_file("vehicle_data.csv")
-
-    # # Iterate over the files in the directory
-    # for file in os.listdir("."):
-    #     # Check if the file has a ".png" extension
-    #     if (file.endswith(".png")):
-    #         # Delete the file
-    #         os.remove(file)
-    #         print("Deleted:", file)
-    #     else:
-    #         print("Skipping:", file)
     
-    # os.chdir("..")
-
+def output():
+    os.mkdir('output')
+    for vehicle in sim.simulation:
+        data = { 
+            'vehicle_type':vehicle.vehicle_class, 
+            'vehicle_speed_avg':vehicle.speed_avg
+            }
+        fc.append_dict_to_csv( data=data ,filename= 'vehicle_data.csv' )               
+    # Plot the average speeds for the specified vehicle types
+    fc.plot_average_speeds()
+    fc.plot_vehicle_average_speed()
+   
 
 
 class Main:
@@ -144,15 +132,17 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
+        if(GD.time_elapsed == GD.sim_time):
+            output()
+            sys.exit()
     #########################################################################################################################
     #######################################      Display Background In Simulation     #######################################
     #########################################################################################################################
         screen.blit(GD.background_white, (0, 0))  
         screen.blit(GD.background, (150, 0))   
         #mouse coordination
-        # mousex, mousey = pygame.mouse.get_pos()
-        # print(f"{mousex} , {mousey}")
+        mousex, mousey = pygame.mouse.get_pos()
+        print(f"{mousex} , {mousey}")
 
     #########################################################################################################################
     #######################################  display signal and set timer according   #######################################

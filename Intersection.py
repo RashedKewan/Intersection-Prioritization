@@ -21,7 +21,6 @@ class Intersection:
         self.number_of_buses:int = 0
         self.number_of_trucks :int= 0
         self.number_of_motorcycle:int = 0
-      
         x = start_coordinate
         self.traffic_sign_arrow_coordinates:list    = [( x+5  , x-55), (x+5  , x-185), (x+95  , x-185), (x+95   , x-55)]
         self.signal_coordinates:list                = [( x    , x-35), (x    , x-165), (x+90  , x-165), (x+90   , x-35)]
@@ -74,12 +73,12 @@ class Intersection:
                 vehicle = GD.vehicles_[GD.direction_numbers[self.next_green]][next_green_lane][j]
                 self.increase_vehicle_counter(vehicle)
 
-            
-            green_time = math.ceil(
-                (self.number_of_cars*GD.vehicles_weight[GD.CAR]) + 
-                (self.number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
-                (self.number_of_buses*GD.vehicles_weight[GD.BUS]) + 
-                (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK]))
+            # changed to adjust configuration without algorithim
+            green_time = GD.default_green #math.ceil(
+                # (self.number_of_cars*GD.vehicles_weight[GD.CAR]) + 
+                # (self.number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
+                # (self.number_of_buses*GD.vehicles_weight[GD.BUS]) + 
+                # (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK]))
 
             print('Green Time: ', green_time)
             if(green_time < GD.default_minimum):

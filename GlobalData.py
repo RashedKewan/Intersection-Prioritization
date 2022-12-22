@@ -289,7 +289,7 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 20       # change this to change time of simulation
+sim_time :int = 200       # change this to change time of simulation
 time_elapsed :int = 0
 
 # FGKJ_intersection.current_green :int = 0   # Indicates which signal is green
@@ -428,154 +428,154 @@ generating_coordinates = {
      RIGHT:{         # RIGHT
           CD: 
           {
-               '0':[243,False],
-               '1':[312,False],
+               '1':[243,False],
+               '0':[312,False],
           }
                
           ,
           IJ:
               {
-               '0':[235,False],
-               '1':[295,False],
+               '1':[235,False],
+               '0':[295,False],
           }
           ,
           KL:
                {
-               '0':[500,False],
-               '1':[583,False],
+               '1':[500,False],
+               '0':[583,False],
           }
           ,
           ST:
               {
-               '0':[750,False],
-               '1':[810,False],
+               '1':[750,False],
+               '0':[810,False],
           }
           ,
           QR:
                {
-               '0':[490,False],
-               '1':[560,False],
+               '1':[490,False],
+               '0':[560,False],
           }
           
           ,
           WX:
               {
-               '0':[745,False],
-               '1':[820,False],
+               '1':[745,False],
+               '0':[820,False],
           }
           
      },
      LEFT:{         # LEFT
           BA:
              {
-               '0':[360,False],
-               '1':[250,False],
+               '1':[360,False],
+               '0':[250,False],
           }
           ,
           FE:
               {
-               '0':[356,False],
-               '1':[250,False],
+               '1':[356,False],
+               '0':[250,False],
           }
           ,
           HG:
                {
-               '0':[610,False],
-               '1':[540,False],
+               '1':[610,False],
+               '0':[540,False],
           }
           ,
           NM:
               {
-               '0':[610,False],
-               '1':[515,False],
+               '1':[610,False],
+               '0':[515,False],
           }
           ,
           PO:
                {
-               '0':[865,False],
-               '1':[790,False],
+               '1':[865,False],
+               '0':[790,False],
           }
           ,
           VU:
                {
-               '0':[865,False],
-               '1':[790,False],
+               '1':[865,False],
+               '0':[790,False],
           }
           
      },
      UP:{         # UP
           E_C_:
               {
-               '0':[205,False],
-               '1':[130,False],
+               '1':[205,False],
+               '0':[130,False],
           }
           ,
           G_B_:
                {
-               '0':[204,False],
-               '1':[145,False],
+               '1':[204,False],
+               '0':[145,False],
           }
           ,
           M_K_:
                {
-               '0':[460,False],
-               '1':[400,False],
+               '1':[460,False],
+               '0':[400,False],
           }
           ,
           O_H_:
                {
-               '0':[453,False],
-               '1':[376,False],
+               '1':[453,False],
+               '0':[380,False],
           }
           ,
           X_P_:
               {
-               '0':[715,False],
-               '1':[647,False],
+               '1':[715,False],
+               '0':[647,False],
           }
           ,
           U_S_:
                {
-               '0':[718,False],
-               '1':[649,False],
+               '1':[718,False],
+               '0':[649,False],
           }
           
      },
      DOWN:{         # DOWN
           A_I_:
              {
-               '0':[100,False],
-               '1':[170,False],
+               '1':[100,False],
+               '0':[170,False],
           }
           ,
           D_F_:
                {
-               '0':[100,False],
-               '1':[170,False],
+               '1':[100,False],
+               '0':[170,False],
           }
           ,
           J_Q_:
                {
-               '0':[350,False],
-               '1':[425,False],
+               '1':[350,False],
+               '0':[425,False],
           }
           ,
           L_N_:
               {
-               '0':[350,False],
-               '1':[405,False],
+               '1':[350,False],
+               '0':[405,False],
           }
           ,
           R_W_:
               {
-               '0':[600,False],
-               '1':[680,False],
+               '1':[600,False],
+               '0':[680,False],
           }
           ,
           T_V_:
                {
-               '0':[594,False],
-               '1':[670,False],
+               '1':[594,False],
+               '0':[670,False],
           }
           
      }
@@ -660,10 +660,10 @@ steps_turning_vehicle:dict={
 }
 cars_number:int = 10
 vehicles_generating:dict = {
-     CAR:3 ,
-     BUS:2, 
-     TRUCK:3, 
-     MOTORCYCLE:2
+     CAR:5 ,
+     BUS:5, 
+     TRUCK:5, 
+     MOTORCYCLE:5
      }
 
 
@@ -781,26 +781,39 @@ next_lane_of = {
           CD:[ DOWN , D_F_ ],
           KL:[ DOWN , L_N_ ],
           ST:[ DOWN , T_V_ ],
-          WX:[ UP   , X_P_ ]    
+          WX:[ UP   , X_P_ ],
+          #
+          IJ:[ RIGHT, KL   ],
+          QR:[ RIGHT, ST   ]      
+
      },
      LEFT:{        
           BA:[ DOWN , A_I_ ],
           FE:[ UP   , E_C_ ],
           NM:[ UP   , M_K_ ],
-          VU:[ UP   , U_S_ ]
+          VU:[ UP   , U_S_ ],
+          #
+          HG:[ LEFT, FE   ],
+          PO:[ LEFT, NM   ]      
      },
      UP:{       
           E_C_:[ RIGHT , CD ],
           G_B_:[ LEFT  , BA ],
           O_H_:[ LEFT  , HG ],
-          X_P_:[ LEFT  , PO ]
+          X_P_:[ LEFT  , PO ],
+          #
+          U_S_:[ UP, O_H_],
+          M_K_:[ UP, G_B_]    
           
      },
      DOWN:{        
           A_I_:[ RIGHT , IJ ],
           J_Q_:[ RIGHT , QR ],
           R_W_:[ RIGHT , WX ],
-          T_V_:[ LEFT  , VU ]
+          T_V_:[ LEFT  , VU ],
+          #
+          D_F_:[ DOWN, J_Q_],
+          L_N_:[ DOWN, R_W_]    
      }
 }
 

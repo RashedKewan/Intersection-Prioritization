@@ -126,21 +126,27 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
             print("| Cant select another lane. |")
             print('-----------------------------')
             return 0,0,0
+    
+    
     if(direction == GD.RIGHT or direction==GD.LEFT ):
         if(GD.generating_coordinates[direction][lane_number]['0'][1]):#if first place is full
             vehicle_x=GD.generating_coordinates[direction][lane_number]['1'][0]
             GD.generating_coordinates[direction][lane_number]['1'][1]=True
-        else:
+        elif(GD.generating_coordinates[direction][lane_number]['0'][1] == False):
             vehicle_x=GD.generating_coordinates[direction][lane_number]['0'][0] 
             GD.generating_coordinates[direction][lane_number]['0'][1]=True
         vehicle_y=GD.streets[direction][lane_number][c_y][0]
+
+
     if(direction == GD.DOWN or direction==GD.UP ):
         if(GD.generating_coordinates[direction][lane_number]['0'][1]):#if first place is full
             vehicle_y=GD.generating_coordinates[direction][lane_number]['1'][0]
+
             GD.generating_coordinates[direction][lane_number]['1'][1]=True
-        else:
+        elif(GD.generating_coordinates[direction][lane_number]['0'][1] == False ):
             vehicle_y=GD.generating_coordinates[direction][lane_number]['0'][0] 
             GD.generating_coordinates[direction][lane_number]['0'][1]=True
+
         vehicle_x=GD.streets[direction][lane_number][c_x][0]
     GD.cars_number=GD.cars_number-1
     return lane_number,vehicle_x,vehicle_y
@@ -162,9 +168,7 @@ def generate_vehicle():
    
     for vehicle_ , generation_number  in GD.vehicles_generating.items():
         for _ in range(generation_number):
-            #vehicle_type = random.randint(0, 3)
             direction_number = random.randint(0,3)
-            #lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],GD.vehicle_types[vehicle_type]) 
             lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],vehicle_)
             will_turn_left , will_turn_right = decide_if_will_turn(lane_number = lane_number)
             
@@ -177,10 +181,7 @@ def generate_vehicle():
                 x               = vehicle_x,
                 y               = vehicle_y
                 )
-            #add the vehicle to the list in the first index 
-            #GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].insert(0,vehicle)
             GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].append(vehicle)
-            #vehicle.print()
             time.sleep(0.5)
        
 
@@ -193,30 +194,12 @@ def check_if_will_turn():
 
 
 
-def output():
-    os.mkdir('output')
-   # Change to the "output" directory
-    os.chdir("output")
-    for vehicle in simulation:
-        data = { 
-            'vehicle_type':vehicle.vehicle_class, 
-            'vehicle_speed_avg':vehicle.speed_avg
-            }
-        fc.append_dict_to_csv(filename= 'vehicle_data.csv', data=data)                
-    # Plot the average speeds for the specified vehicle types
-    fc.plot_average_speeds()
-    fc.plot_vehicle_average_speed()
-    os.chdir("..")
-
-
-
 def simulation_time():
     while(True):
         GD.time_elapsed += 1
         time.sleep(1)
         if(GD.time_elapsed == GD.sim_time):
             total_vehicles = 0
-            output()
             print('Lane-wise Vehicle Counts')
     #         for intersection in GD.intersections.keys():
     #             for i in range(4):
@@ -228,6 +211,7 @@ def simulation_time():
             print('Total time passed: ', GD.time_elapsed)
             print('No. of vehicles passed per unit time: ',
                   (float(total_vehicles) / float(GD.time_elapsed)))
+            time.sleep(1)
             os._exit(1)
 
 
