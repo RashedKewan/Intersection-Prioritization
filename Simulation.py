@@ -8,6 +8,7 @@ from TrafficSignal import TrafficSignal
 import GlobalData as GD
 from Vehicle import VehicleClass
 from Intersection import Intersection
+import FileController as fc
 
 pygame.init()
 simulation = pygame.sprite.Group()
@@ -65,8 +66,8 @@ def create_intersction_signals( intersection: int = GD.FGKJ  ):
     GD.intersections[ intersection ].signals = signals
 
 def initialize():
-    GD.intersections[GD.FGKJ] = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=0)
-    GD.intersections[GD.NOSR] = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=3)
+    GD.intersections[GD.FGKJ] = Intersection(intersection=GD.FGKJ, start_coordinate=365, current_green=1)
+    GD.intersections[GD.NOSR] = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=1)
     create_intersction_signals(intersection = GD.FGKJ )
     create_intersction_signals(intersection = GD.NOSR )
     run_thread(thread_name="NOSR" ,thread_target=GD.intersections[GD.NOSR].repeat)
@@ -179,8 +180,8 @@ def generate_vehicle():
             #add the vehicle to the list in the first index 
             #GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].insert(0,vehicle)
             GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].append(vehicle)
-            vehicle.print()
-            time.sleep(0.3)
+            #vehicle.print()
+            time.sleep(0.5)
        
 
 
@@ -191,12 +192,31 @@ def check_if_will_turn():
     return 0
 
 
+
+def output():
+    os.mkdir('output')
+   # Change to the "output" directory
+    os.chdir("output")
+    for vehicle in simulation:
+        data = { 
+            'vehicle_type':vehicle.vehicle_class, 
+            'vehicle_speed_avg':vehicle.speed_avg
+            }
+        fc.append_dict_to_csv(filename= 'vehicle_data.csv', data=data)                
+    # Plot the average speeds for the specified vehicle types
+    fc.plot_average_speeds()
+    fc.plot_vehicle_average_speed()
+    os.chdir("..")
+
+
+
 def simulation_time():
     while(True):
         GD.time_elapsed += 1
         time.sleep(1)
         if(GD.time_elapsed == GD.sim_time):
             total_vehicles = 0
+            output()
             print('Lane-wise Vehicle Counts')
     #         for intersection in GD.intersections.keys():
     #             for i in range(4):

@@ -1,8 +1,12 @@
+import os
+import shutil
 import threading
 import pygame
 import Simulation as sim
 import sys
 import GlobalData as GD
+import FileController as fc
+
 
 def run_thread(thread_name:str , thread_target,args=()):
     thread = threading.Thread(name=thread_name, target=thread_target, args=args)
@@ -43,6 +47,7 @@ def display_the_vehicles():
 def display_time_elapsed():
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)
     screen.blit(time_elapsed_text, (800, 50))
+
 
 def signals_conroller(intersection):
             traffic_sign_arrow_images = []
@@ -86,7 +91,41 @@ def signals_conroller(intersection):
                 display_signal_timer_and_vehicle_count_for_each_signal(intersection ,signal_number = i , signal_texts = signal_texts)
 
 
+
+def prepare_output_environment():
+    # Check if the directory exists
+    if os.path.exists("output"):
+        # Delete the directory and all of its contents
+        shutil.rmtree("output")
+        print("Directory deleted")
+    else:
+        # Print an error message
+        print("Directory does not exist")
+
+    # # Change to the "output" directory
+    # os.chdir("output")
+
+    # # Output 
+    # fc.remove_file("vehicle_data.csv")
+
+    # # Iterate over the files in the directory
+    # for file in os.listdir("."):
+    #     # Check if the file has a ".png" extension
+    #     if (file.endswith(".png")):
+    #         # Delete the file
+    #         os.remove(file)
+    #         print("Deleted:", file)
+    #     else:
+    #         print("Skipping:", file)
+    
+    # os.chdir("..")
+
+
+
 class Main:
+    
+    prepare_output_environment()
+
     #########################################################################################################################
     ####################################################    Threads   #######################################################
     #########################################################################################################################
@@ -94,12 +133,13 @@ class Main:
     run_thread("initialization" ,sim.initialize)
     run_thread("generateVehicles" ,sim.generate_vehicle)
 
+
+    # Vehicles to Generate
     cars_number:int = 0
     for v in GD.vehicles_generating.values():
         cars_number += v
     GD.cars_number = cars_number
-
-
+   
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -111,8 +151,8 @@ class Main:
         screen.blit(GD.background_white, (0, 0))  
         screen.blit(GD.background, (150, 0))   
         #mouse coordination
-        mousex, mousey = pygame.mouse.get_pos()
-        print(f"{mousex} , {mousey}")
+        # mousex, mousey = pygame.mouse.get_pos()
+        # print(f"{mousex} , {mousey}")
 
     #########################################################################################################################
     #######################################  display signal and set timer according   #######################################
@@ -126,4 +166,6 @@ class Main:
 
         display_the_vehicles()
         pygame.display.update()
+    
+
     

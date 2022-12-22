@@ -289,7 +289,7 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 9999999       # change this to change time of simulation
+sim_time :int = 20       # change this to change time of simulation
 time_elapsed :int = 0
 
 # FGKJ_intersection.current_green :int = 0   # Indicates which signal is green
@@ -661,9 +661,9 @@ steps_turning_vehicle:dict={
 cars_number:int = 10
 vehicles_generating:dict = {
      CAR:3 ,
-     BUS:0, 
-     TRUCK:1, 
-     MOTORCYCLE:1
+     BUS:2, 
+     TRUCK:3, 
+     MOTORCYCLE:2
      }
 
 
@@ -673,6 +673,8 @@ vehicle_types:dict = {
      2: TRUCK, 
      3: MOTORCYCLE
      }
+
+
      
 vehicles_weight = {
      MOTORCYCLE: 1,
@@ -692,6 +694,7 @@ direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 
 # Coordinates of stop lines
+mm = 80
 stop_lines:dict = {
      RIGHT: [357,611], 
      DOWN : [205,455], 
@@ -851,61 +854,9 @@ crossed = {
      }
 }
 # Gap between vehicles
-gap = 15   # stopping gap
+gap  = 15   # stopping gap
 gap2 = 15   # moving gap
 
-
-
-# left-down  (-self.radius , -self.angle)  self.angle |  % 90
-# left-up    ( self.radius ,  self.angle) -self.angle |  % 90
-# right-down (-self.radius ,  self.angle) -self.angle |  % 90
-# right-up   ( self.radius , -self.angle)  self.angle |  % 90
-             
-# right-down (- , +) | -self.angle |  % 90
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
-# left-up    (+ , +) | -self.angle |  % 90 
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0,self.radius).rotate(self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
-# left-down  (- , -) | self.angle  |  % 90 
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(-self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, self.angle)
-# right-up   (+ , -) | self.angle  |  % 90 
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, self.radius).rotate(-self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, self.angle)
-
-
-# up-left    (-self.radius , -self.angle)  self.angle |  % -90
-# down-left  ( self.radius ,  self.angle) -self.angle |  % -90
-# up-right   (-self.radius ,  self.angle) -self.angle |  % -90
-# down-right ( self.radius , -self.angle)  self.angle |  % -90
-# down-right (+ , -) | self.angle  |  % -90  
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, self.radius).rotate(-self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, self.angle)
-# down-left    (+ , +) | -self.angle |  % 90 
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0,self.radius).rotate(self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, -self.angle)
-# up-left    (- , -) | self.angle  |  % -90  
-    # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(-self.angle) 
-    # self.image = pygame.transform.rotate(self.original_image, self.angle)
-
-
-# up-right   (- , +) | -self.angle |  % 90
-     # center = pygame.math.Vector2(self.pos) + pygame.math.Vector2(0, -self.radius).rotate(self.angle) 
-     # self.image = pygame.transform.rotate(self.original_image, -self.angle)
-
-
-
-
-# left-down  (-self.radius , -self.angle)  self.angle |  % 90
-# left-up    ( self.radius ,  self.angle) -self.angle |  % 90
-# right-down (-self.radius ,  self.angle) -self.angle |  % 90
-# right-up   ( self.radius , -self.angle)  self.angle |  % 90
-
-# up-left    (-self.radius , -self.angle)  self.angle |  % -90
-# down-left  ( self.radius ,  self.angle) -self.angle |  % -90
-# up-right   (-self.radius ,  self.angle) -self.angle |  % -90
-# down-right ( self.radius , -self.angle)  self.angle |  % -90
 
 
 
@@ -1051,75 +1002,3 @@ circle_coordinates = {
 }
 
 
-
-
-
-# left_down  = 0
-# left_up    = 1
-# right_down = 2
-# right_up   = 3
-# up_left    = 4
-# down_left  = 5
-# up_right   = 6
-# down_right = 7
-
-
-
-# circle_coordinates = {
-#      left_down  :{
-#           'pos':{
-#                'x':227,
-#                'y':80
-#           },
-#           'radius':68
-#      },
-#      left_up    :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      right_down :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      right_up   :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      up_left    :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      down_left  :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      up_right   :{
-#           'pos':{
-#                'x':0,
-#                'y':0
-#           },
-#           'radius':0
-#      },
-#      down_right :{
-#                'pos':{
-#                     'x':0,
-#                     'y':0
-#                },
-#                'radius':0
-#      }
-# }

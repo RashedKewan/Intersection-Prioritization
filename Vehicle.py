@@ -1,3 +1,4 @@
+import math
 import pygame
 import Simulation as sim
 import GlobalData as GD
@@ -26,10 +27,9 @@ class VehicleClass(pygame.sprite.Sprite):
         
         #######
         self.image = self.current_image.get_rect()
-        # self.pos = (227,80)
-        # self.radius = 65
         self.all_sprites = pygame.sprite.Group(self) 
-
+        self.speed_avg = 0
+        self.Kilometre = 0
 
         sim.simulation.add(self)
 
@@ -50,7 +50,6 @@ class VehicleClass(pygame.sprite.Sprite):
 #############################################################################################################################
         
     def apply_circle_rotation_helper(self):
-            self.print()
             center = pygame.math.Vector2(GD.circle_coordinates[self.direction][self.lane]['pos']) + pygame.math.Vector2( GD.circle_params_for_rotation[self.direction][self.lane][0] *GD.circle_coordinates[self.direction][self.lane]['radius'], GD.circle_params_for_rotation[self.direction][self.lane][1] *GD.circle_coordinates[self.direction][self.lane]['radius'] ).rotate( GD.circle_params_for_rotation[self.direction][self.lane][2] *self.rotate_angle )
             self.image = pygame.transform.rotate(self.original_image, GD.circle_params_for_rotation[self.direction][self.lane][3]*self.rotate_angle)
             self.rect = self.image.get_rect(center = (round(center.x), round(center.y)))
@@ -70,6 +69,8 @@ class VehicleClass(pygame.sprite.Sprite):
 #############################################################################################################################
 
     def move_(self,screen):
+        prev_x = self.x
+        prev_y = self.y
         ### added
         rotate_prossece_on = False
         ### 
@@ -459,7 +460,6 @@ class VehicleClass(pygame.sprite.Sprite):
                 rotation_available = current_position <= rotation_point
                 next_direction     = GD.next_lane_of[self.direction][self.lane][0]
                 next_lane          = GD.next_lane_of[self.direction][self.lane][1]
-                self.print()
                 if(rotation_available):
                     if (len(GD.vehicles_[next_direction][next_lane]) >2 ):
                         if(self.lane != GD.BA):
@@ -797,8 +797,23 @@ class VehicleClass(pygame.sprite.Sprite):
                                 self.y = self.y - self.speed
                             elif(self.y - self.current_image.get_rect().height - GD.gap - self.speed > GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].y ):
                                 self.y = self.y - GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].speed
-        self.crossed = 0
+        
         ### added
+        self.crossed = 0
+
+        # Increase Kilometres
+        if(prev_x != self.x and prev_y == self.y):
+            self.Kilometre += abs(self.x - prev_x)
+        elif(prev_x == self.x and prev_y != self.y):
+            self.Kilometre += abs(self.y - prev_y)
+        else:
+            x = self.x - prev_x
+            y = self.y - prev_y
+            self.Kilometre += math.sqrt( x*x + y*y )
+
+        #Calculate speed_avg
+        self.speed_avg = self.Kilometre / GD.time_elapsed
+        
         if(rotate_prossece_on == False):
             screen.blit(self.current_image, [self.x, self.y])
 
