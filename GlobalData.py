@@ -816,14 +816,28 @@ next_lane_of = {
           L_N_:[ DOWN, R_W_]    
      }
 }
-
+intersection_weights_for_lanes = {
+     FGKJ : {
+          
+          RIGHT :[IJ ,A_I_],
+          DOWN  :[D_F_,CD],
+          LEFT  :[HG,O_H_],
+          UP    :[M_K_ ,NM],
+     },
+     NOSR:{
+          RIGHT :[QR ,J_Q_],
+          DOWN  :[L_N_,KL],
+          LEFT  :[PO ,X_P_],
+          UP    :[U_S_,VU],
+     }
+}
 intersection_lanes = {
      FGKJ : {
           
           RIGHT :[IJ  ],
           DOWN  :[D_F_],
-          LEFT  :[M_K_],
-          UP    :[HG  ],
+          LEFT  :[HG],
+          UP    :[M_K_ ],
      },
      NOSR:{
           RIGHT :[QR  ],
