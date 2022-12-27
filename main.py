@@ -101,23 +101,27 @@ def prepare_output_environment():
     
 def output():
     os.mkdir('output')
+    fc.create_xlsx_file()
     for vehicle in sim.simulation:
         data = { 
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_csv( data=data ,filename= 'vehicle_data.csv' )               
+        fc.append_dict_to_xlsx( data=data ,filename= 'vehicle_data.xlsx' )               
     # Plot the average speeds for the specified vehicle types
-    fc.plot_average_speeds()
+    fc.plot_average_speeds_for_each_vehicle_type()
     fc.plot_vehicle_average_speed()
    
+
 def to_percent(fraction):
   return f"{int(round(fraction * 100))}%"
+
+
 
 class Main:
     
     prepare_output_environment()
-    
+    fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx')
     
     run_thread("generateVehicles" ,sim.generate_vehicle)
     # Vehicles to Generate

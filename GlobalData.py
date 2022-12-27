@@ -289,7 +289,7 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 200       # change this to change time of simulation
+sim_time :int = 20       # change this to change time of simulation
 time_elapsed :int = 0
 
 # FGKJ_intersection.current_green :int = 0   # Indicates which signal is green
@@ -660,10 +660,10 @@ steps_turning_vehicle:dict={
 }
 cars_number:int = 10
 vehicles_generating:dict = {
-     CAR:5 ,
-     BUS:5, 
-     TRUCK:5, 
-     MOTORCYCLE:5
+     # CAR:5 ,
+     # BUS:5, 
+     # TRUCK:5, 
+     # MOTORCYCLE:5
      }
 
 
