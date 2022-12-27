@@ -278,12 +278,12 @@ green_signal = pygame.image.load('images/signals/green.png')
 non_signal = pygame.image.load('images/signals/non.png')
 background = pygame.image.load('images/street.png')
 background_white = pygame.image.load('images/bg-white.png')
-
+loading = pygame.image.load('images/loading.jpg')
 
 # Default values of signal times
 default_red :int = 150
 default_yellow:int = 3
-default_green:int = 20
+default_green:int = 10
 default_minimum:int = 10
 default_maximum:int = 60
 
@@ -677,10 +677,10 @@ vehicle_types:dict = {
 
      
 vehicles_weight = {
-     MOTORCYCLE: 1,
-     CAR: 4,
-     TRUCK: 8,
-     BUS: 20
+     MOTORCYCLE: 2 ,
+     CAR       : 5 ,
+     TRUCK     : 8 ,
+     BUS       : 10
      } 
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
@@ -696,10 +696,10 @@ direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 # Coordinates of stop lines
 mm = 80
 stop_lines:dict = {
-     RIGHT: [357,611], 
-     DOWN : [205,455], 
-     LEFT : [493-50,745-50], 
-     UP   : [340-50,592-50]
+     RIGHT: [370,625], 
+     DOWN : [225,480], 
+     LEFT : [493-55,745-55], 
+     UP   : [340-55,592-70]
      }
 
 
@@ -881,8 +881,8 @@ crossed = {
      }
 }
 # Gap between vehicles
-gap  = 15   # stopping gap
-gap2 = 15   # moving gap
+gap  = 12   # stopping gap
+gap2 = 12   # moving gap
 
 
 

@@ -8,6 +8,8 @@ import GlobalData as GD
 import FileController as fc
 
 
+
+
 def run_thread(thread_name:str , thread_target,args=()):
     thread = threading.Thread(name=thread_name, target=thread_target, args=args)
     thread.daemon = True
@@ -79,9 +81,10 @@ def signals_conroller(intersection):
                             turn_signal_on(intersection ,signal_img = GD.green_signal, index=i)
         
                 else:
-                    if(GD.intersections[intersection].signals[i].red <= 10):
-                        GD.intersections[intersection].signals[i].signal_text = GD.intersections[intersection].signals[i].red 
-                    else:
+                    # if(GD.intersections[intersection].signals[i].red  < 5 and i == GD.intersections[intersection].next_green):
+                    #     GD.intersections[intersection].signals[i].signal_text = GD.intersections[intersection].signals[i].red 
+                    # elif(i != GD.intersections[intersection].next_green or i != GD.intersections[intersection].current_green):
+                    if(i != GD.intersections[intersection].current_green):
                         GD.intersections[intersection].signals[i].signal_text = ""
                     turn_signal_on(intersection , signal_img = GD.red_signal_img, index=i)
                 
@@ -108,26 +111,49 @@ def output():
     fc.plot_average_speeds()
     fc.plot_vehicle_average_speed()
    
-
+def to_percent(fraction):
+  return f"{int(round(fraction * 100))}%"
 
 class Main:
     
     prepare_output_environment()
+    
+    
+    run_thread("generateVehicles" ,sim.generate_vehicle)
+    # Vehicles to Generate
+    cars_number:int = 0
+    for v in GD.vehicles_generating.values():
+        cars_number += v
+    GD.cars_number = cars_number
+
+
+
+
+    while(GD.cars_number > 0):
+        screen.blit(GD.loading, (0, 0))
+        # Set the font and font size
+        font = pygame.font.Font(None, 36)
+        displayText =to_percent((cars_number - GD.cars_number ) / cars_number)
+        # Create the text surface
+        text_surface = font.render(displayText, True, GD.white)
+
+        # Get the rectangle for the text surface
+        text_rect = text_surface.get_rect()
+
+        # Set the position of the text rectangle
+        text_rect.center = ( 550,390)#( 708,400)
+
+        # Draw the text to the screen
+        screen.blit(text_surface, text_rect)
+        
+        pygame.display.update()   
 
     #########################################################################################################################
     ####################################################    Threads   #######################################################
     #########################################################################################################################
     run_thread(thread_name="simulationTime" ,thread_target=sim.simulation_time)
     run_thread("initialization" ,sim.initialize)
-    run_thread("generateVehicles" ,sim.generate_vehicle)
-
-
-    # Vehicles to Generate
-    cars_number:int = 0
-    for v in GD.vehicles_generating.values():
-        cars_number += v
-    GD.cars_number = cars_number
-   
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -135,14 +161,17 @@ class Main:
         if(GD.time_elapsed == GD.sim_time):
             output()
             sys.exit()
+            
+        
+       
     #########################################################################################################################
     #######################################      Display Background In Simulation     #######################################
     #########################################################################################################################
-        screen.blit(GD.background_white, (0, 0))  
+        screen.blit(GD.background_white, (0, 0))
         screen.blit(GD.background, (150, 0))   
         #mouse coordination
-        mousex, mousey = pygame.mouse.get_pos()
-        print(f"{mousex} , {mousey}")
+        # mousex, mousey = pygame.mouse.get_pos()
+        # print(f"{mousex} , {mousey}")
 
     #########################################################################################################################
     #######################################  display signal and set timer according   #######################################
@@ -150,12 +179,12 @@ class Main:
     #########################################################################################################################
         run_thread(thread_name="FGKJ signals_conroller" ,thread_target=signals_conroller,args=(GD.FGKJ,)).join()
         run_thread(thread_name="NOSR signals_conroller" ,thread_target=signals_conroller,args=(GD.NOSR,)).join()
-       
+    
         
         display_time_elapsed()
 
         display_the_vehicles()
         pygame.display.update()
-    
 
-    
+
+

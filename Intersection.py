@@ -13,7 +13,7 @@ class Intersection:
         self.number_of_signals :int = 4
 
         self.current_green :int = current_green   # Indicates which signal is green
-        self.next_green = self.find_max_weight_lane(current_green)
+        self.next_green = 0 # self.set_next_green()
         #self.next_green :int = (self.current_green + 1) % self.number_of_signals
         
         self.current_yellow :int = 0   # Indicates whether yellow signal is on or off
@@ -37,13 +37,12 @@ class Intersection:
             if(i == self.current_green):
                 if(self.current_yellow == 0):
                     self.signals[i].green -= 1
-                    if(self.signals[i].green==5):
-                        self.next_green=self.find_max_weight_lane(i)
                     self.signals[i].total_green_time += 1
                 else:
                     self.signals[i].yellow -= 1
             else:
                 self.signals[i].red -= 1
+
 
 
     def increase_vehicle_counter(self,vehicle : VehicleClass ):
@@ -79,11 +78,7 @@ class Intersection:
                 self.increase_vehicle_counter(vehicle)
 
             # changed to adjust configuration without algorithim
-            green_time = GD.default_green #math.ceil(
-                # (self.number_of_cars*GD.vehicles_weight[GD.CAR]) + 
-                # (self.number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
-                # (self.number_of_buses*GD.vehicles_weight[GD.BUS]) + 
-                # (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK]))
+            green_time = GD.default_green
 
             print('Green Time: ', green_time)
             if(green_time < GD.default_minimum):
@@ -167,39 +162,8 @@ class Intersection:
 #####################################################################
 #####################################################################
 
-    def set_time_(self):
-            #text = "detecting vehicles, " + \
-             #   GD.direction_numbers[(self.current_green + 1) % self.number_of_signals]
-            #language = 'en'
-            #readTextWithVoice(text,language)
-            #os.system("say detecting vehicles, " + GD.directionNumbers[(GD.currentGreen+1) % GD.noOfSignals])
-            self.number_of_cars       :int = 0
-            self.number_of_buses      :int = 0
-            self.number_of_trucks     :int = 0
-            self.number_of_motorcycle :int = 0
-            
-            next_green_direction = GD.direction_numbers[self.next_green]
-            next_green_lane      = GD.intersection_lanes[self.intersection][next_green_direction][0]
-            number_of_vehicles_in_next_green:int = len(GD.vehicles_[next_green_direction][next_green_lane])
-
-            for j in range(number_of_vehicles_in_next_green):
-                vehicle = GD.vehicles_[GD.direction_numbers[self.next_green]][next_green_lane][j]
-                self.increase_vehicle_counter(vehicle)
-
-            # changed to adjust configuration without algorithim
-            green_time = GD.default_green #math.ceil(
-                # (self.number_of_cars*GD.vehicles_weight[GD.CAR]) + 
-                # (self.number_of_motorcycle*GD.vehicles_weight[GD.MOTORCYCLE]) + 
-                # (self.number_of_buses*GD.vehicles_weight[GD.BUS]) + 
-                # (self.number_of_trucks*GD.vehicles_weight[GD.TRUCK]))
-
-            print('Green Time: ', green_time)
-            if(green_time < GD.default_minimum):
-                green_time = GD.default_minimum
-            elif(green_time > GD.default_maximum):
-                green_time = GD.default_maximum
-        
-            self.signals[self.next_green].green = green_time
+    def set_time_(self): 
+        self.signals[self.next_green].green = GD.default_green
 
     def calculate_weight(self,lane_direction):
         second_direction=0
@@ -221,51 +185,60 @@ class Intersection:
         for vehicle in GD.vehicles_[second_direction][second_lane]:
             weight = weight + GD.vehicles_weight[vehicle.vehicle_class]
         return weight
-#minimum weight for each lane
-#calculate all the lanes even the current green
 
 
-    def find_max_weight_lane(self,current_green):
-        max=0
-        max_lane=0
-        for i in range (self.number_of_signals):
-            if(i!=current_green):
-                weight=self.calculate_weight(i)
-                if(weight>max):
-                    max=weight
-                    max_lane=i
-        return max_lane
+
+    #min_vehicles_weights_per_signal = 5
+    def update_values_(self):
+        for i in range(0, self.number_of_signals):
+            if(i == self.current_green):
+                if(self.current_yellow == 0):
+                    if ( self.calculate_weight(lane_direction = i) < 5):# min_vehicles_weights_per_signal):
+                        self.set_next_green()
+                        self.signals[i].green=0
+                    else:
+                        self.signals[i].green -= 1
+                        if(self.signals[i].green==5):
+                            self.set_next_green()
+                else:
+                    self.signals[i].yellow -= 1
+            else:
+                self.signals[i].red -= 1
+
+
+    def set_next_green(self):
+        max_weight = 0
+        next_green = 0
+        for signal in range (self.number_of_signals):
+            weight=self.calculate_weight(signal)
+            
+            if( weight > max_weight ):
+                max_weight = weight
+                next_green = signal
+
+        self.next_green =  next_green
+
             
     def repeat_(self):
-        
             # while the timer of current green signal is not zero
             while(self.signals[self.current_green].green > 0):
-                # printStatus()
-                self.update_values()
-
+                self.update_values_()
+                
                 # set time of next green signal
                 if(self.signals[(self.next_green) % (self.number_of_signals)].red == GD.detection_time):
                     thread = threading.Thread(
                         name="detection", target=self.set_time_, args=())
                     thread.daemon = True
                     thread.start()
-                    # setTime()
                 time.sleep(1)
                 
 
             self.current_yellow = 1   # set yellow signal on
             self.vehicle_count_texts[self.current_green] = "0"
 
-            # reset stop coordinates of lanes and vehicles
-            for i in range(0, 3):
-                GD.stops[GD.direction_numbers[self.current_green]][i] = GD.default_stop[GD.direction_numbers[self.current_green]]
-                for vehicle in GD.vehicles_[GD.direction_numbers[self.current_green]][i]:
-                    vehicle.stop = GD.default_stop[GD.direction_numbers[self.current_green]]
-
             # while the timer of current yellow signal is not zero
             while(self.signals[self.current_green].yellow > 0):
-                # printStatus()
-                self.update_values()
+                self.update_values_()
                 time.sleep(1)
             self.current_yellow = 0   # set yellow signal off
 
@@ -273,22 +246,13 @@ class Intersection:
             self.signals[self.current_green].green = GD.default_green
             self.signals[self.current_green].yellow = GD.default_yellow
             self.signals[self.current_green].red = GD.default_red
-            
-
 
             # set next signal as green signal
             self.current_green = self.next_green
-            # set next green signal
-            #self.next_green = (self.current_green + 1) % self.number_of_signals
-            #start calling the functon whenn green time = 8
-            #if(self.signals[self.current_green].green <=8):
             
-            #self.next_green=self.find_max_weight_lane(self.current_green)
-            
-
             self.current_yellow = 1   # set yellow signal on
             while(self.signals[self.current_green].yellow > 0):
-                self.update_values()
+                self.update_values_()
                 time.sleep(1)
                 
         
@@ -298,8 +262,7 @@ class Intersection:
         
 
             # set the red time of next to next signal as (yellow time + green time) of next signal
-            self.signals[self.next_green].red = self.signals[self.current_green].yellow + \
-                                            self.signals[self.current_green].green
+            self.signals[self.next_green].red = self.signals[self.current_green].yellow + self.signals[self.current_green].green
 
             self.repeat_()
 

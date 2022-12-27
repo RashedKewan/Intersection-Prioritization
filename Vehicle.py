@@ -87,8 +87,10 @@ class VehicleClass(pygame.sprite.Sprite):
                 next_lane          = GD.next_lane_of[self.direction][self.lane][1]
                 
                 max_vehicle_number_in_next_lane = 1
-                if (self.lane == GD.WX ):
+                if (self.lane in [ GD.ST , GD.CD ]):
                     max_vehicle_number_in_next_lane = 2
+                elif (self.lane == GD.WX ):
+                    max_vehicle_number_in_next_lane = 3
                 
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
                         if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane  ):
@@ -231,8 +233,16 @@ class VehicleClass(pygame.sprite.Sprite):
                 rotation_available = current_position >= rotation_point
                 next_direction = GD.next_lane_of[self.direction][self.lane][0]
                 next_lane      = GD.next_lane_of[self.direction][self.lane][1]
+
+
+                max_vehicle_number_in_next_lane = 1
+                if (self.lane in [GD.R_W_] ):
+                    max_vehicle_number_in_next_lane = 3
+                elif (self.lane in [ GD.A_I_ , GD.J_Q_,GD.T_V_]):
+                    max_vehicle_number_in_next_lane = 2
+                
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
-                    if (len(GD.vehicles_[next_direction][next_lane]) >1 ):
+                    if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane  == GD.T_V_):
                             if(self.rotate_angle > 40):
                                 vehicle_can_move_without_crash  = (self.x  > GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 
@@ -363,7 +373,9 @@ class VehicleClass(pygame.sprite.Sprite):
                 next_lane          = GD.next_lane_of[self.direction][self.lane][1]
 
                 max_vehicle_number_in_next_lane = 1
-                if (self.lane == GD.BA ):
+                if (self.lane in [GD.FE ,GD.VU] ):
+                    max_vehicle_number_in_next_lane = 2
+                elif (self.lane in [GD.BA ] ):
                     max_vehicle_number_in_next_lane = 3
                 
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
@@ -505,10 +517,16 @@ class VehicleClass(pygame.sprite.Sprite):
                 next_direction     = GD.next_lane_of[self.direction][self.lane][0]
                 next_lane          = GD.next_lane_of[self.direction][self.lane][1]
 
+                max_vehicle_number_in_next_lane = 1
+                if (self.lane in [GD.E_C_,GD.X_P_, GD.O_H_] ):
+                    max_vehicle_number_in_next_lane = 2
+                else:
+                    max_vehicle_number_in_next_lane = 3
+                
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
                     # self.current_image = pygame.transform.rotate(self.original_image, 1 * 90)
                     # self.image = self.current_image.get_rect()
-                    if (len(GD.vehicles_[next_direction][next_lane]) >1 ):
+                    if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane == GD.E_C_):
                             if(self.rotate_angle > 40):
                                 vehicle_can_move_without_crash  = (self.x  < GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 

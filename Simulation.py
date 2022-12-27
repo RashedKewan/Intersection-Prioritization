@@ -2,7 +2,6 @@ import random
 import time
 import threading
 import pygame
-from gtts import gTTS
 import os
 from TrafficSignal import TrafficSignal
 import GlobalData as GD
