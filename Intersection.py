@@ -13,8 +13,8 @@ class Intersection:
         self.number_of_signals :int = 4
 
         self.current_green :int = current_green   # Indicates which signal is green
-        self.next_green = 0 # self.set_next_green()
-        #self.next_green :int = (self.current_green + 1) % self.number_of_signals
+        
+        self.next_green :int = (self.current_green + 1) % self.number_of_signals
         
         self.current_yellow :int = 0   # Indicates whether yellow signal is on or off
 
@@ -210,11 +210,12 @@ class Intersection:
         max_weight = 0
         next_green = 0
         for signal in range (self.number_of_signals):
-            weight=self.calculate_weight(signal)
-            
-            if( weight > max_weight ):
-                max_weight = weight
-                next_green = signal
+            if( signal != self.current_green ):
+                weight=self.calculate_weight(signal)
+                
+                if( weight > max_weight ):
+                    max_weight = weight
+                    next_green = signal
 
         self.next_green =  next_green
 

@@ -1,27 +1,104 @@
-import csv
 import os
 import shutil
 import matplotlib.pyplot as plt
 import pandas as pd
 import GlobalData as GD
 import openpyxl
+import datetime
+import shutil
+
+def copy_file(dst):
+  # Set the source and destination paths
+  src = 'configuration/vehicles_generating.xlsx'
+  # Copy the file from the source to the destination
+  print(src)
+  print(dst)
+  shutil.copy(src, dst)
 
 
-def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx'):
+
+def get_current_time():
+  now = datetime.datetime.now()
+  date_time = now.strftime("%d-%m-%Y/%H-%M-%S")
+  return date_time
+
+
+
+
+
+
+
+def read_xlsx_file_for_algo(directory = 'configuration' , filename = 'Algorithm.xlsx'):
+  file_path = f"{directory}/{filename}"
+
+  # Open the workbook
+  workbook = openpyxl.load_workbook(file_path)
+
+  # Get the sheet you want to access
+  sheet = workbook['Sheet1']
+
+  # Iterate over the columns in the sheet
+  for i,col in enumerate(sheet.columns):
+      # Find the column you want to access
+      if i == 1:
+          # Print the values in the column
+          for cell in col:
+            status = 'OFF'
+            if str(cell.value) == 'true':
+              status = 'ON '
+            print('\n\n\n')
+            print('------------------------------------')
+            print(f"| Algorithm Activity Status  : {status} |")
+            print('------------------------------------')
+            print('\n\n\n')
+            return cell.value
+
+
+
+
+
+
+
+def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx' , column = 'generating_number'):
   file_path = f"{directory}/{filename}"
   xlSheet = "Sheet1"
   # Load the data from the xlsx file
   df = pd.read_excel(file_path,sheet_name = xlSheet)
-
+  data = {}
   # Iterate over the rows of the dataframe
   for _, row in df.iterrows():
       # Access data for each column by column name
       vehicle_type = row['vehicle_type']
-      generating_number = row['generating_number']
-      GD.vehicles_generating[vehicle_type]=generating_number
+      generating_number = row[column]
+      data[vehicle_type]=generating_number
+  return data
       
 
-def create_xlsx_file():
+# def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx'):
+#   file_path = f"{directory}/{filename}"
+#   xlSheet = "Sheet1"
+#   # Load the data from the xlsx file
+#   df = pd.read_excel(file_path,sheet_name = xlSheet)
+
+#   # Iterate over the rows of the dataframe
+#   for _, row in df.iterrows():
+#       # Access data for each column by column name
+#       vehicle_type = row['vehicle_type']
+#       generating_number = row['generating_number']
+#       GD.vehicles_generating[vehicle_type]=generating_number
+      
+
+
+
+
+def create_directory():
+  path = f'output/{get_current_time()}'
+  os.makedirs(path, exist_ok=True)
+  return path
+
+
+
+def create_xlsx_file(path):
   # Open the file in append mode
   if not os.path.exists('output'):
     os.mkdir('output')
@@ -36,21 +113,28 @@ def create_xlsx_file():
   sheet['B1'] = 'vehicle_speed_avg'
   
   # Save the workbook to an xlsx file
-  wb.save('output/vehicle_data.xlsx')
+  wb.save(f'{path}/vehicle_data.xlsx')
 
 
 
-def append_dict_to_xlsx( filename , data , directory="output" , fieldnames=['vehicle_type', 'vehicle_speed_avg']):
-  # Open the file in append mode
-  if not os.path.exists(directory):
-    os.mkdir('output')
-  df = pd.read_excel(f"{directory}/{filename}")
+
+
+
+
+
+def append_dict_to_xlsx( filename , data ,path ):
+
+  df = pd.read_excel(f"{path}/{filename}")
 
   # Append the new row to the dataframe
   df = df.append(data, ignore_index=True)
 
   # Write the data back to the xlsx file
-  df.to_excel(f"{directory}/{filename}", index=False)
+  df.to_excel(f"{path}/{filename}", index=False)
+
+
+
+
 
 
 
@@ -69,22 +153,20 @@ def remove_directory(directory="output"):
 
 
 
-def plot_vehicle_average_speed(directory="output" , filename="vehicle_data.xlsx"):
-  if not os.path.exists(directory):
-    os.mkdir('output')
 
-  file_path = f"{directory}/{filename}"
+
+
+
+def plot_vehicle_average_speed(path ):
+
+  file_path = f"{path}/vehicle_data.xlsx"
   xlSheet = "Sheet1"
   # Load the data from the xlsx file
   df = pd.read_excel(file_path,sheet_name = xlSheet)
   
-  # # Create a scatter plot of the data
-  # df.plot(kind="scatter", x="vehicle_type", y="vehicle_speed_avg")
-
-
-  colors = ['red', 'blue', 'green', 'orange']
+  colors = ['skyblue' , 'g' , 'r' , 'pink', 'coral']
   # Create a mapping from vehicle type to integer index
-  vehicle_type_to_index = {'car': 0, 'truck': 1, 'motorcycle': 2, 'bus': 3}
+  vehicle_type_to_index = {'car': 0, 'bus': 1, 'truck': 2, 'motorcycle': 3}
 
   # Use the map method to transform the vehicle_type column
   df['vehicle_type_index'] = df['vehicle_type'].map(vehicle_type_to_index)
@@ -92,39 +174,39 @@ def plot_vehicle_average_speed(directory="output" , filename="vehicle_data.xlsx"
   # Plot the scatter plot using the transformed column
   df.plot(kind="scatter", x="vehicle_type", y="vehicle_speed_avg", color=[colors[int(x)] for x in df['vehicle_type_index']])
 
-
-
   # Customize the appearance of the plot
   plt.xlabel("Vehicle Type")
   plt.ylabel("Average Speed (km/h)")
   plt.title("Average Speeds for Different Vehicle Types")
 
-  plt.savefig(f"{directory}/avg_speed_for_each_vehicle.png", dpi=300)
+  plt.savefig(f"{path}/avg_speed_for_each_vehicle.png", dpi=300)
 
 
 
 
-def plot_average_speeds_for_each_vehicle_type(directory="output", filename="vehicle_data.xlsx"):
-    if not os.path.exists(directory):
-      os.mkdir('output')
 
-    file_path = f"{directory}/{filename}"
+
+
+def plot_average_speeds_for_each_vehicle_type(path):
+  
+    file_path = f"{path}/vehicle_data.xlsx"
     xlSheet = "Sheet1"
     # Load the data from the xlsx file
     df = pd.read_excel(file_path,sheet_name = xlSheet)
     
     # Create a scatter plot of the data
-    df.plot(kind="scatter", x="vehicle_type", y="vehicle_speed_avg")
-
+    df.plot(kind="scatter",x="vehicle_type", y="vehicle_speed_avg")
+    
     # Group the rows by vehicle type and calculate the mean average speed
     mean_speeds = df.groupby("vehicle_type").mean()
-
+     
     # # Create a bar plot of the mean average speeds
     mean_speeds.plot(kind="bar")
-
+  
     # Customize the appearance of the plot
     plt.xlabel("Vehicle Type")
     plt.ylabel("Average Speed (km/h)")
     plt.title("Mean Average Speeds for Different Vehicle Types")
     
-    plt.savefig(f"{directory}/average_speeds_for_each_type.png", dpi=300)
+    plt.savefig(f"{path}/average_speeds_for_each_type.png", dpi=300)
+

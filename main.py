@@ -47,8 +47,14 @@ def display_the_vehicles():
 
 
 def display_time_elapsed():
+    algorithm_activity = 'OFF'
+    if(GD.algorithm_active):
+        algorithm_activity = 'ON'
+    time_elapsed_text = font.render(f"Algorithm Activity Status  : {algorithm_activity} ", True, GD.black, GD.white)
+    screen.blit(time_elapsed_text, (750, 20))
     time_elapsed_text = font.render(("Time Elapsed: " + str(GD.time_elapsed)), True, GD.black, GD.white)
-    screen.blit(time_elapsed_text, (800, 50))
+    screen.blit(time_elapsed_text, (750, 50))
+    
 
 
 def signals_conroller(intersection):
@@ -95,60 +101,78 @@ def signals_conroller(intersection):
 
 
 
-def prepare_output_environment():
-    fc.remove_directory(directory="output")
-
     
 def output():
-    os.mkdir('output')
-    fc.create_xlsx_file()
+    path = fc.create_directory()
+    fc.create_xlsx_file(path)
+    fc.copy_file(dst=path)
     for vehicle in sim.simulation:
         data = { 
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_xlsx( data=data ,filename= 'vehicle_data.xlsx' )               
+        fc.append_dict_to_xlsx( filename= 'vehicle_data.xlsx' , data=data  , path = path )               
     # Plot the average speeds for the specified vehicle types
-    fc.plot_average_speeds_for_each_vehicle_type()
-    fc.plot_vehicle_average_speed()
+    fc.plot_average_speeds_for_each_vehicle_type(path)
+    fc.plot_vehicle_average_speed(path)
+    
    
 
 def to_percent(fraction):
-  return f"{int(round(fraction * 100))}%"
+    percent = int(round(fraction * 100))
+    return f"{percent}%" , percent
+
+def create_text(displayText , position, font_size):
+    # Create the font object with the specified size
+    font = pygame.font.Font(None, font_size)
+
+    # Create the text surface
+    text_surface = font.render(displayText, True, GD.white)
+
+    # Get the rectangle for the text surface
+    text_rect = text_surface.get_rect()
+
+    # Set the position of the text rectangle
+    text_rect.center = position #( 550,390)
+
+    # Draw the text to the screen
+    screen.blit(text_surface, text_rect) 
 
 
 
 class Main:
+    algorithm_activity = fc.read_xlsx_file_for_algo()
+    if( algorithm_activity == 'true'):
+        GD.algorithm_active = True
+
+    GD.vehicles_generating = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx',column='generating_number')
+    GD.vehicles_weight = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_weight.xlsx',column='weight')
+    GD.speeds = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_speed.xlsx',column='speed')
     
-    prepare_output_environment()
-    fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx')
-    
-    run_thread("generateVehicles" ,sim.generate_vehicle)
-    # Vehicles to Generate
     cars_number:int = 0
     for v in GD.vehicles_generating.values():
         cars_number += v
     GD.cars_number = cars_number
-
-
-
-
+    run_thread("generateVehicles" ,sim.generate_vehicle)
+ 
     while(GD.cars_number > 0):
         screen.blit(GD.loading, (0, 0))
+        
         # Set the font and font size
         font = pygame.font.Font(None, 36)
-        displayText =to_percent((cars_number - GD.cars_number ) / cars_number)
-        # Create the text surface
-        text_surface = font.render(displayText, True, GD.white)
+        displayText,percent =to_percent((cars_number - GD.cars_number ) / cars_number)
+        
+        if(percent < 60):
+            screen.blit(GD.red_signal_img_88, (350, 300))
+        elif(percent >= 60 and percent < 90 ):
+            create_text('Get Ready!' , ( 560,100) ,50)
+            screen.blit(GD.yellow_signal_img_88, (350, 300))
+        elif(percent >= 90 ):
+            create_text('Go!' , ( 580,100) ,50)
+            screen.blit(GD.green_signal_88 , (350, 300))
 
-        # Get the rectangle for the text surface
-        text_rect = text_surface.get_rect()
-
-        # Set the position of the text rectangle
-        text_rect.center = ( 550,390)#( 708,400)
-
-        # Draw the text to the screen
-        screen.blit(text_surface, text_rect)
+        
+        create_text(displayText , ( 550,390) ,32)
         
         pygame.display.update()   
 

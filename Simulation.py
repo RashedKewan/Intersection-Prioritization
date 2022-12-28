@@ -69,9 +69,13 @@ def initialize():
     GD.intersections[GD.NOSR] = Intersection(intersection=GD.NOSR, start_coordinate=615, current_green=1)
     create_intersction_signals(intersection = GD.FGKJ )
     create_intersction_signals(intersection = GD.NOSR )
-    run_thread(thread_name="NOSR" ,thread_target=GD.intersections[GD.NOSR].repeat_)
-    run_thread(thread_name="FGKJ" ,thread_target=GD.intersections[GD.FGKJ].repeat_)
-   
+    
+    if(GD.algorithm_active):
+        run_thread(thread_name="NOSR" ,thread_target=GD.intersections[GD.NOSR].repeat_)
+        run_thread(thread_name="FGKJ" ,thread_target=GD.intersections[GD.FGKJ].repeat_)
+    else:
+        run_thread(thread_name="NOSR" ,thread_target=GD.intersections[GD.NOSR].repeat)
+        run_thread(thread_name="FGKJ" ,thread_target=GD.intersections[GD.FGKJ].repeat)
 
 def decide_if_will_turn(lane_number : int):
     will_turn_right = 0

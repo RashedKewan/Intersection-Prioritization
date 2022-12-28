@@ -132,14 +132,6 @@ points = {
 }
 
 
-street_class = {
-     RIGHT:0,
-     DOWN:1,
-     LEFT:2,
-     UP:3
-}
-#lane_number = 
-
 streets = {
      
      RIGHT:{         # RIGHT
@@ -249,15 +241,7 @@ streets = {
      }
 }
 
-
-
-# define for each  'maslol'  it ' netev ' number
-# random :select direction {R,L,U,D}
-# select street vector .For EX: AI
-# Random : select 'netev' number in choosen street vector
-
-
-
+algorithm_active = False
 # Font Size
 font_size:int = 30
 
@@ -272,6 +256,12 @@ screen_size = (screen_width, screen_height)
 
 # Loading signal images and font
 #ronen change all image type to be with the image name , like this
+
+red_signal_img_88= pygame.image.load('images/signals/red_88.png')
+yellow_signal_img_88 = pygame.image.load('images/signals/yellow_88.png')
+green_signal_88 = pygame.image.load('images/signals/green_88.png')
+
+
 red_signal_img= pygame.image.load('images/signals/red.png')
 yellow_signal_img = pygame.image.load('images/signals/yellow.png')
 green_signal = pygame.image.load('images/signals/green.png')
@@ -289,12 +279,8 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 20       # change this to change time of simulation
+sim_time :int = 40       # change this to change time of simulation
 time_elapsed :int = 0
-
-# FGKJ_intersection.current_green :int = 0   # Indicates which signal is green
-# FGKJ_intersection.next_green :int = (FGKJ_intersection.current_green + 1) % FGKJ_intersection.number_of_signals
-# FGKJ_intersection.current_yellow :int = 0   # Indicates whether yellow signal is on or off
 
 # Average times for vehicles to pass the intersection
 car_time :int = 2
@@ -302,41 +288,13 @@ motorcycle_time :int = 1
 bus_time :float = 2.5
 truck_time :float = 2.5
 
-# # Count of cars at a traffic signal
-# FGKJ_intersection.number_of_cars :int= 0
-# FGKJ_intersection.number_of_buses:int = 0
-# FGKJ_intersection.number_of_trucks :int= 0
-# FGKJ_intersection.number_of_motorcycle:int = 0
-# #number_of_lanes:int = 2
-
-
 # Red signal time at which cars will be detected at a signal
 detection_time:int = 5
 
-speeds:dict = {CAR: 2.25, BUS: 1.8, TRUCK: 1.8,
-          MOTORCYCLE: 2.5}  # average speeds of vehicles
-#speeds:dict = {CAR: 1.8, BUS: 1.8, TRUCK: 1.8,
- #         MOTORCYCLE: 1.8}  # average speeds of vehicles
+speeds = {}
 
-# Coordinates of start
-# x = direction : lane <- { 0 , 1 , 2 }
-"""
-x = {RIGHT: [0, 0, 0], DOWN: [755, 727, 697],
-     LEFT: [1400, 1400, 1400], UP: [602, 627, 657]}
-y = {RIGHT: [348, 370, 398], DOWN: [0, 0, 0],
-     LEFT: [498, 466, 436], UP: [800, 800, 800]}
-
-z = 66
-x:dict = {RIGHT: [0, 0, 0], DOWN: [755-z-245, 727-z-245, 697-z-245],
-     LEFT: [1400, 1400, 1400], UP: [602+z, 627+z, 657+z]}
-y:dict = {RIGHT: [348+z, 370+z, 398+z], DOWN: [0, 0, 0],
-     LEFT: [498-z, 466-z, 436-z], UP: [800, 800, 800]}
-
-vehicles:dict = {RIGHT: {0: [], 1: [], 2: [], 'crossed': 0}, DOWN: {0: [], 1: [], 2: [], 'crossed': 0},
-            LEFT: {0: [], 1: [], 2: [], 'crossed': 0}, UP: {0: [], 1: [], 2: [], 'crossed': 0}}
-#vehicleTypes = {0: CAR, 1: BUS, 2: TRUCK, 3: 'rickshaw', 4: MOTORCYCLE}
-
-"""
+# speeds:dict = {CAR: 2.25, BUS: 1.8, TRUCK: 1.8,
+#           MOTORCYCLE: 2.5}  # average speeds of vehicles
 
 vehicles_ = {
      
@@ -659,12 +617,7 @@ steps_turning_vehicle:dict={
 
 }
 cars_number:int = 10
-vehicles_generating:dict = {
-     # CAR:5 ,
-     # BUS:5, 
-     # TRUCK:5, 
-     # MOTORCYCLE:5
-     }
+vehicles_generating:dict = {}
 
 
 vehicle_types:dict = {
@@ -675,13 +628,14 @@ vehicle_types:dict = {
      }
 
 
-     
-vehicles_weight = {
-     MOTORCYCLE: 2 ,
-     CAR       : 5 ,
-     TRUCK     : 8 ,
-     BUS       : 10
-     } 
+vehicles_weight = {}
+    
+# vehicles_weight = {
+#      MOTORCYCLE: 2 ,
+#      CAR       : 5 ,
+#      TRUCK     : 8 ,
+#      BUS       : 10
+#      } 
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 # Coordinates of signal image, timer, and vehicle count
@@ -694,9 +648,9 @@ direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
 
 
 # Coordinates of stop lines
-mm = 80
+
 stop_lines:dict = {
-     RIGHT: [370,625], 
+     RIGHT: [370,635], 
      DOWN : [225,480], 
      LEFT : [493-55,745-55], 
      UP   : [340-55,592-70]
