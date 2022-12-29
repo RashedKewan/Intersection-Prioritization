@@ -107,7 +107,7 @@ def create_xlsx_file(path='temp'):
   sheet['B1'] = 'vehicle_speed_avg'
   
   # Save the workbook to an xlsx file
-  wb.save(f'{path}/vehicle_data.xlsx')
+  wb.save(f'{path}/vehicles_avg_speeds.xlsx')
 
 
 
@@ -153,7 +153,7 @@ def remove_directory(directory="output"):
 
 def plot_vehicle_average_speed(path='temp'):
 
-  file_path = f"{path}/vehicle_data.xlsx"
+  file_path = f"{path}/vehicles_avg_speeds.xlsx"
   xlSheet = "Sheet1"
   # Load the data from the xlsx file
   df = pd.read_excel(file_path,sheet_name = xlSheet)
@@ -219,7 +219,7 @@ def plot_vehicle_average_speed(path='temp'):
 
 def plot_average_speeds_for_each_vehicle_type(path='temp'):
   
-    file_path = f"{path}/vehicle_data.xlsx"
+    file_path = f"{path}/vehicles_avg_speeds.xlsx"
     xlSheet = "Sheet1"
     # Load the data from the xlsx file
     df = pd.read_excel(file_path,sheet_name = xlSheet)

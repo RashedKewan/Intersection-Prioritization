@@ -1,6 +1,7 @@
 import os
 import shutil
 import threading
+import time
 import pygame
 import Simulation as sim
 import sys
@@ -103,6 +104,11 @@ def signals_conroller(intersection):
 
     
 def output():
+    # Check if the directory exists
+    if not os.path.exists('temp'):
+        # Create the directory
+        os.makedirs('temp')
+        
     path , current_time = fc.create_directory()
     fc.create_xlsx_file()
     for vehicle in sim.simulation:
@@ -110,7 +116,7 @@ def output():
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_xlsx( filename= 'vehicle_data.xlsx' , data=data  )               
+        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )     
     # Plot the average speeds for the specified vehicle types
     fc.plot_average_speeds_for_each_vehicle_type()
     fc.plot_vehicle_average_speed()
@@ -144,9 +150,9 @@ class Main:
     if( algorithm_activity == 'true'):
         GD.algorithm_active = True
 
-    GD.vehicles_generating  = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='generating_number')
-    GD.vehicles_weight      = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='weight')
-    GD.speeds               = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='speed')
+    GD.vehicles_generating  = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_db.xlsx',column='generating_number')
+    GD.vehicles_weight      = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_db.xlsx',column='weight')
+    GD.speeds               = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_db.xlsx',column='speed')
    
     cars_number:int = 0
     for v in GD.vehicles_generating.values():
