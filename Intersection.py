@@ -194,12 +194,16 @@ class Intersection:
             if(i == self.current_green):
                 if(self.current_yellow == 0):
                     if ( self.calculate_weight(lane_direction = i) < 5):# min_vehicles_weights_per_signal):
-                        self.set_next_green()
-                        self.signals[i].green=0
+                        max_weight  = self.set_next_green()
+                        if(max_weight == 0):
+                            self.signals[i].green=10
+                        else:
+                            self.signals[i].green=0
                     else:
                         self.signals[i].green -= 1
                         if(self.signals[i].green==5):
                             self.set_next_green()
+                            
                 else:
                     self.signals[i].yellow -= 1
             else:
@@ -216,9 +220,11 @@ class Intersection:
                 if( weight > max_weight ):
                     max_weight = weight
                     next_green = signal
-
-        self.next_green =  next_green
-
+        if(max_weight == 0):
+            self.next_green :int = (self.current_green + 1) % self.number_of_signals
+        else:
+            self.next_green =  next_green
+        return max_weight
             
     def repeat_(self):
             # while the timer of current green signal is not zero

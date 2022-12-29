@@ -6,8 +6,8 @@ import Simulation as sim
 import sys
 import GlobalData as GD
 import FileController as fc
-
-
+import PDFReport as pdf
+from reportlab.pdfgen import canvas
 
 
 def run_thread(thread_name:str , thread_target,args=()):
@@ -103,19 +103,18 @@ def signals_conroller(intersection):
 
     
 def output():
-    path = fc.create_directory()
-    fc.create_xlsx_file(path)
-    fc.copy_file(dst=path)
+    path , current_time = fc.create_directory()
+    fc.create_xlsx_file()
     for vehicle in sim.simulation:
         data = { 
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_xlsx( filename= 'vehicle_data.xlsx' , data=data  , path = path )               
+        fc.append_dict_to_xlsx( filename= 'vehicle_data.xlsx' , data=data  )               
     # Plot the average speeds for the specified vehicle types
-    fc.plot_average_speeds_for_each_vehicle_type(path)
-    fc.plot_vehicle_average_speed(path)
-    
+    fc.plot_average_speeds_for_each_vehicle_type()
+    fc.plot_vehicle_average_speed()
+    pdf.create_report(path , current_time)
    
 
 def to_percent(fraction):
@@ -145,10 +144,10 @@ class Main:
     if( algorithm_activity == 'true'):
         GD.algorithm_active = True
 
-    GD.vehicles_generating = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx',column='generating_number')
-    GD.vehicles_weight = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_weight.xlsx',column='weight')
-    GD.speeds = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_speed.xlsx',column='speed')
-    
+    GD.vehicles_generating  = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='generating_number')
+    GD.vehicles_weight      = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='weight')
+    GD.speeds               = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_data.xlsx',column='speed')
+   
     cars_number:int = 0
     for v in GD.vehicles_generating.values():
         cars_number += v
@@ -186,7 +185,7 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-        if(GD.time_elapsed == GD.sim_time):
+        if(GD.time_elapsed == GD.sim_time-2):
             output()
             sys.exit()
             

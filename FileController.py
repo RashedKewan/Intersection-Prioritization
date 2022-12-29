@@ -7,12 +7,8 @@ import openpyxl
 import datetime
 import shutil
 
-def copy_file(dst):
-  # Set the source and destination paths
-  src = 'configuration/vehicles_generating.xlsx'
+def copy_file(src ,dst):
   # Copy the file from the source to the destination
-  print(src)
-  print(dst)
   shutil.copy(src, dst)
 
 
@@ -92,16 +88,14 @@ def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating
 
 
 def create_directory():
-  path = f'output/{get_current_time()}'
+  current_time = get_current_time()
+  path = f'output/{current_time}'
   os.makedirs(path, exist_ok=True)
-  return path
+  return path , current_time
 
 
 
-def create_xlsx_file(path):
-  # Open the file in append mode
-  if not os.path.exists('output'):
-    os.mkdir('output')
+def create_xlsx_file(path='temp'):
   # Create a new empty workbook
   wb = openpyxl.Workbook()
     
@@ -122,7 +116,7 @@ def create_xlsx_file(path):
 
 
 
-def append_dict_to_xlsx( filename , data ,path ):
+def append_dict_to_xlsx( filename , data ,path='temp'):
 
   df = pd.read_excel(f"{path}/{filename}")
 
@@ -157,7 +151,7 @@ def remove_directory(directory="output"):
 
 
 
-def plot_vehicle_average_speed(path ):
+def plot_vehicle_average_speed(path='temp'):
 
   file_path = f"{path}/vehicle_data.xlsx"
   xlSheet = "Sheet1"
@@ -184,10 +178,46 @@ def plot_vehicle_average_speed(path ):
 
 
 
+# from reportlab.lib.pagesizes import letter
+# from reportlab.pdfgen.canvas import Canvas
+
+# def plot_average_speeds_for_each_vehicle_type(path):
+  
+#     file_path = f"{path}/vehicle_data.xlsx"
+#     xlSheet = "Sheet1"
+#     # Load the data from the xlsx file
+#     df = pd.read_excel(file_path,sheet_name = xlSheet)
+    
+#     # Create a scatter plot of the data
+#     df.plot(kind="scatter",x="vehicle_type", y="vehicle_speed_avg")
+    
+#     # Group the rows by vehicle type and calculate the mean average speed
+#     mean_speeds = df.groupby("vehicle_type").mean()
+     
+#     # # Create a bar plot of the mean average speeds
+#     mean_speeds.plot(kind="bar")
+  
+#     # Customize the appearance of the plot
+#     plt.xlabel("Vehicle Type")
+#     plt.ylabel("Average Speed (km/h)")
+#     plt.title("Mean Average Speeds for Different Vehicle Types")
+    
+#     # Save the plot to a file
+#     plt.savefig("average_speeds_for_each_type.png", dpi=300)
+    
+#     # Create a new PDF document with a size of letter paper
+#     pdf_file = f"{path}/report.pdf"
+#     pdf_canvas = Canvas(pdf_file, pagesize=letter)
+    
+#     # Add the plot image to the PDF document
+#     pdf_canvas.drawImage("average_speeds_for_each_type.png", x=100, y=500, width=400, height=300)
+#     pdf_canvas.showPage()
+#     # Save the PDF document
+#     pdf_canvas.save()
 
 
 
-def plot_average_speeds_for_each_vehicle_type(path):
+def plot_average_speeds_for_each_vehicle_type(path='temp'):
   
     file_path = f"{path}/vehicle_data.xlsx"
     xlSheet = "Sheet1"

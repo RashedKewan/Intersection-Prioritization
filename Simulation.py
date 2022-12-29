@@ -171,7 +171,7 @@ def generate_vehicle():
    
     for vehicle_ , generation_number  in GD.vehicles_generating.items():
         for _ in range(generation_number):
-            direction_number = random.randint(0,3)
+            direction_number = 1#random.randint(0,3)
             lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],vehicle_)
             will_turn_left , will_turn_right = decide_if_will_turn(lane_number = lane_number)
             

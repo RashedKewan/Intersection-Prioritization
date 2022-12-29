@@ -272,14 +272,14 @@ loading = pygame.image.load('images/loading.jpg')
 
 # Default values of signal times
 default_red :int = 150
-default_yellow:int = 3
+default_yellow:int = 1
 default_green:int = 10
 default_minimum:int = 10
 default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 40       # change this to change time of simulation
+sim_time :int = 10       # change this to change time of simulation
 time_elapsed :int = 0
 
 # Average times for vehicles to pass the intersection
@@ -630,25 +630,10 @@ vehicle_types:dict = {
 
 vehicles_weight = {}
     
-# vehicles_weight = {
-#      MOTORCYCLE: 2 ,
-#      CAR       : 5 ,
-#      TRUCK     : 8 ,
-#      BUS       : 10
-#      } 
 direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
-
-# Coordinates of signal image, timer, and vehicle count
-
-# FGKJ_intersection.signal_coordinates:list = [(365, 328), (365, 200), (455,200), (455, 328)]
-# signal_timer_coordinates:list = [(370, 308), (370, 180), (460, 180), (460, 308)] 
-# vehicle_count_coordinates:list = [(330, 308), (330, 180), (500, 180), (500, 308)]
-# FGKJ_intersection.vehicle_count_texts:list = ["0", "0", "0", "0"]
-
 
 
 # Coordinates of stop lines
-
 stop_lines:dict = {
      RIGHT: [370,635], 
      DOWN : [225,480], 
@@ -698,16 +683,16 @@ rotate_point:dict = {
           # odd  represents short rotation
           # even represents long  rotation
           CD:350,
-          KL:605,
+          KL:595,
           ST:850,
           WX:860 #
      },
      DOWN: {
      # odd  represents short rotation
           # even represents long  rotation
-          A_I_:210, #
-          J_Q_:438, #
-          R_W_:700, #
+          A_I_:200, #
+          J_Q_:425, #
+          R_W_:695, #
           T_V_:685
      },
      LEFT: {
@@ -883,8 +868,8 @@ circle_coordinates = {
                
           ,
           KL:{
-               'pos':(623,328),
-               'radius':43
+               'pos':(616,335),
+               'radius':50
           }
           ,
           ST:{
@@ -956,8 +941,8 @@ circle_coordinates = {
      DOWN:{         # DOWN
           A_I_:
              {
-               'pos':(237,225),
-               'radius':60
+               'pos':(230,215),
+               'radius':67
           }
           ,
           
@@ -969,7 +954,7 @@ circle_coordinates = {
           ,
           R_W_:
               {
-               'pos':(735,720),
+               'pos':(731,720),
                'radius':65
           }
           ,
