@@ -203,8 +203,8 @@ class Main:
         screen.blit(GD.background_white, (0, 0))
         screen.blit(GD.background, (150, 0))   
         #mouse coordination
-        # mousex, mousey = pygame.mouse.get_pos()
-        # print(f"{mousex} , {mousey}")
+        mousex, mousey = pygame.mouse.get_pos()
+        print(f"{mousex} , {mousey}")
 
     #########################################################################################################################
     #######################################  display signal and set timer according   #######################################

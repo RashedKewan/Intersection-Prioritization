@@ -103,32 +103,32 @@ def choose_direction():
 
 
 
-# Generating vehicles in the simulation
-def get_lane_length(direction : str , lane_number : int , c_x : str , c_y : str ) -> int:
-    if(direction in [GD.RIGHT , GD.LEFT]):
-        return abs(GD.streets[direction][lane_number][c_x][1] -GD.streets[direction][lane_number][c_x][0])
-    return abs(GD.streets[direction][lane_number][c_y][1] -GD.streets[direction][lane_number][c_y][0])
-     
-
-def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):  
-    c_x = 'x' # coordinate x
-    c_y = 'y' # coordinate x
-    lane_number =  random.randint(0, 5)
-    lanes=[0,1,2,3,4,5]
-   
+def prepare_vehicle_environment( ):  
+    c_x              = 'x' # coordinate x
+    c_y              = 'y' # coordinate x
+    direction_number = random.randint(0,3)
+    lane_number      =  random.randint(0, 5)
+    lanes            = [0,1,2,3,4,5]
+    directions       = [0,1,2,3]
+    direction = GD.direction_numbers[direction_number]
     while( GD.generating_coordinates[direction][lane_number]['0'][1] and GD.generating_coordinates[direction][lane_number]['1'][1]):
         # remove the selected lane from lanes list 
         lanes.remove(lane_number)
         # In case all lanes for given direction is full
-        # we need to handle this case carefully such that to have the ability
-        # to choose another direction
         if(len(lanes) != 0):
             lane_number = random.choice(lanes)
         else :
-            print('-----------------------------')
-            print("| Cant select another lane. |")
-            print('-----------------------------')
-            return 0,0,0
+            # to choose another direction
+            directions.remove(direction_number)
+            if(len(directions) != 0):
+                lanes            = [0,1,2,3,4,5]
+                direction_number = random.choice(directions)
+                direction = GD.direction_numbers[direction_number]
+            else:
+                print('-----------------------------')
+                print("| Cant generate vehicle.    |")
+                print('-----------------------------')
+                return 0,0,0
     
     
     if(direction == GD.RIGHT or direction==GD.LEFT ):
@@ -152,18 +152,8 @@ def coordinate_vehicle_on_screen(direction : str , image_dimention : int  ):
 
         vehicle_x=GD.streets[direction][lane_number][c_x][0]
     GD.cars_number=GD.cars_number-1
-    return lane_number,vehicle_x,vehicle_y
+    return direction,lane_number,vehicle_x,vehicle_y
 
-
-
-def choose_lane(direction_number:str,vehicle:str):
-    path = f"images//{direction_number}//{vehicle}.png"
-    image = pygame.image.load(path)
-    image_dimention = image.get_rect().height
-    if(direction_number in [GD.RIGHT , GD.LEFT]):
-        image_dimention = image.get_rect().width
-    return coordinate_vehicle_on_screen(direction_number,image_dimention)
-   
 
 
 
@@ -171,20 +161,19 @@ def generate_vehicle():
    
     for vehicle_ , generation_number  in GD.vehicles_generating.items():
         for _ in range(generation_number):
-            direction_number = 1#random.randint(0,3)
-            lane_number,vehicle_x,vehicle_y = choose_lane(GD.direction_numbers[direction_number],vehicle_)
+            direction,lane_number,vehicle_x,vehicle_y = prepare_vehicle_environment()
             will_turn_left , will_turn_right = decide_if_will_turn(lane_number = lane_number)
             
             vehicle = VehicleClass(
                 lane            = lane_number, 
                 vehicle_class   = vehicle_, 
-                direction       = GD.direction_numbers[direction_number], 
+                direction       = direction, 
                 will_turn_right = will_turn_right, 
                 will_turn_left  = will_turn_left,
                 x               = vehicle_x,
                 y               = vehicle_y
                 )
-            GD.vehicles_[GD.direction_numbers[direction_number]][lane_number].append(vehicle)
+            GD.vehicles_[direction][lane_number].append(vehicle)
             time.sleep(0.5)
        
 

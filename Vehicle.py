@@ -95,7 +95,7 @@ class VehicleClass(pygame.sprite.Sprite):
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
                         if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane  ):
                             if(self.lane != GD.WX):
-                                if(self.rotate_angle > 40):
+                                if(self.rotate_angle > 30):
                                     vehicle_can_move_without_crash  = (self.y  < GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].y) 
                                     if(vehicle_can_move_without_crash):
                                         rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -105,7 +105,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                     rotate_prossece_on = self.apply_circle_rotation(screen)
                                    
                             else:
-                                if(self.rotate_angle > 40):
+                                if(self.rotate_angle > 30):
                                     vehicle_can_move_without_crash  = (self.y  > GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].y) 
                                     if(vehicle_can_move_without_crash): 
                                         rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -226,7 +226,7 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # DOWN                    
         if(self.direction == GD.DOWN):
-            current_position   = self.y + self.current_image.get_rect().height -15
+            current_position   = self.y #+ self.current_image.get_rect().height -15
             
             if(self.lane in [ GD.A_I_ , GD.J_Q_ , GD.R_W_ , GD.T_V_ ]):
                 rotation_point     = GD.rotate_point[self.direction][self.lane]
@@ -244,7 +244,7 @@ class VehicleClass(pygame.sprite.Sprite):
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
                     if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane  == GD.T_V_):
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.x  > GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 
                                 if(vehicle_can_move_without_crash): 
                                     rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -254,7 +254,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                 rotate_prossece_on = self.apply_circle_rotation(screen)
                                 
                         else:
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.x  < GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 
                                 if(vehicle_can_move_without_crash): 
                                     rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -381,7 +381,7 @@ class VehicleClass(pygame.sprite.Sprite):
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
                     if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane != GD.BA):
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.y  > GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].y) 
                                 if(vehicle_can_move_without_crash):
                                     rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -391,7 +391,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                 rotate_prossece_on = self.apply_circle_rotation(screen)
                                 
                         else:
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.y  < GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].y) 
                                 if(vehicle_can_move_without_crash):
                                     rotate_prossece_on = self.apply_circle_rotation(screen)
@@ -528,7 +528,7 @@ class VehicleClass(pygame.sprite.Sprite):
                     # self.image = self.current_image.get_rect()
                     if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane == GD.E_C_):
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.x  < GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 
                                 if(vehicle_can_move_without_crash):
                                     rotate_prossece_on = self.apply_circle_rotation(screen) 
@@ -538,7 +538,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                 rotate_prossece_on = self.apply_circle_rotation(screen)
                                 
                         else:
-                            if(self.rotate_angle > 40):
+                            if(self.rotate_angle > 30):
                                 vehicle_can_move_without_crash  = (self.x  > GD.vehicles_[self.direction][self.lane][len(GD.vehicles_[self.direction][self.lane])- 1].x) 
                                 if(vehicle_can_move_without_crash):
                                     rotate_prossece_on = self.apply_circle_rotation(screen) 

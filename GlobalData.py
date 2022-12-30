@@ -62,7 +62,7 @@ lanes_quantity = {
 #lanes_quantity= [[ streets[direction][lane][] for lane in range(6)] for direction in range(4)]
 # LOOK IN DESIG FILE
 points = {
-     'A' : { 'x' : 235 , 'y' : 5 },
+     'A' : { 'x' : 255 , 'y' : 5 },
      'B' : { 'x' : 360 , 'y' : 5 },
 
      'C' : { 'x' : 235 , 'y' : 25 },
@@ -279,7 +279,7 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 5       # change this to change time of simulation
+sim_time :int = 10       # change this to change time of simulation
 time_elapsed :int = 0
 
 # Average times for vehicles to pass the intersection
@@ -690,7 +690,7 @@ rotate_point:dict = {
      DOWN: {
      # odd  represents short rotation
           # even represents long  rotation
-          A_I_:200, #
+          A_I_:195, #
           J_Q_:425, #
           R_W_:695, #
           T_V_:685
@@ -886,9 +886,12 @@ circle_coordinates = {
      },
      LEFT:{ #        # LEFT
           BA:
-             {
+              {
+          #      'pos':(225,80),
+          #      'radius':63
+          
                'pos':(225,80),
-               'radius':63
+               'radius':65
           }
           ,
           FE:
@@ -941,7 +944,7 @@ circle_coordinates = {
      DOWN:{         # DOWN
           A_I_:
              {
-               'pos':(230,215),
+               'pos':(230,220),
                'radius':67
           }
           ,

@@ -231,8 +231,15 @@ def plot_average_speeds_for_each_vehicle_type(path='temp'):
     mean_speeds = df.groupby("vehicle_type").mean()
      
     # # Create a bar plot of the mean average speeds
-    mean_speeds.plot(kind="bar")
-  
+    mean_speeds.plot(kind="bar", cmap='viridis')
+
+    
+    # Get the x-coordinates of the bar plot
+    x_coords = list(range(len(mean_speeds)))
+    
+    for i, (index, row) in enumerate(mean_speeds.iterrows()):
+      plt.text(x_coords[i]-0.25, row["vehicle_speed_avg"]+0.5, f"{row['vehicle_speed_avg']:.1f}", fontsize=10, ha="center")
+
     # Customize the appearance of the plot
     plt.xlabel("Vehicle Type")
     plt.ylabel("Average Speed (km/h)")

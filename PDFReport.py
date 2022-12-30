@@ -1,3 +1,4 @@
+import os
 from openpyxl import load_workbook
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.pdfgen import canvas
@@ -131,17 +132,36 @@ def create_report(path , current_time):
     pdf_canvas.drawString(50, y, "_____________________________    Vehicles Data    _____________________________")
     y = y - 150
     pdf_canvas.drawImage("temp/vehicles_db.png", 50, y, 480, vehicles_data_image_height)
-    y = y - 30
+
+    
+   ###########################################################################################
+    pdf_canvas.showPage()
+    y = 750
     pdf_canvas.drawString(50, y, "__________________________    Vehicles Average Speeds    _______________________")
-    y = y - 25 - vehicles_avg_speeds_image_height
+    y = y-25 - vehicles_avg_speeds_image_height
     pdf_canvas.drawImage("temp/vehicles_avg_speeds.png", 50, y, 500, vehicles_avg_speeds_image_height)
+
+
+
     ###########################################################################################
     pdf_canvas.showPage()
     # Add the plot image to the PDF document
     y = 750
     pdf_canvas.drawString(100, y, "___________________________    Graphs    ___________________________")
     pdf_canvas.drawImage("temp/average_speeds_for_each_type.png", x=100, y=410, width=400, height=300)
-    pdf_canvas.drawImage("temp/avg_speed_for_each_vehicle.png", x=100, y=110, width=400, height=300)
+    pdf_canvas.drawImage("temp/avg_speed_for_each_vehicle.png", x=100, y=100, width=400, height=300)
     pdf_canvas.showPage()
     pdf_canvas.save()
-    print('Report Created.')
+
+        
+    if os.path.exists(f"{path}/report.pdf"):
+        print ('------------------------------------')
+        print(f"|   Report Successfully Created    |")
+        print ('------------------------------------')
+        
+    else:
+        print ('------------------------------------')
+        print(f"|     Failed Report Creation.      |")
+        print ('------------------------------------')
+        
+        
