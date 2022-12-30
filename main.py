@@ -147,7 +147,7 @@ def create_text(displayText , position, font_size):
 
 class Main:
     algorithm_activity = fc.read_xlsx_file_for_algo()
-    if( algorithm_activity == 'true'):
+    if( algorithm_activity.lower() == 'true'):
         GD.algorithm_active = True
 
     GD.vehicles_generating  = fc.read_xlsx_file(directory = 'configuration' , filename = 'vehicles_db.xlsx',column='generating_number')
@@ -186,7 +186,7 @@ class Main:
     #########################################################################################################################
     run_thread(thread_name="simulationTime" ,thread_target=sim.simulation_time)
     run_thread("initialization" ,sim.initialize)
-    
+   
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -203,8 +203,8 @@ class Main:
         screen.blit(GD.background_white, (0, 0))
         screen.blit(GD.background, (150, 0))   
         #mouse coordination
-        mousex, mousey = pygame.mouse.get_pos()
-        print(f"{mousex} , {mousey}")
+        # mousex, mousey = pygame.mouse.get_pos()
+        # print(f"{mousex} , {mousey}")
 
     #########################################################################################################################
     #######################################  display signal and set timer according   #######################################

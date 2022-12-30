@@ -1,9 +1,9 @@
 import pygame
-from Intersection import Intersection
+
 
 FGKJ:int  = 0
 NOSR:int  = 1
-intersections:Intersection = {}
+intersections = {}
 # vehicle typpes
 CAR:str = 'car'
 BUS:str = 'bus'
@@ -279,7 +279,7 @@ default_maximum:int = 60
 
 # FGKJ_intersection.signals =[]
 # FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 10       # change this to change time of simulation
+sim_time :int = 15      # change this to change time of simulation
 time_elapsed :int = 0
 
 # Average times for vehicles to pass the intersection
