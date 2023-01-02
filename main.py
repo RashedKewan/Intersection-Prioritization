@@ -127,21 +127,31 @@ def to_percent(fraction):
     percent = int(round(fraction * 100))
     return f"{percent}%" , percent
 
-def create_text(displayText , position, font_size):
+def create_text(displayText , position, font_size,font_color):
     # Create the font object with the specified size
     font = pygame.font.Font(None, font_size)
 
     # Create the text surface
-    text_surface = font.render(displayText, True, GD.white)
+    text_surface = font.render(displayText, True, font_color)
 
     # Get the rectangle for the text surface
     text_rect = text_surface.get_rect()
 
     # Set the position of the text rectangle
-    text_rect.center = position #( 550,390)
+    text_rect.center = position 
 
     # Draw the text to the screen
     screen.blit(text_surface, text_rect) 
+
+def show_loading_report():
+    temp =  GD.sim_time -5  
+    while(GD.sim_time > GD.time_elapsed ):
+        screen.blit(GD.background_white, (0, 0))
+        displayText , percent = to_percent(( GD.time_elapsed - GD.sim_time ) / (temp))
+        displayText = 100 + 2*percent
+        create_text(f'Loading Report {displayText}%' , ( 560,70) ,50,GD.black)
+        screen.blit(GD.report, (337, 125))
+        pygame.display.update()
 
 
 
@@ -170,14 +180,14 @@ class Main:
         if(percent < 60):
             screen.blit(GD.red_signal_img_88, (350, 300))
         elif(percent >= 60 and percent < 90 ):
-            create_text('Get Ready!' , ( 560,100) ,50)
+            create_text('Get Ready!' , ( 560,100) ,50,GD.white)
             screen.blit(GD.yellow_signal_img_88, (350, 300))
         elif(percent >= 90 ):
-            create_text('Go!' , ( 580,100) ,50)
+            create_text('Go!' , ( 580,100) ,50,GD.white)
             screen.blit(GD.green_signal_88 , (350, 300))
 
         
-        create_text(displayText , ( 550,390) ,32)
+        create_text(displayText , ( 550,390) ,32,GD.white)
         
         pygame.display.update()   
 
@@ -192,10 +202,10 @@ class Main:
             if event.type == pygame.QUIT:
                 sys.exit()
         if(GD.time_elapsed == GD.sim_time-5):
-            screen.blit(GD.background_white, (0, 0))
-            screen.blit(GD.data_analysis, (300, 150))
-            pygame.display.update()
-            output()
+            t1  = run_thread("show_loading_report" , show_loading_report)
+            t2  = run_thread("output" , output)
+            t1.join()
+            t2.join()
             sys.exit()
             
         

@@ -270,6 +270,7 @@ background = pygame.image.load('images/street.png')
 background_white = pygame.image.load('images/bg-white.png')
 loading = pygame.image.load('images/loading.jpg')
 data_analysis = pygame.image.load('images/data_analysis.png')
+report = pygame.image.load('images/report.png')
 
 
 # Default values of signal times
