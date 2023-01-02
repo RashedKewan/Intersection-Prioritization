@@ -26,14 +26,14 @@ def apply(is_active : bool = False,times = 5):
     
     # Prepare options for generation_number in configuration/vehicles_db.xlsx file
     generating_vehicles_tests = [
-        [1,0,0,0]
+        [1,0,0,0],
         [0,1,0,0],
         [0,0,1,0],
-        [0,0,0,1],
+        [0,0,0,1]
     ]
 
     for i in range(2,13):
-        generating_vehicles_tests.append([i,i,i,i])
+         generating_vehicles_tests.append([i,i,i,i])
 
     for test_values in generating_vehicles_tests:
         # Open the workbook and sheet
