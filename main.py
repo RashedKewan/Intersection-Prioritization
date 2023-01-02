@@ -116,7 +116,13 @@ def output():
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )     
+        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )
+    if(len(sim.simulation) <= 0):
+        data = { 
+            'vehicle_type':"", 
+            'vehicle_speed_avg':0
+            }
+        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )
     # Plot the average speeds for the specified vehicle types
     fc.plot_average_speeds_for_each_vehicle_type()
     fc.plot_vehicle_average_speed()

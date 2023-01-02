@@ -5,7 +5,7 @@ import pygame
 import os
 from TrafficSignal import TrafficSignal
 import GlobalData as GD
-from Vehicle import VehicleClass
+
 from Intersection import Intersection
 import FileController as fc
 
@@ -19,7 +19,7 @@ def run_thread(thread_name:str , thread_target):
     thread.daemon = True
     thread.start()
 
-
+from Vehicle import VehicleClass
 def create_intersction_signals( intersection: int = GD.FGKJ  ):
     signals = []
     current_green = GD.intersections[ intersection ].current_green

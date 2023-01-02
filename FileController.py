@@ -6,6 +6,7 @@ import GlobalData as GD
 import openpyxl
 import datetime
 import shutil
+import Simulation as sim
 
 def copy_file(src ,dst):
   # Copy the file from the source to the destination
@@ -55,11 +56,32 @@ def read_xlsx_file_for_algo(directory = 'configuration' , filename = 'Algorithm.
 
 
 
+# def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx' , column = 'generating_number'):
+#   file_path = f"{directory}/{filename}"
+#   xlSheet = "Sheet1"
+#   # Load the data from the xlsx file
+#   df = pd.read_excel(file_path,sheet_name = xlSheet)
+#   data = {}
+#   # Iterate over the rows of the dataframe
+#   for _, row in df.iterrows():
+#       # Access data for each column by column name
+#       vehicle_type = row['vehicle_type']
+#       generating_number = row[column]
+#       data[vehicle_type]=generating_number
+#   return data
 def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx' , column = 'generating_number'):
   file_path = f"{directory}/{filename}"
   xlSheet = "Sheet1"
+  
+  # Open the Excel file
+  xlsx = pd.ExcelFile(file_path)
+  
+  # Check if the sheet name is valid
+  if xlSheet not in xlsx.sheet_names:
+    raise ValueError(f"Sheet '{xlSheet}' not found in file '{filename}'")
+  
   # Load the data from the xlsx file
-  df = pd.read_excel(file_path,sheet_name = xlSheet)
+  df = pd.read_excel(xlsx, sheet_name=xlSheet)
   data = {}
   # Iterate over the rows of the dataframe
   for _, row in df.iterrows():
@@ -68,7 +90,7 @@ def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating
       generating_number = row[column]
       data[vehicle_type]=generating_number
   return data
-      
+
 
 # def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx'):
 #   file_path = f"{directory}/{filename}"
@@ -101,7 +123,7 @@ def create_xlsx_file(path='temp'):
     
   # Get the active sheet
   sheet = wb.active
-
+  print(sheet)
   # Modify the data in the sheet
   sheet['A1'] = 'vehicle_type'
   sheet['B1'] = 'vehicle_speed_avg'
@@ -117,14 +139,14 @@ def create_xlsx_file(path='temp'):
 
 
 def append_dict_to_xlsx( filename , data ,path='temp'):
+  if(len(data) > 1):
+    df = pd.read_excel(f"{path}/{filename}")
 
-  df = pd.read_excel(f"{path}/{filename}")
+    # Append the new row to the dataframe
+    df = df.append(data, ignore_index=True)
 
-  # Append the new row to the dataframe
-  df = df.append(data, ignore_index=True)
-
-  # Write the data back to the xlsx file
-  df.to_excel(f"{path}/{filename}", index=False)
+    # Write the data back to the xlsx file
+    df.to_excel(f"{path}/{filename}", index=False)
 
 
 
@@ -155,6 +177,12 @@ def plot_vehicle_average_speed(path='temp'):
 
   file_path = f"{path}/vehicles_avg_speeds.xlsx"
   xlSheet = "Sheet1"
+  # Open the Excel file
+  xlsx = pd.ExcelFile(file_path)
+  
+     # Check if the sheet name is valid
+  if xlSheet not in xlsx.sheet_names:
+    raise ValueError(f"Sheet '{xlSheet}' not found in file '{file_path}'")
   # Load the data from the xlsx file
   df = pd.read_excel(file_path,sheet_name = xlSheet)
   
@@ -164,9 +192,9 @@ def plot_vehicle_average_speed(path='temp'):
 
   # Use the map method to transform the vehicle_type column
   df['vehicle_type_index'] = df['vehicle_type'].map(vehicle_type_to_index)
-
+  if(len(sim.simulation) > 0):
   # Plot the scatter plot using the transformed column
-  df.plot(kind="scatter", x="vehicle_type", y="vehicle_speed_avg", color=[colors[int(x)] for x in df['vehicle_type_index']])
+    df.plot(kind="scatter", x="vehicle_type", y="vehicle_speed_avg", color=[colors[int(x)] for x in df['vehicle_type_index']])
 
   # Customize the appearance of the plot
   plt.xlabel("Vehicle Type")
@@ -222,23 +250,29 @@ def plot_average_speeds_for_each_vehicle_type(path='temp'):
     file_path = f"{path}/vehicles_avg_speeds.xlsx"
     xlSheet = "Sheet1"
     # Load the data from the xlsx file
-    df = pd.read_excel(file_path,sheet_name = xlSheet)
     
+     # Open the Excel file
+    xlsx = pd.ExcelFile(file_path)
+  
+     # Check if the sheet name is valid
+    if xlSheet not in xlsx.sheet_names:
+      raise ValueError(f"Sheet '{xlSheet}' not found in file '{file_path}'")
+    df = pd.read_excel(file_path,sheet_name = xlSheet)
     # Create a scatter plot of the data
     df.plot(kind="scatter",x="vehicle_type", y="vehicle_speed_avg")
-    
+    if(len(sim.simulation)>0):
     # Group the rows by vehicle type and calculate the mean average speed
-    mean_speeds = df.groupby("vehicle_type").mean()
+      mean_speeds = df.groupby("vehicle_type").mean()
      
     # # Create a bar plot of the mean average speeds
-    mean_speeds.plot(kind="bar", cmap='viridis')
+      mean_speeds.plot(kind="bar", cmap='viridis')
 
     
     # Get the x-coordinates of the bar plot
-    x_coords = list(range(len(mean_speeds)))
+      x_coords = list(range(len(mean_speeds)))
     
-    for i, (index, row) in enumerate(mean_speeds.iterrows()):
-      plt.text(x_coords[i]-0.25, row["vehicle_speed_avg"]+0.5, f"{row['vehicle_speed_avg']:.1f}", fontsize=10, ha="center")
+      for i, (index, row) in enumerate(mean_speeds.iterrows()):
+        plt.text(x_coords[i]-0.25, row["vehicle_speed_avg"]+0.5, f"{row['vehicle_speed_avg']:.1f}", fontsize=10, ha="center")
 
     # Customize the appearance of the plot
     plt.xlabel("Vehicle Type")
