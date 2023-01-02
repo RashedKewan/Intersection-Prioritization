@@ -191,7 +191,10 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-        if(GD.time_elapsed == GD.sim_time-2):
+        if(GD.time_elapsed == GD.sim_time-5):
+            screen.blit(GD.background_white, (0, 0))
+            screen.blit(GD.data_analysis, (300, 150))
+            pygame.display.update()
             output()
             sys.exit()
             

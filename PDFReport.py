@@ -1,4 +1,5 @@
 import os
+import PyPDF2
 from openpyxl import load_workbook
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.pdfgen import canvas
@@ -152,7 +153,7 @@ def create_report(path , current_time):
     pdf_canvas.drawImage("temp/avg_speed_for_each_vehicle.png", x=100, y=100, width=400, height=300)
     pdf_canvas.showPage()
     pdf_canvas.save()
-
+    download_file(path)
         
     if os.path.exists(f"{path}/report.pdf"):
         print ('------------------------------------')
@@ -163,5 +164,53 @@ def create_report(path , current_time):
         print ('------------------------------------')
         print(f"|     Failed Report Creation.      |")
         print ('------------------------------------')
+
+def read_pdf_file(path):
+
+    # Construct the path to the PDF file
+    pdf_path = path
+
+    # Open the PDF file in read-only mode
+    with open(pdf_path, "rb") as f:
+        # Create a PDF object
+        pdf = PyPDF2.PdfReader(f)
+            
+        # Create a new PDF file to write to
+        output_pdf = PyPDF2.PdfWriter()
+
+        # Get the number of pages in the PDF
+        num_pages = len(pdf.pages)
+        text = ""
+        # Iterate through the pages of the PDF
+        for i in range(num_pages):
+            # Get the i-th page
+            page = pdf.pages[i]
+
+            # Extract the text from the page
+            output_pdf.add_page(page)
+
         
+        return output_pdf
+
+def download_file(path):
+    # Get the path to the downloads directory
+    downloads_dir = os.path.expanduser("~/Downloads")
+    time = path.rsplit("/", 1)[-1]
+    date = path.rsplit("/", 1)[1]
+    # Construct the path to the PDF file in the downloads directory
+    pdf_path = os.path.join(downloads_dir, f"report_{date}_{time}.pdf")
+
+    # Check if the file already exists
+    if os.path.exists(pdf_path):
+        # The file already exists, so you can decide what action to take here
+        print("The PDF file already exists in the downloads directory.")
+    else:
         
+        pdf_contents = read_pdf_file(f"{path}/report.pdf")
+        # Create a new file object in write mode
+        with open(pdf_path, "wb") as f:
+            # Write the contents of the PDF to the file
+            pdf_contents.write(f)
+
+        # Close the file
+        f.close()
