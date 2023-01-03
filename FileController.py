@@ -59,7 +59,7 @@ def read_xlsx_file_for_algo(directory = 'configuration' , filename = 'Algorithm.
           # Print the values in the column
           for cell in col:
             status = 'OFF'
-            if str(cell.value) == 'true':
+            if str(cell.value).lower() == 'true':
               status = 'ON '
             print('\n\n\n')
             print('------------------------------------')

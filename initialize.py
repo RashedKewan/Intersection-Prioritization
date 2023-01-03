@@ -22,11 +22,32 @@ pygame.display.set_caption("SIMULATION")
 # Set the dimensions of the dropdown menu
 menu_width = 75
 menu_height = 40
+
+
+
+
 # Create the options for the dropdown menu
 options = ["On", "Off"]
 
+def read_algorithm_activity():
+    # Open the workbook and sheet
+    workbook = openpyxl.load_workbook("configuration/Algorithm.xlsx")
+    sheet = workbook["Sheet1"]
+    if( sheet.cell(row=1, column=2).value.lower()  == 'true'):
+        return  options[0]
+    return  options[1]
+
+
+
+def read_simulation_time():
+    # Open the workbook and sheet
+    workbook = openpyxl.load_workbook("configuration/Simulation.xlsx")
+    sheet = workbook["Sheet1"]
+    return str(sheet.cell(row=1, column=2).value)
+    
+
 # Set the default option
-default_option = "Off"
+default_option = read_algorithm_activity()
 
 # Open the Excel workbook
 workbook = openpyxl.load_workbook('configuration/vehicles_db.xlsx')
@@ -123,9 +144,9 @@ input_rect = pygame.Rect(TABLE_LEFT+290,40, 75, 25)
 
 # Set up the font and text surface
 font = pygame.font.Font(None, 32)
-text_surface = font.render("15", True, (255, 255, 255))
+text_surface = font.render(read_simulation_time(), True, (255, 255, 255))
 # Set up the input string
-input_string = "15"
+input_string = read_simulation_time()
 
 
 
@@ -203,12 +224,19 @@ def set_algorithm_activity(is_active : bool = False):
 
     # Define the new column name
     new_column_name = f"{is_active}"
-    print(f">>>>>>>>  {new_column_name}")
     # Update the value of the cell
     sheet.cell(row=1, column=2).value = new_column_name
 
-    # Save the changes to the workbook
-    workbook.save("configuration/Algorithm.xlsx")
+   
+    
+    try:
+         # Save the changes to the workbook
+        workbook.save("configuration/Algorithm.xlsx")
+        print("algorithm_activity saved successfully")
+        return True
+    except Exception as e:
+        print("Error saving algorithm_activity:", e)
+        return False
 
 
 def set_simulation_time(sim_time:int = 15):
@@ -218,12 +246,18 @@ def set_simulation_time(sim_time:int = 15):
 
     # Define the new column name
     new_column_name = f"{sim_time}"
-    print(f">>>>>>>>  {new_column_name}")
     # Update the value of the cell
     sheet.cell(row=1, column=2).value = new_column_name
 
-    # Save the changes to the workbook
-    workbook.save("configuration/Simulation.xlsx")
+   
+    try:
+         # Save the changes to the workbook
+        workbook.save("configuration/Simulation.xlsx")
+        print("simulation_time saved successfully")
+        return True
+    except Exception as e:
+        print("Error saving simulation_time:", e)
+        return False
 
 
 
@@ -234,7 +268,7 @@ def run_thread(thread_name:str , thread_target,args=()):
     thread.start()
     return thread
 
-def handle_save_message():
+def handle_save_message(msg , color):
     timer = 500
     
     while(timer > 0):
@@ -242,7 +276,7 @@ def handle_save_message():
         font = pygame.font.Font(None, 30)
 
         # Create the text surface
-        text_surface = font.render("                                                  Your changes have been saved!                                                  ", True, (255,255,255),(154,205,50))
+        text_surface = font.render(f"                                                  {msg}                                                  ", True, (255,255,255),color)
 
         # Get the rectangle for the text surface
         text_rect = text_surface.get_rect()
@@ -257,21 +291,31 @@ def handle_save_message():
 
 
 def save_table():
+    vehicles_db_saved = False
     """Save the values in the table to the Excel workbook."""
     for row in range(1, 6):
         for col in range(1, 5):
             # Set the cell value in the worksheet
             worksheet.cell(row=row, column=col, value=table[row-1][col-1])
-    # Save the changes to the workbook
-    workbook.save('configuration/vehicles_db.xlsx')
+    
+    try:
+        # Save the changes to the workbook
+        workbook.save('configuration/vehicles_db.xlsx')
+        print("Workbook saved successfully")
+        vehicles_db_saved = True
+    except Exception as e:
+        print("Error saving workbook:", e)
+       
     active = False
     if(menu.selected_option == 'On'):
         active = True
-    set_algorithm_activity(is_active=active)
-    set_simulation_time(sim_time= int(input_string))
-    run_thread(thread_name='handle_save_message', thread_target= handle_save_message)
-    print('saved')
-
+    algorithm_activity_saved = set_algorithm_activity(is_active=active)
+    simulation_time_saved = set_simulation_time(sim_time= int(input_string))
+    if(algorithm_activity_saved and simulation_time_saved and vehicles_db_saved):
+        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes have been saved!",(154,205,50)))
+    else:
+        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes failed to save!",(255,99,71)))
+   
 
 
 
@@ -322,7 +366,7 @@ while running:
                 row = (event.pos[1] - TABLE_TOP) // CELL_HEIGHT
                 row -= 1
                 col = (event.pos[0] - TABLE_LEFT) // CELL_WIDTH
-                print(f"row {row }  col {col}")
+                #print(f"row {row }  col {col}")
                 if row > 0 and row < 5 and col > 0 and col < 4:
                     current_row = row
                     current_col = col
@@ -376,4 +420,4 @@ while running:
 
 # Quit pygame
 pygame.quit()
-subprocess.run(["python", "main.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.run(["python", "main.py"])
