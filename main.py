@@ -162,6 +162,7 @@ def show_loading_report():
 
 
 class Main:
+    GD.sim_time        = fc.read_xlsx_file_for_sim()+5
     algorithm_activity = fc.read_xlsx_file_for_algo()
     if( algorithm_activity.lower() == 'true'):
         GD.algorithm_active = True

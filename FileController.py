@@ -22,6 +22,24 @@ def get_current_time():
 
 
 
+def read_xlsx_file_for_sim(directory = 'configuration' , filename = 'Simulation.xlsx'):
+  file_path = f"{directory}/{filename}"
+
+  # Open the workbook
+  workbook = openpyxl.load_workbook(file_path)
+
+  # Get the sheet you want to access
+  sheet = workbook['Sheet1']
+
+  # Iterate over the columns in the sheet
+  for i,col in enumerate(sheet.columns):
+      # Find the column you want to access
+      if i == 1:
+          # Print the values in the column
+          for cell in col:
+            return int(cell.value)
+
+
 
 
 

@@ -124,7 +124,7 @@ def create_report(path , current_time):
     if( GD.algorithm_active ):
         algorithm_activity = 'ON'
     pdf_canvas.drawString(50, y   , f"Algorithm Activity Status : {algorithm_activity}")
-    pdf_canvas.drawString(50, y-15, f"Time Elapsed                  : {GD.time_elapsed}")
+    pdf_canvas.drawString(50, y-15, f"Time Elapsed                  : {GD.sim_time-5}")
     
 
     y = y - 30
