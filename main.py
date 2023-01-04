@@ -167,10 +167,12 @@ def show_loading_report():
 # Colours
 black = (0, 0, 0)
 white = (255, 255, 255)
+gray = (62,78,86)
+gray_dark =(88,111,123)#(69,69,69)
 
 # Set the dimensions of the dropdown menu
 menu_width = 75
-menu_height = 40
+menu_height = 25
 
 
 
@@ -229,19 +231,19 @@ class DropdownMenu:
     def draw(self, screen):
         # Draw the dropdown box
          # Draw the dropdown box
-        pygame.draw.rect(screen, (200, 200, 200), (self.x, self.y, self.width, self.height), 1)
+        pygame.draw.rect(screen, gray, (self.x, self.y, self.width, self.height),1)
 
         # Render the selected option
-        text = self.font.render(self.selected_option, 1, (0, 0, 0))
-        screen.blit(text, (self.x + 10, self.y + 10))
+        text = self.font.render(self.selected_option, 1, gray)
+        screen.blit(text, (self.x + 10, self.y ))
 
         # If the menu is open, draw the options
         if self.menu_open:
             y = self.y + self.height
             for option in self.options:
                 # Render the option
-                text = self.font.render(option, 1, (0, 0, 0))
-                screen.blit(text, (self.x + 10, y + 10))
+                text = self.font.render(option, 1, gray)
+                screen.blit(text, (self.x + 10, y ))
                 # Increment the y position for the next option
                 y += self.height
 
@@ -266,22 +268,22 @@ class DropdownMenu:
 
 
 
-
+font = pygame.font.SysFont('Arial', 22)
 # Set the font and the font size
-font = pygame.font.Font(None, 32)
+#font = pygame.font.Font(None, 32)
 # Create the dropdown menu
 menu = DropdownMenu(menu_width, menu_height, options, default_option, font)
 
 # Set the position of the dropdown menu
-menu_x = TABLE_LEFT+TABLE_WIDTH-40-menu_width
-menu_y = 25
+menu_x = TABLE_WIDTH-50-menu_width
+menu_y = 40
 menu.set_position(menu_x, menu_y)
 
-font_size:int = 24
-font = pygame.font.SysFont('Arial', 18)
+
+
 
 # Create a font for the table cells
-font = pygame.font.Font(None, font_size)
+#font = pygame.font.Font(None, font_size)
 
 # Create a surface to draw the table on
 table_surface = pygame.Surface((TABLE_WIDTH, TABLE_HEIGHT))
@@ -289,10 +291,10 @@ table_surface = pygame.Surface((TABLE_WIDTH, TABLE_HEIGHT))
 
 
 # Define the input rectangle
-input_rect = pygame.Rect(TABLE_LEFT+290,40, 75, 25)
+input_rect = pygame.Rect(TABLE_LEFT+270,40, 75, 25)
 
 # Set up the font and text surface
-font = pygame.font.Font(None, 32)
+#font = pygame.font.Font(None, 32)
 text_surface = font.render(read_simulation_time(), True, (255, 255, 255))
 # Set up the input string
 input_string = read_simulation_time()
@@ -303,7 +305,7 @@ input_string = read_simulation_time()
 
 def create_text(displayText , position, font_size,font_color):
     # Create the font object with the specified size
-    font = pygame.font.Font(None, font_size)
+    font = pygame.font.SysFont('Arial', 22)
 
     # Create the text surface
     text_surface = font.render(displayText, True, font_color)
@@ -333,7 +335,7 @@ def create_save_button():
 
     # Create the surface to display the Save button on
     save_button_surface = pygame.Surface((CELL_WIDTH, 50))
-    save_button_surface.fill((0, 0, 255))
+    save_button_surface.fill(gray_dark)
     save_button_surface.blit(save_button_text, (CELL_WIDTH // 2 - save_button_text.get_width() // 2, 25 - save_button_text.get_height() // 2))
 
 
@@ -348,7 +350,7 @@ def create_start_button():
 
     # Create the surface to display the Start button on
     start_button_surface = pygame.Surface((CELL_WIDTH, 50))
-    start_button_surface.fill((0, 0, 255))
+    start_button_surface.fill(gray_dark)
     start_button_surface.blit(start_button_text, (CELL_WIDTH // 2 - start_button_text.get_width() // 2, 25 - start_button_text.get_height() // 2))
 
 
@@ -366,11 +368,12 @@ def draw_table():
         for col in range(4):
             # Calculate the cell rect
             cell_rect = pygame.Rect(TABLE_LEFT + col * CELL_WIDTH, TABLE_TOP + row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT)
+           
             # Draw the cell rect
-            pygame.draw.rect(table_surface, black, cell_rect, 1)
+            pygame.draw.rect(table_surface, gray, cell_rect, 1)
             # Render the cell text
             text = table[row][col]
-            cell_text = font.render((str(text)).encode('utf-8'), True, black)
+            cell_text = font.render((str(text)).encode('utf-8'), True, gray)
             # Calculate the position of the cell text
             cell_text_pos = (TABLE_LEFT + col * CELL_WIDTH + CELL_WIDTH // 2 - cell_text.get_width() // 2, TABLE_TOP + row * CELL_HEIGHT + CELL_HEIGHT // 2 - cell_text.get_height() // 2)
             # Draw the cell text
@@ -433,13 +436,13 @@ def handle_save_message(msg , color):
         font = pygame.font.Font(None, 30)
 
         # Create the text surface
-        text_surface = font.render(f"                                                  {msg}                                                  ", True, (255,255,255),color)
+        text_surface = font.render(f"                                                                         {msg}                                                                         ", True, (255,255,255),color)
 
         # Get the rectangle for the text surface
         text_rect = text_surface.get_rect()
 
         # Set the position of the text rectangle
-        text_rect.center = (550,15) 
+        text_rect.center = (550,10) 
 
         # Draw the text to the screen
         screen.blit(text_surface, text_rect)
@@ -469,7 +472,7 @@ def save_table():
     algorithm_activity_saved = set_algorithm_activity(is_active=active)
     simulation_time_saved = set_simulation_time(sim_time= int(input_string))
     if(algorithm_activity_saved and simulation_time_saved and vehicles_db_saved):
-        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes have been saved!",(154,205,50)))
+        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes have been saved!",(111,149,111)))
     else:
         run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes failed to save!",(255,99,71)))
    
@@ -568,16 +571,16 @@ def init():
         screen.blit(start_button_surface, start_button)
         # Draw the table surface on the window
         screen.blit(table_surface, (TABLE_LEFT, TABLE_TOP))
-        create_text('Algorithm Activity Status : ', (menu_x-150,50) ,32,(0,0,0))
+        create_text('Algorithm Activity Status : ', (menu_x-130,50) ,32,gray)
         # Draw the dropdown menu
         menu.draw(screen)
 
 
-        create_text('Simulation Time : ', (250,50) ,32,(0,0,0))
+        create_text('Simulation Time : ', (250,50) ,32,gray)
         # Update the text surface with the input string
-        text_surface = font.render(input_string, True, (0,0,0))
+        text_surface = font.render(input_string, True, gray)
         # Draw the input rectangle to the screen
-        pygame.draw.rect(screen, (200, 200, 200), input_rect, 1)
+        pygame.draw.rect(screen, gray_dark, input_rect, 1)
         # Draw the text surface to the screen
         screen.blit(text_surface, input_rect.topleft)
 
