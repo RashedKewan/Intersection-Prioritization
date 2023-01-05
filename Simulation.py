@@ -203,7 +203,7 @@ def simulation_time():
             print('Total time passed: ', GD.time_elapsed)
             print('No. of vehicles passed per unit time: ',
                   (float(total_vehicles) / float(GD.time_elapsed)))
-            time.sleep(1)
-            os._exit(1)
+            # time.sleep(1)
+            # os._exit(1)
 
 

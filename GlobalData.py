@@ -248,6 +248,10 @@ font_size:int = 30
 # Colours
 black = (0, 0, 0)
 white = (255, 255, 255)
+gray = (62,78,86)
+gray_dark =(88,111,123)#(69,69,69)
+gray_fatih = (188,197,202)
+
 
 # Screensize
 screen_width:int = 1100
@@ -262,15 +266,17 @@ yellow_signal_img_88 = pygame.image.load('images/signals/yellow_88.png')
 green_signal_88 = pygame.image.load('images/signals/green_88.png')
 
 
-red_signal_img= pygame.image.load('images/signals/red.png')
-yellow_signal_img = pygame.image.load('images/signals/yellow.png')
-green_signal = pygame.image.load('images/signals/green.png')
-non_signal = pygame.image.load('images/signals/non.png')
-background = pygame.image.load('images/street.png')
-background_white = pygame.image.load('images/bg-white.png')
-loading = pygame.image.load('images/loading.jpg')
-data_analysis = pygame.image.load('images/data_analysis.png')
-report = pygame.image.load('images/report.png')
+red_signal_img                = pygame.image.load('images/signals/red.png')
+yellow_signal_img             = pygame.image.load('images/signals/yellow.png')
+green_signal                  = pygame.image.load('images/signals/green.png')
+non_signal                    = pygame.image.load('images/signals/non.png')
+background                    = pygame.image.load('images/street.png')
+background_white              = pygame.image.load('images/bg-white.png')
+loading                       = pygame.image.load('images/loading.jpg')
+data_analysis                 = pygame.image.load('images/data_analysis.png')
+report                        = pygame.image.load('images/report.png')
+current_config_downloading    = pygame.image.load('images/current_config_downloading.png')
+overall_config_downloading    = pygame.image.load('images/overall_config_downloading.png')
 
 
 # Default values of signal times

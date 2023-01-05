@@ -10,6 +10,8 @@ import FileController as fc
 import PDFReport as pdf
 from reportlab.pdfgen import canvas
 import openpyxl
+from DropdownMenu import DropdownMenu
+import numpy as np
 
 def run_thread(thread_name:str , thread_target,args=()):
     thread = threading.Thread(name=thread_name, target=thread_target, args=args)
@@ -101,41 +103,48 @@ def signals_conroller(intersection):
                 display_signal_timer_and_vehicle_count_for_each_signal(intersection ,signal_number = i , signal_texts = signal_texts)
 
 
-
+path = ''
     
 def output():
+    global path
     # Check if the directory exists
     if not os.path.exists('temp'):
         # Create the directory
         os.makedirs('temp')
-        
     path , current_time = fc.create_directory()
-    fc.create_xlsx_file()
+    fc.copy_file(src='configuration/Algorithm.xlsx' , dst=path)   
+    fc.copy_file(src='configuration/vehicles_db.xlsx' , dst=path)   
+    
+    fc.create_xlsx_file(path)
     for vehicle in sim.simulation:
         data = { 
             'vehicle_type':vehicle.vehicle_class, 
             'vehicle_speed_avg':vehicle.speed_avg
             }
-        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )
+        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  ,path=path)
     if(len(sim.simulation) <= 0):
         data = { 
             'vehicle_type':"", 
             'vehicle_speed_avg':0
             }
-        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data  )
+        fc.append_dict_to_xlsx( filename= 'vehicles_avg_speeds.xlsx' , data=data ,path=path )
     # Plot the average speeds for the specified vehicle types
-    fc.plot_average_speeds_for_each_vehicle_type()
-    fc.plot_vehicle_average_speed()
-    pdf.create_report(path , current_time)
-   
+    fc.plot_average_speeds_for_each_vehicle_type(path)
+    fc.plot_vehicle_average_speed(path)
+    pdf.create_report_for_current_configuration(path , current_time)
+
+    if(len(os.listdir(path.rsplit('/', 1)[0])) %2 == 0):
+        fc.create_simulations_data(path)
+        fc.plot_simulations_data(path)
+        pdf.create_report_for_overall_configurations(path,current_time)
+    
 
 def to_percent(fraction):
     percent = int(round(fraction * 100))
     return f"{percent}%" , percent
 
 def create_text(displayText , position, font_size,font_color):
-    # Create the font object with the specified size
-    font = pygame.font.Font(None, font_size)
+    font = pygame.font.SysFont('Arial', 22)
 
     # Create the text surface
     text_surface = font.render(displayText, True, font_color)
@@ -151,7 +160,7 @@ def create_text(displayText , position, font_size,font_color):
 
 def show_loading_report():
     temp =  GD.sim_time -5  
-    while(GD.sim_time > GD.time_elapsed ):
+    while(True ):
         screen.blit(GD.background_white, (0, 0))
         displayText , percent = to_percent(( GD.time_elapsed - GD.sim_time ) / (temp))
         displayText = 100 + 2*percent
@@ -163,12 +172,6 @@ def show_loading_report():
 ###############################################################################################################################
 ###############################################################################################################################
 ###############################################################################################################################
-
-# Colours
-black = (0, 0, 0)
-white = (255, 255, 255)
-gray = (62,78,86)
-gray_dark =(88,111,123)#(69,69,69)
 
 # Set the dimensions of the dropdown menu
 menu_width = 75
@@ -194,7 +197,7 @@ def read_simulation_time():
     # Open the workbook and sheet
     workbook = openpyxl.load_workbook("configuration/Simulation.xlsx")
     sheet = workbook["Sheet1"]
-    return str(sheet.cell(row=1, column=2).value)
+    return str(sheet.cell(row=1, column=2).value),str(sheet.cell(row=2, column=2).value)
     
 
 # Set the default option
@@ -214,64 +217,7 @@ TABLE_HEIGHT = 600
 CELL_WIDTH = TABLE_WIDTH // 5
 CELL_HEIGHT = TABLE_HEIGHT // 6
 
-class DropdownMenu:
-    def __init__(self, width, height, options, default_option, font):
-        self.width = width
-        self.height = height
-        self.options = options
-        self.default_option = default_option
-        self.font = font
-        self.selected_option = default_option
-        self.menu_open = False
-
-    def set_position(self, x, y):
-        self.x = x
-        self.y = y
-
-    def draw(self, screen):
-        # Draw the dropdown box
-         # Draw the dropdown box
-        pygame.draw.rect(screen, gray, (self.x, self.y, self.width, self.height),1)
-
-        # Render the selected option
-        text = self.font.render(self.selected_option, 1, gray)
-        screen.blit(text, (self.x + 10, self.y ))
-
-        # If the menu is open, draw the options
-        if self.menu_open:
-            y = self.y + self.height
-            for option in self.options:
-                # Render the option
-                text = self.font.render(option, 1, gray)
-                screen.blit(text, (self.x + 10, y ))
-                # Increment the y position for the next option
-                y += self.height
-
-    def toggle_menu(self):
-        self.menu_open = not self.menu_open
-
-    def is_mouse_selection(self, pos):
-        if pos[0] > self.x and pos[0] < self.x + self.width and pos[1] > self.y and pos[1] < self.y + self.height:
-            return True
-        return False
-
-    def set_menu_selection(self, pos):
-        if self.menu_open:
-            y = self.y + self.height
-            for option in self.options:
-                if pos[1] > y and pos[1] < y + self.height:
-                    self.selected_option = option
-                    self.menu_open = False
-                y += self.height
-
-
-
-
-
 font = pygame.font.SysFont('Arial', 22)
-# Set the font and the font size
-#font = pygame.font.Font(None, 32)
-# Create the dropdown menu
 menu = DropdownMenu(menu_width, menu_height, options, default_option, font)
 
 # Set the position of the dropdown menu
@@ -279,48 +225,56 @@ menu_x = TABLE_WIDTH-50-menu_width
 menu_y = 40
 menu.set_position(menu_x, menu_y)
 
-
-
-
-# Create a font for the table cells
-#font = pygame.font.Font(None, font_size)
-
 # Create a surface to draw the table on
 table_surface = pygame.Surface((TABLE_WIDTH, TABLE_HEIGHT))
-
-
-
 # Define the input rectangle
 input_rect = pygame.Rect(TABLE_LEFT+270,40, 75, 25)
-
-# Set up the font and text surface
-#font = pygame.font.Font(None, 32)
-text_surface = font.render(read_simulation_time(), True, (255, 255, 255))
+input_string,sim_id = read_simulation_time()
+text_surface = font.render(input_string, True, (255, 255, 255))
 # Set up the input string
-input_string = read_simulation_time()
 
 
 
 
+def create_overall_config_downloading_button(color = GD.gray_fatih):
+    """Create the Save button and its surface."""
+    global overall_config_downloading_button, overall_config_downloading_button_surface
 
-def create_text(displayText , position, font_size,font_color):
-    # Create the font object with the specified size
-    font = pygame.font.SysFont('Arial', 22)
+    # Create the Save button
+    overall_config_downloading_button = pygame.Rect(190, 450, CELL_WIDTH , 50)
+    overall_config_downloading_button_text = font.render('Download', True, (255, 255, 255))
 
-    # Create the text surface
-    text_surface = font.render(displayText, True, font_color)
-
-    # Get the rectangle for the text surface
-    text_rect = text_surface.get_rect()
-
-    # Set the position of the text rectangle
-    text_rect.center = position 
-
-    # Draw the text to the screen
-    screen.blit(text_surface, text_rect)
+    # Create the surface to display the Save button on
+    overall_config_downloading_button_surface = pygame.Surface((CELL_WIDTH, 50))
+    overall_config_downloading_button_surface.fill(color)
+    overall_config_downloading_button_surface.blit(overall_config_downloading_button_text, (CELL_WIDTH // 2 - overall_config_downloading_button_text.get_width() // 2, 25 - overall_config_downloading_button_text.get_height() // 2))
 
 
 
+def create_current_config_downloading_button(color = GD.gray_fatih):
+    """Create the Save button and its surface."""
+    global current_config_downloading_button, current_config_downloading_button_surface
+
+    # Create the Save button
+    current_config_downloading_button = pygame.Rect(690, 450, CELL_WIDTH , 50)
+    current_config_downloading_button_text = font.render('Download', True, (255, 255, 255))
+
+    # Create the surface to display the Save button on
+    current_config_downloading_button_surface = pygame.Surface((CELL_WIDTH, 50))
+    current_config_downloading_button_surface.fill(color)
+    current_config_downloading_button_surface.blit(current_config_downloading_button_text, (CELL_WIDTH // 2 - current_config_downloading_button_text.get_width() // 2, 25 - current_config_downloading_button_text.get_height() // 2))
+
+
+# def create_reset_button():
+#     """Create the Save button and its surface."""
+#     global reset_button, reset_button_surface
+
+#     reset_button = pygame.Rect(400, 78, CELL_WIDTH//2 , 25)
+#     reset_button_text = font.render('Reset', True, (255, 255, 255))
+
+#     reset_button_surface = pygame.Surface((CELL_WIDTH//2, 25))
+#     reset_button_surface.fill(gray_dark)
+#     reset_button_surface.blit(reset_button_text, (CELL_WIDTH // 4 - reset_button_text.get_width() // 2, reset_button_text.get_height() // 2 -10))
 
 
 
@@ -335,7 +289,7 @@ def create_save_button():
 
     # Create the surface to display the Save button on
     save_button_surface = pygame.Surface((CELL_WIDTH, 50))
-    save_button_surface.fill(gray_dark)
+    save_button_surface.fill(GD.gray_dark)
     save_button_surface.blit(save_button_text, (CELL_WIDTH // 2 - save_button_text.get_width() // 2, 25 - save_button_text.get_height() // 2))
 
 
@@ -346,11 +300,11 @@ def create_start_button():
 
     # Create the Save button
     start_button = pygame.Rect(TABLE_LEFT+TABLE_HEIGHT+150, TABLE_TOP + TABLE_HEIGHT + 10, CELL_WIDTH , 50)
-    start_button_text = font.render('Srart Simulation', True, (255, 255, 255))
+    start_button_text = font.render('Srart', True, (255, 255, 255))
 
     # Create the surface to display the Start button on
     start_button_surface = pygame.Surface((CELL_WIDTH, 50))
-    start_button_surface.fill(gray_dark)
+    start_button_surface.fill(GD.gray_dark)
     start_button_surface.blit(start_button_text, (CELL_WIDTH // 2 - start_button_text.get_width() // 2, 25 - start_button_text.get_height() // 2))
 
 
@@ -363,17 +317,17 @@ def draw_table():
     global table_surface
 
     # Draw the table
-    table_surface.fill(white)
+    table_surface.fill(GD.white)
     for row in range(5):
         for col in range(4):
             # Calculate the cell rect
             cell_rect = pygame.Rect(TABLE_LEFT + col * CELL_WIDTH, TABLE_TOP + row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT)
            
             # Draw the cell rect
-            pygame.draw.rect(table_surface, gray, cell_rect, 1)
+            pygame.draw.rect(table_surface, GD.gray, cell_rect, 1)
             # Render the cell text
             text = table[row][col]
-            cell_text = font.render((str(text)).encode('utf-8'), True, gray)
+            cell_text = font.render((str(text)).encode('utf-8'), True, GD.gray)
             # Calculate the position of the cell text
             cell_text_pos = (TABLE_LEFT + col * CELL_WIDTH + CELL_WIDTH // 2 - cell_text.get_width() // 2, TABLE_TOP + row * CELL_HEIGHT + CELL_HEIGHT // 2 - cell_text.get_height() // 2)
             # Draw the cell text
@@ -381,100 +335,148 @@ def draw_table():
 
 
 
-
-
-
-def set_algorithm_activity(is_active : bool = False):
+def read_sim_numbers():
+    path = f"configuration/Simulation.xlsx"
     # Open the workbook and sheet
-    workbook = openpyxl.load_workbook("configuration/Algorithm.xlsx")
+    workbook = openpyxl.load_workbook(path)
     sheet = workbook["Sheet1"]
 
-    # Define the new column name
-    new_column_name = f"{is_active}"
     # Update the value of the cell
-    sheet.cell(row=1, column=2).value = new_column_name
-
-   
+    return sheet.cell(row=2, column=2).value 
     
-    try:
-         # Save the changes to the workbook
-        workbook.save("configuration/Algorithm.xlsx")
-        print("algorithm_activity saved successfully")
-        return True
-    except Exception as e:
-        print("Error saving algorithm_activity:", e)
-        return False
 
-
-def set_simulation_time(sim_time:int = 15):
+def set_sim_numbers(number):
+    path = f"configuration/Simulation.xlsx"
     # Open the workbook and sheet
-    workbook = openpyxl.load_workbook("configuration/Simulation.xlsx")
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook["Sheet1"]
+
+    # Update the value of the cell
+    sheet.cell(row=2, column=2).value = f"{number}"
+    workbook.save(path)
+    
+
+def save_data(value , filename):
+    path = f"configuration/{filename}.xlsx"
+    # Open the workbook and sheet
+    workbook = openpyxl.load_workbook(path)
     sheet = workbook["Sheet1"]
 
     # Define the new column name
-    new_column_name = f"{sim_time}"
+    new_column_name = f"{value}"
     # Update the value of the cell
     sheet.cell(row=1, column=2).value = new_column_name
+    if(filename == 'Simulation'):
+        sheet.cell(row=2, column=2).value = '0'
 
-   
     try:
+
          # Save the changes to the workbook
-        workbook.save("configuration/Simulation.xlsx")
-        print("simulation_time saved successfully")
+        workbook.save(path)
+        print(f"successfully data saved on {filename}.xlsx")
         return True
     except Exception as e:
-        print("Error saving simulation_time:", e)
+        print(f"Error saving {filename}.xlsx data : {e}")
         return False
 
-
+# Create a lock object
+lock = threading.Lock()
 
 def handle_save_message(msg , color):
-    timer = 500
-    
-    while(timer > 0):
-        # Create the font object with the specified size
-        font = pygame.font.Font(None, 30)
-
-        # Create the text surface
-        text_surface = font.render(f"                                                                         {msg}                                                                         ", True, (255,255,255),color)
-
-        # Get the rectangle for the text surface
-        text_rect = text_surface.get_rect()
-
-        # Set the position of the text rectangle
-        text_rect.center = (550,10) 
-
-        # Draw the text to the screen
-        screen.blit(text_surface, text_rect)
-        timer -=1
+    # Acquire the lock
+    lock.acquire()
+    try:
+        timer = 500
         
+        while(timer > 0):
+            # Create the font object with the specified size
+            font = pygame.font.Font(None, 30)
+
+            # Create the text surface
+            text_surface = font.render(f"                                                                         {msg}                                                                         ", True, (255,255,255),color)
+
+            # Get the rectangle for the text surface
+            text_rect = text_surface.get_rect()
+
+            # Set the position of the text rectangle
+            text_rect.center = (550,10) 
+
+            # Draw the text to the screen
+            screen.blit(text_surface, text_rect)
+            timer -=1
+    finally:
+        # Release the lock when finished
+        lock.release()
+
+def append_failed_field(failed_data , field_name):
+    if(len(failed_data) == 0):
+        failed_data += field_name
+    else:
+        failed_data += f', {field_name}'
+    return failed_data
+
+def save_table_data():
+    workbook = openpyxl.load_workbook('configuration/vehicles_db.xlsx')
+    sheet = workbook["Sheet1"]
+    max_vehicles = 48
+    vehicles_counter = 0
+    for row in range(2, 6):
+        vehicles_counter += int(table[row-1][3])
+
+
+    path = ''
+    generating_number_error = -1
+    if(vehicles_counter < max_vehicles):
+        """Save the values in the table to the Excel workbook."""
+        for row in range(1, 6):
+            for col in range(1, 5):
+                # Set the cell value in the worksheet
+                print(table[row-1][col-1])
+                sheet.cell(row=row, column=col, value=table[row-1][col-1])
+        path = 'configuration/vehicles_db.xlsx'
+        generating_number_error = 0
+        
+    try:
+        # Save the changes to the workbook
+        print(path)
+        workbook.save(path)
+        print(f"successfully data saved on vehicles_db.xlsx")
+        return 1
+    except Exception as e:
+        print(f"Error saving vehicles_db.xlsx data : {e}")
+        return generating_number_error
+
 
 
 def save_table():
-    vehicles_db_saved = False
-    """Save the values in the table to the Excel workbook."""
-    for row in range(1, 6):
-        for col in range(1, 5):
-            # Set the cell value in the worksheet
-            worksheet.cell(row=row, column=col, value=table[row-1][col-1])
-    
-    try:
-        # Save the changes to the workbook
-        workbook.save('configuration/vehicles_db.xlsx')
-        print("Workbook saved successfully")
-        vehicles_db_saved = True
-    except Exception as e:
-        print("Error saving workbook:", e)
-       
+    failed_data = ""
     active = False
     if(menu.selected_option == 'On'):
         active = True
-    algorithm_activity_saved = set_algorithm_activity(is_active=active)
-    simulation_time_saved = set_simulation_time(sim_time= int(input_string))
-    if(algorithm_activity_saved and simulation_time_saved and vehicles_db_saved):
+
+    vehicles_db_saved        = save_table_data()
+    algorithm_activity_saved = save_data(value = active            , filename = 'Algorithm')
+    simulation_time_saved    = save_data(value = int(input_string) , filename = 'Simulation')
+    
+    
+    if(vehicles_db_saved != 1) :
+        failed_data = append_failed_field(failed_data , field_name='Vehicles Table')
+
+    if(not algorithm_activity_saved):
+        failed_data = append_failed_field(failed_data , field_name='Algorithm Status Activity')
+       
+    if(not simulation_time_saved):
+        failed_data = append_failed_field(failed_data , field_name='Simulation Time')
+
+
+
+    if(algorithm_activity_saved and simulation_time_saved and vehicles_db_saved == 1):
         run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes have been saved!",(111,149,111)))
     else:
-        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Your changes failed to save!",(255,99,71)))
+        if( vehicles_db_saved == -1):
+            run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"Your overall generating numbers exeeds the max=48. Please make a change and try again.",(255,99,71)))
+        else:
+            run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"Failed to save changes for : {failed_data}!",(255,99,71)))
    
 
 
@@ -490,12 +492,16 @@ for row in worksheet.iter_rows():
     table.append(table_row)
 
 # Create the Save button and its surface
+#create_reset_button()
 create_save_button()
 create_start_button()
+create_overall_config_downloading_button()
+create_current_config_downloading_button()
+
 background_white = pygame.image.load('images/bg-white.png')
 # Run the game loop
 def init():
-    global input_string
+    global input_string,sim_id
     running = True
     input_enabled = False
     while running:
@@ -505,26 +511,31 @@ def init():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
+
+            
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                input_enabled = False
+                if menu.is_mouse_selection(event.pos):
+                    menu.toggle_menu()
+                else:
+                    menu.set_menu_selection(event.pos)
+                    
                 if input_rect.collidepoint(event.pos):
                     # Handle mouse button down events
                     if event.button == 1:
                         # Left mouse button clicked
                         # Enable input
                         input_enabled = True
-                    elif event.button == 3:
+                    # elif event.button == 3:
+                    else:
                         # Right mouse button clicked
                         # Disable input
                         input_enabled = False
-                if menu.is_mouse_selection(event.pos):
-                    menu.toggle_menu()
-                    print(menu.selected_option)
-                else:
-                    menu.set_menu_selection(event.pos)
-                    print(menu.selected_option)
                 # Check if the Save button was clicked
-                if save_button.collidepoint(event.pos):
+                elif save_button.collidepoint(event.pos):
                     save_table()
+                # elif reset_button.collidepoint(event.pos):
+                #     sim_id = 0
                 elif start_button.collidepoint(event.pos):
                     screen.fill((255, 255, 255))
                     running = False
@@ -565,31 +576,48 @@ def init():
                 
 
         
-        # Draw the table and the Save button
+        # Draw the table and the  buttons
         draw_table()
-        screen.blit(save_button_surface, save_button)
-        screen.blit(start_button_surface, start_button)
         # Draw the table surface on the window
         screen.blit(table_surface, (TABLE_LEFT, TABLE_TOP))
-        create_text('Algorithm Activity Status : ', (menu_x-130,50) ,32,gray)
+        screen.blit(save_button_surface, save_button)
+        screen.blit(start_button_surface, start_button)
+        #screen.blit(reset_button_surface, reset_button)
+        
+        create_text('Algorithm Activity Status : ', (menu_x-130,50) ,32,GD.gray)
         # Draw the dropdown menu
         menu.draw(screen)
 
 
-        create_text('Simulation Time : ', (250,50) ,32,gray)
+        create_text('Simulation Time  : ', (253,50) ,32,GD.gray)
         # Update the text surface with the input string
-        text_surface = font.render(input_string, True, gray)
+        text_surface = font.render(input_string, True, GD.gray)
         # Draw the input rectangle to the screen
-        pygame.draw.rect(screen, gray_dark, input_rect, 1)
+        pygame.draw.rect(screen, GD.gray_dark, input_rect, 1)
         # Draw the text surface to the screen
         screen.blit(text_surface, input_rect.topleft)
+       
+        create_text(f'Simulations NO. :  {sim_id}', (263,90) ,32,GD.gray)
 
         pygame.display.update()
+
+
+
+
+def display_file_downloading_statuse(downloaded_path):
+    running = True
+    while running:
+        if(os.path.exists(f"{downloaded_path}")):
+            running = False
+            run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=("Report Downloaded Successfully!",(111,149,111)))
+
+
 ###############################################################################################################################
 ###############################################################################################################################
 ###############################################################################################################################
 class Main:
     init()
+    
     GD.sim_time        = fc.read_xlsx_file_for_sim()+5
     algorithm_activity = fc.read_xlsx_file_for_algo()
     if( algorithm_activity.lower() == 'true'):
@@ -631,17 +659,17 @@ class Main:
     #########################################################################################################################
     run_thread(thread_name="simulationTime" ,thread_target=sim.simulation_time)
     run_thread("initialization" ,sim.initialize)
-   
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                running = False
         if(GD.time_elapsed == GD.sim_time-5):
-            t1  = run_thread("show_loading_report" , show_loading_report)
+            # t1  = run_thread("show_loading_report" , show_loading_report)
             t2  = run_thread("output" , output)
-            t1.join()
-            t2.join()
-            sys.exit()
+            # t1.join()
+            # t2.join()
+            running = False
             
         
        
@@ -669,3 +697,77 @@ class Main:
 
 
 
+    sim_nums = int(read_sim_numbers())
+    sim_nums += 1
+    set_sim_numbers(str(sim_nums))
+
+    current_config_downloading_is_available = False
+    overall_config_downloading_is_available = False
+
+    running = True
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if current_config_downloading_button.collidepoint(event.pos):
+                    if(current_config_downloading_is_available):
+                        downloaded_path , can_download = pdf.download_file(path=path , report_name='report')
+                        if(can_download):
+                            run_thread(thread_name='display_file_downloading_statuse', thread_target= display_file_downloading_statuse,args=(downloaded_path,))
+                     
+                        else:
+                            run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"The PDF file already exists in the downloads directory.",(255,99,71)))
+                    else:
+                        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"File not available yet.",(255,99,71)))
+                           
+                elif overall_config_downloading_button.collidepoint(event.pos):
+                    if(overall_config_downloading_is_available):
+                        downloaded_path , can_download = pdf.download_file(path, report_name='simulations_report')
+                        if(can_download):
+                            run_thread(thread_name='display_file_downloading_statuse', thread_target= display_file_downloading_statuse,args=(downloaded_path,))
+                     
+                        else:
+                            run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"The PDF file already exists in the downloads directory.",(255,99,71)))
+                    else:
+                        run_thread(thread_name='handle_save_message', thread_target= handle_save_message,args=(f"File not available yet.",(255,99,71)))
+                      
+                    
+        # t1  = run_thread("show_loading_report" , show_loading_report)
+        # t2  = run_thread("output" , output)
+        # t1.join()
+        # t2.join()
+        screen.blit(GD.background_white, (0, 0))
+        # displayText , percent = to_percent(( GD.time_elapsed - GD.sim_time ) / (temp))
+        # displayText = 100 + 2*percent
+        font = pygame.font.SysFont('Arial', 40)
+
+        # Create the text surface
+        text_surface = font.render('Loading Reports', True, GD.gray)
+
+        # Get the rectangle for the text surface
+        text_rect = text_surface.get_rect()
+
+        # Set the position of the text rectangle
+        text_rect.center = ( 560,70) 
+
+        # Draw the text to the screen
+        screen.blit(text_surface, text_rect) 
+        
+        #screen.blit(GD.report, (337, 125))
+        x=230
+        y=280
+        screen.blit(GD.overall_config_downloading, (x, y))
+        screen.blit(GD.current_config_downloading, (x+500, y))
+        if(os.path.exists(f"{path}/report.pdf")):
+            current_config_downloading_is_available = True
+            create_current_config_downloading_button(GD.gray_dark)
+
+        if(os.path.exists(f"{path}/simulations_report.pdf")):
+            overall_config_downloading_is_available = True
+            create_overall_config_downloading_button(GD.gray_dark)
+
+        screen.blit(overall_config_downloading_button_surface, overall_config_downloading_button)
+        screen.blit(current_config_downloading_button_surface, current_config_downloading_button)
+        pygame.display.update()
