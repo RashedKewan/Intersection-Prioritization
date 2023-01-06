@@ -9,7 +9,7 @@ def algorithm_is_active(is_active : bool = False):
 
     # Define the new column name
     new_column_name = f"{is_active}"
-    print(f">>>>>>>>  {new_column_name}")
+    
     # Update the value of the cell
     sheet.cell(row=1, column=2).value = new_column_name
 

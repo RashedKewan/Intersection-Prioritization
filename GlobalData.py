@@ -1,20 +1,88 @@
 import pygame
 
 
-FGKJ:int  = 0
-NOSR:int  = 1
-intersections = {}
+# Colours
+black           = (  0,   0,   0)
+white           = (255, 255, 255)
+gray            = ( 62,  78,  86)
+gray_dark       = ( 88, 111, 123)
+gray_fatih      = (188, 197, 202)
+
+
+
+FGKJ      :int  = 0
+NOSR      :int  = 1
+
 # vehicle typpes
-CAR:str = 'car'
-BUS:str = 'bus'
-TRUCK:str = 'truck'
-MOTORCYCLE:str = 'motorcycle'
+CAR       :str  = 'car'
+BUS       :str  = 'bus'
+TRUCK     :str  = 'truck'
+MOTORCYCLE:str  = 'motorcycle'
 
 # directions
-RIGHT:str = 'right'
-LEFT:str = 'left'
-UP :str= 'up'
-DOWN :str= 'down'
+RIGHT     :str  = 'right'
+LEFT      :str  = 'left'
+UP        :str  = 'up'
+DOWN      :str  = 'down'
+
+
+# Loading signal images and font
+red_signal_img_88             = pygame.image.load('images/signals/red_88.png')
+yellow_signal_img_88          = pygame.image.load('images/signals/yellow_88.png')
+green_signal_88               = pygame.image.load('images/signals/green_88.png')
+red_signal_img                = pygame.image.load('images/signals/red.png')
+yellow_signal_img             = pygame.image.load('images/signals/yellow.png')
+green_signal                  = pygame.image.load('images/signals/green.png')
+non_signal                    = pygame.image.load('images/signals/non.png')
+background                    = pygame.image.load('images/street.png')
+background_white              = pygame.image.load('images/bg-white.png')
+loading                       = pygame.image.load('images/loading.jpg')
+data_analysis                 = pygame.image.load('images/data_analysis.png')
+report                        = pygame.image.load('images/report.png')
+current_config_downloading    = pygame.image.load('images/current_config_downloading.png')
+overall_config_downloading    = pygame.image.load('images/overall_config_downloading.png')
+
+
+# Default values of signal times
+default_red         :int   = 150
+default_yellow      :int   = 1
+default_green       :int   = 10
+default_minimum     :int   = 10
+default_maximum     :int   = 60
+
+# change this to change time of simulation
+sim_time            :int   = 15      
+time_elapsed        :int   = 0
+
+# Average times for vehicles to pass the intersection
+car_time            :int   = 2
+motorcycle_time     :int   = 1
+bus_time            :float = 2.5
+truck_time          :float = 2.5
+
+# Red signal time at which cars will be detected at a signal
+detection_time      :int   = 5
+rotation_angle      :int   = 3
+algorithm_active    :bool  = False
+# Gap between vehicles
+gap                 :int   = 12   # stopping gap
+gap2                :int   = 12   # moving gap
+
+# Font Size
+font_size           :int   = 30
+
+#speeds dictionary for each vehicle type
+speeds              :dict  = {}
+vehicles_weight     :dict  = {}
+vehicles_generating :dict  = {}
+intersections       :dict  = {}
+
+# Screensize
+screen_width        :int  = 1100
+screen_height       :int  = 800 
+screen_size               = (screen_width, screen_height)
+number_of_vehicles_to_be_generated:int = 10
+
 
 
 
@@ -23,7 +91,7 @@ DOWN :str= 'down'
 CD = 0
 IJ = 1
 KL = 2
-ST= 3
+ST = 3
 QR = 4
 WX = 5
 
@@ -32,7 +100,7 @@ A_I_ = 0
 D_F_ = 1
 J_Q_ = 2
 L_N_ = 3
-R_W_= 4
+R_W_ = 4
 T_V_ = 5
 
 #Left direction lanes
@@ -51,15 +119,55 @@ O_H_ = 3
 X_P_ = 4
 U_S_ = 5
 
-# overall vehicles per lane
-#lanes_quantity= [[0 for _ in range(6)] for _ in range(4)]
-lanes_quantity = {
-     RIGHT:[0,0,0,0,0,0],
-     DOWN :[0,0,0,0,0,0],
-     LEFT :[0,0,0,0,0,0],
-     UP   :[0,0,0,0,0,0]
-}
-#lanes_quantity= [[ streets[direction][lane][] for lane in range(6)] for direction in range(4)]
+
+
+
+vehicle_types    :dict = {
+     0: CAR,
+     1: BUS, 
+     2: TRUCK, 
+     3: MOTORCYCLE
+     }
+
+
+
+direction_numbers:dict = {
+     0: RIGHT,
+     1: DOWN,
+     2: LEFT,
+     3: UP}
+     
+
+
+default_stop     :dict = {
+     RIGHT: 580, 
+     DOWN : 320, 
+     LEFT : 810, 
+     UP   : 545
+     }
+
+
+
+stops            :dict = {
+     RIGHT: [580, 580, 580], 
+     DOWN : [320, 320, 320],
+     LEFT : [810, 810, 810], 
+     UP   : [545, 545, 545]
+     }
+
+
+
+# Coordinates of stop lines
+stop_lines       :dict = {
+     RIGHT: [370,635], 
+     DOWN : [225,480], 
+     LEFT : [493-55,745-55], 
+     UP   : [340-55,592-70]
+     }
+
+
+
+
 # LOOK IN DESIG FILE
 points = {
      'A' : { 'x' : 255 , 'y' : 5 },
@@ -130,6 +238,10 @@ points = {
 
      
 }
+
+
+
+
 
 
 streets = {
@@ -241,154 +353,49 @@ streets = {
      }
 }
 
-algorithm_active = False
-# Font Size
-font_size:int = 30
-
-# Colours
-black = (0, 0, 0)
-white = (255, 255, 255)
-gray = (62,78,86)
-gray_dark =(88,111,123)#(69,69,69)
-gray_fatih = (188,197,202)
 
 
-# Screensize
-screen_width:int = 1100
-screen_height:int = 800 #800
-screen_size = (screen_width, screen_height)
-
-# Loading signal images and font
-#ronen change all image type to be with the image name , like this
-
-red_signal_img_88= pygame.image.load('images/signals/red_88.png')
-yellow_signal_img_88 = pygame.image.load('images/signals/yellow_88.png')
-green_signal_88 = pygame.image.load('images/signals/green_88.png')
 
 
-red_signal_img                = pygame.image.load('images/signals/red.png')
-yellow_signal_img             = pygame.image.load('images/signals/yellow.png')
-green_signal                  = pygame.image.load('images/signals/green.png')
-non_signal                    = pygame.image.load('images/signals/non.png')
-background                    = pygame.image.load('images/street.png')
-background_white              = pygame.image.load('images/bg-white.png')
-loading                       = pygame.image.load('images/loading.jpg')
-data_analysis                 = pygame.image.load('images/data_analysis.png')
-report                        = pygame.image.load('images/report.png')
-current_config_downloading    = pygame.image.load('images/current_config_downloading.png')
-overall_config_downloading    = pygame.image.load('images/overall_config_downloading.png')
-
-
-# Default values of signal times
-default_red :int = 150
-default_yellow:int = 1
-default_green:int = 10
-default_minimum:int = 10
-default_maximum:int = 60
-
-# FGKJ_intersection.signals =[]
-# FGKJ_intersection.number_of_signals :int = 4
-sim_time :int = 15      # change this to change time of simulation
-time_elapsed :int = 0
-
-# Average times for vehicles to pass the intersection
-car_time :int = 2
-motorcycle_time :int = 1
-bus_time :float = 2.5
-truck_time :float = 2.5
-
-# Red signal time at which cars will be detected at a signal
-detection_time:int = 5
-
-speeds = {}
-
-# speeds:dict = {CAR: 2.25, BUS: 1.8, TRUCK: 1.8,
-#           MOTORCYCLE: 2.5}  # average speeds of vehicles
 
 vehicles_ = {
-     
-     RIGHT:{         # RIGHT
-          CD:
-               []
-          ,
-          IJ:
-              []
-          ,
-          KL:
-               []
-          ,
-          ST:
-              []
-          ,
-          QR:
-               []
-          
-          ,
-          WX:
-              []
-          
+     RIGHT:{         
+          CD:[],
+          IJ:[],
+          KL:[],
+          ST:[],
+          QR:[],
+          WX:[]  
      },
-     LEFT:{         # LEFT
-          BA:
-              []
-          ,
-          FE:
-              []
-          ,
-          HG:
-               []
-          ,
-          NM:
-              []
-          ,
-          PO:
-               []
-          ,
-          VU:
-               []
-          
+     LEFT:{         
+          BA:[],
+          FE:[],
+          HG:[],
+          NM:[],
+          PO:[],
+          VU:[]
      },
-     UP:{         # UP
-          E_C_:
-              []
-          ,
-          G_B_:
-               []
-          ,
-          M_K_:
-               []
-          ,
-          O_H_:
-               []
-          ,
-          X_P_:
-              []
-          ,
-          U_S_:
-               []
-          
+     UP:{         
+          E_C_:[],
+          G_B_:[],
+          M_K_:[],
+          O_H_:[],
+          X_P_:[],
+          U_S_:[]
      },
-     DOWN:{         # DOWN
-          A_I_:
-             []
-          ,
-          D_F_:
-               []
-          ,
-          J_Q_:
-               []
-          ,
-          L_N_:
-              []
-          ,
-          R_W_:
-              []
-          ,
-          T_V_:
-               []
-          
+     DOWN:{         
+          A_I_:[],
+          D_F_:[],
+          J_Q_:[],
+          L_N_:[],
+          R_W_:[],
+          T_V_:[]
      }
 }
+
+
+
+
 
 generating_coordinates = {
      
@@ -548,6 +555,11 @@ generating_coordinates = {
      }
 }
 
+
+
+
+
+
 steps_turning_vehicle:dict={
     
      CAR:{         
@@ -625,104 +637,46 @@ steps_turning_vehicle:dict={
 
 
 }
-cars_number:int = 10
-vehicles_generating:dict = {}
-
-
-vehicle_types:dict = {
-     0: CAR,
-     1: BUS, 
-     2: TRUCK, 
-     3: MOTORCYCLE
-     }
-
-
-vehicles_weight = {}
-    
-direction_numbers = {0: RIGHT, 1: DOWN, 2: LEFT, 3: UP}
-
-
-# Coordinates of stop lines
-stop_lines:dict = {
-     RIGHT: [370,635], 
-     DOWN : [225,480], 
-     LEFT : [493-55,745-55], 
-     UP   : [340-55,592-70]
-     }
 
 
 
-
-
-default_stop:dict = {RIGHT: 580, DOWN: 320, LEFT: 810, UP: 545}
-stops:dict = {RIGHT: [580, 580, 580], DOWN: [320, 320, 320],
-         LEFT: [810, 810, 810], UP: [545, 545, 545]}
-
-mid:dict = {
-     RIGHT: {
-          IJ:{
-               'x': 407, 
-               'y': 290
-               },
-          QR:{
-               'x': 680, 
-               'y': 525
-               }    
-          }, 
-     DOWN: {
-          IJ:{'x': 407, 'y': 290},
-          QR:{'x': 680, 'y': 525}    
-          }, 
-     LEFT: {
-          IJ:{'x': 407, 'y': 290},
-          QR:{'x': 680, 'y': 525}    
-          }, 
-     UP: {
-          IJ:{'x': 407, 'y': 290},
-          QR:{'x': 680, 'y': 525}    
-          },
-     }
-
-# rotate_factor = 70
-# directly = {RIGHT: {'x': 705-rotate_factor, 'y': 445}, DOWN: {'x': 695, 'y': 450-rotate_factor},
-#             LEFT: {'x': 695+rotate_factor - 20, 'y': 425}, UP: {'x': 695, 'y': 400+rotate_factor}}
 
 rotate_point:dict = {
      RIGHT: { 
-          # odd  represents short rotation
-          # even represents long  rotation
           CD:350,
           KL:595,
           ST:850,
-          WX:860 #
+          WX:860 
      },
      DOWN: {
-     # odd  represents short rotation
-          # even represents long  rotation
-          A_I_:195, #
-          J_Q_:425, #
-          R_W_:695, #
+          A_I_:195, 
+          J_Q_:425, 
+          R_W_:695, 
           T_V_:685
      },
      LEFT: {
-          # odd  represents short rotation
-          # even represents long  rotation
-          BA:205, #
+          BA:205, 
           FE:225,
           NM:480,
           VU:725
      }, 
      UP: {
-          # odd  represents short rotation
-          # even represents long  rotation
-          X_P_:590, #
-          O_H_:350, #
-          G_B_:95, #
+          X_P_:590, 
+          O_H_:350, 
+          G_B_:95, 
           E_C_:100
      }
      }
+
+
+
+
+
+
+
+
+
    
-rotation_angle = 3
 next_lane_of = {
      
      RIGHT:{        
@@ -795,6 +749,11 @@ intersection_lanes = {
      }
 }
 
+
+
+
+
+
 # how many vehicles crossed in each signal
 crossed = {
      FGKJ : {
@@ -828,10 +787,6 @@ crossed = {
           }
      }
 }
-# Gap between vehicles
-gap  = 12   # stopping gap
-gap2 = 12   # moving gap
-
 
 
 
@@ -863,6 +818,8 @@ circle_params_for_rotation = {
           T_V_:[ 1,0, 1,-1]      
      }
 }
+
+
 
 
 

@@ -5,32 +5,24 @@ import GlobalData as GD
 
 
 class VehicleClass(pygame.sprite.Sprite):
-    flag=False
-    def __init__(self, lane : int , vehicle_class : str, direction : int, will_turn_right : bool , will_turn_left : bool ,x : int , y : int ):
+    def __init__(self, lane : int , vehicle_class : str, direction : int,x : int , y : int ):
         pygame.sprite.Sprite.__init__(self)
-        self.lane = lane
-        self.vehicle_class = vehicle_class
-        self.speed = GD.speeds[vehicle_class]
-        self.direction = direction
-        self.x = x #GD.streets[direction][lane]['x'][0]#GD.x[direction][lane]
-        self.y = y #GD.streets[direction][lane]['y'][0]#GD.y[direction][lane]
-        self.crossed = 0
-        self.will_turn_right = will_turn_right
-        self.will_turn_left = will_turn_left
-        self.turned = 0
-        self.rotate_angle = 0
-        #GD.vehicles_[direction][lane].append(self)
-        #self.index = len(GD.vehicles_[direction][lane]) - 1
-        path = f"images//{direction}//{vehicle_class}.png"
-        self.original_image = pygame.image.load(path).convert_alpha()
-        self.current_image = pygame.image.load(path).convert_alpha()
-        
-        #######
-        self.image = self.current_image.get_rect()
-        self.all_sprites = pygame.sprite.Group(self) 
-        self.speed_avg = 0
-        self.Kilometre = 0
-
+        self.lane               = lane
+        self.vehicle_class      = vehicle_class
+        self.speed              = GD.speeds[vehicle_class]
+        self.direction          = direction
+        self.x                  = x 
+        self.y                  = y 
+        self.crossed            = 0
+        self.turned             = 0
+        self.rotate_angle       = 0
+        path                    = f"images//{direction}//{vehicle_class}.png"
+        self.original_image     = pygame.image.load(path).convert_alpha()
+        self.current_image      = pygame.image.load(path).convert_alpha()
+        self.image              = self.current_image.get_rect()
+        self.all_sprites        = pygame.sprite.Group(self) 
+        self.speed_avg          = 0
+        self.Kilometre          = 0
         sim.simulation.add(self)
 
 #############################################################################################################################
@@ -50,12 +42,12 @@ class VehicleClass(pygame.sprite.Sprite):
 #############################################################################################################################
         
     def apply_circle_rotation_helper(self):
-            center = pygame.math.Vector2(GD.circle_coordinates[self.direction][self.lane]['pos']) + pygame.math.Vector2( GD.circle_params_for_rotation[self.direction][self.lane][0] *GD.circle_coordinates[self.direction][self.lane]['radius'], GD.circle_params_for_rotation[self.direction][self.lane][1] *GD.circle_coordinates[self.direction][self.lane]['radius'] ).rotate( GD.circle_params_for_rotation[self.direction][self.lane][2] *self.rotate_angle )
-            self.image = pygame.transform.rotate(self.original_image, GD.circle_params_for_rotation[self.direction][self.lane][3]*self.rotate_angle)
-            self.rect = self.image.get_rect(center = (round(center.x), round(center.y)))
+            center            = pygame.math.Vector2(GD.circle_coordinates[self.direction][self.lane]['pos']) + pygame.math.Vector2( GD.circle_params_for_rotation[self.direction][self.lane][0] *GD.circle_coordinates[self.direction][self.lane]['radius'], GD.circle_params_for_rotation[self.direction][self.lane][1] *GD.circle_coordinates[self.direction][self.lane]['radius'] ).rotate( GD.circle_params_for_rotation[self.direction][self.lane][2] *self.rotate_angle )
+            self.image        = pygame.transform.rotate(self.original_image, GD.circle_params_for_rotation[self.direction][self.lane][3]*self.rotate_angle)
+            self.rect         = self.image.get_rect(center = (round(center.x), round(center.y)))
             self.rotate_angle = (self.rotate_angle + 1.9) % 90
-            self.x = self.rect.x
-            self.y = self.rect.y
+            self.x            = self.rect.x
+            self.y            = self.rect.y
 
     def apply_circle_rotation(self,screen):
         if(self.rotate_angle < 88):
@@ -68,17 +60,16 @@ class VehicleClass(pygame.sprite.Sprite):
 
 #############################################################################################################################
 
-    def move_(self,screen):
+    def move(self,screen):
         prev_x = self.x
         prev_y = self.y
-        ### added
         rotate_prossece_on = False
-        ### 
+       
         # RIGHT
-        if(GD.cars_number>0):
+        if(GD.number_of_vehicles_to_be_generated>0):
             return
         if(self.direction == GD.RIGHT):
-            current_position   = self.x + 5#self.current_image.get_rect().width
+            current_position   = self.x + 5
             
             if(self.lane in [ GD.CD , GD.KL , GD.ST , GD.WX ]):
                 rotation_point     = GD.rotate_point[self.direction][self.lane]
@@ -169,11 +160,9 @@ class VehicleClass(pygame.sprite.Sprite):
                                                     vehicle_crossed_intersection    or 
                                                     signal_not_red                
                                                 ) and (
-                                                    #(self.index == 0)               or 
-                                                    vehicle_can_move_without_crash         #((GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1)))
+                                                    vehicle_can_move_without_crash         
                                                 )
-                        #if( (GD.vehicles_[self.direction][self.lane]) > 1 )
-                        #if red
+                       
                         if(not signal_not_red):
                             if(vehicle_didnt_reaches_stop_line ):
                                 if(not vehicle_is_first and self.x + self.current_image.get_rect().width + GD.gap + self.speed < GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].x ):
@@ -209,7 +198,7 @@ class VehicleClass(pygame.sprite.Sprite):
                             elif(self.lane == GD.QR ):
                                 self.lane = GD.ST
 
-                            GD.vehicles_[self.direction][self.lane].append(self) #add the car to the next lane
+                            GD.vehicles_[self.direction][self.lane].append(self) 
                     else:
                         vehicle_didnt_reaches_stop_line = (self.x+self.current_image.get_rect().width <= GD.stop_lines[self.direction][intersection])
                         vehicle_can_move_without_crash  = (self.x + self.current_image.get_rect().width + GD.gap + self.speed < GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].x) 
@@ -226,7 +215,7 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # DOWN                    
         if(self.direction == GD.DOWN):
-            current_position   = self.y #+ self.current_image.get_rect().height -15
+            current_position   = self.y 
             
             if(self.lane in [ GD.A_I_ , GD.J_Q_ , GD.R_W_ , GD.T_V_ ]):
                 rotation_point     = GD.rotate_point[self.direction][self.lane]
@@ -278,7 +267,7 @@ class VehicleClass(pygame.sprite.Sprite):
                         GD.vehicles_[self.direction][self.lane].pop(0)
                         self.direction = next_direction
                         self.lane      = next_lane
-                        GD.vehicles_[self.direction][self.lane].append(self) #add the car to the next lane
+                        GD.vehicles_[self.direction][self.lane].append(self)
                         self.rotate_angle = 0
                         self.original_image = self.current_image
                  
@@ -314,8 +303,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                                     vehicle_crossed_intersection    or 
                                                     signal_not_red                
                                                 ) and (
-                                                    #(self.index == 0)               or 
-                                                    vehicle_can_move_without_crash         #((GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1)))
+                                                    vehicle_can_move_without_crash 
                                                 )
                         #if red
                         if(not signal_not_red):
@@ -337,9 +325,7 @@ class VehicleClass(pygame.sprite.Sprite):
                         if(self.lane == GD.L_N_):
                             image_has_crossed_stop_line_now =  current_position >= GD.stop_lines[self.direction][GD.NOSR]    
                         if(image_has_crossed_stop_line_now):
-                            #GD.vehicles_[self.direction][self.lane].pop(0)
-                            #for vehicle in GD.vehicles_[self.direction][self.lane]:
-                            #   vehicle.index = vehicle.index-1
+                           
                             GD.vehicles_[self.direction][self.lane].pop(0)
 
                             self.crossed = 1
@@ -348,13 +334,12 @@ class VehicleClass(pygame.sprite.Sprite):
                                 GD.crossed[GD.FGKJ][self.direction]['crossed'] += 1
                             else:
                                 GD.crossed[GD.NOSR][self.direction]['crossed'] += 1
-                            #self.y = self.y + 5*self.speed  
-                                
+                         
                             if(self.lane == GD.D_F_ ):
                                 self.lane = GD.J_Q_
                             elif(self.lane == GD.L_N_ ):
                                 self.lane = GD.R_W_
-                            GD.vehicles_[self.direction][self.lane].append(self) #add the car to the next lane
+                            GD.vehicles_[self.direction][self.lane].append(self) 
                     else:
                         vehicle_didnt_reaches_stop_line = (self.y+self.current_image.get_rect().height <= GD.stop_lines[self.direction][intersection])
                         vehicle_can_move_without_crash  = (self.y + self.current_image.get_rect().height + GD.gap + self.speed < GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].y) 
@@ -364,7 +349,7 @@ class VehicleClass(pygame.sprite.Sprite):
 
         # LEFT   
         if(self.direction == GD.LEFT):
-            current_position   = self.x #self.current_image.get_rect().width
+            current_position   = self.x 
 
             if(self.lane in [ GD.BA , GD.FE , GD.NM , GD.VU ]):
                 rotation_point     = GD.rotate_point[self.direction][self.lane]
@@ -415,7 +400,7 @@ class VehicleClass(pygame.sprite.Sprite):
                         GD.vehicles_[self.direction][self.lane].pop(0)
                         self.direction = next_direction
                         self.lane      = next_lane
-                        GD.vehicles_[self.direction][self.lane].append(self) #add the car to the next lane
+                        GD.vehicles_[self.direction][self.lane].append(self) 
                         self.rotate_angle = 0
                         
                         self.original_image = self.current_image
@@ -435,18 +420,12 @@ class VehicleClass(pygame.sprite.Sprite):
             elif(self.lane in [ GD.PO , GD.HG ]):
                 next_direction     = GD.next_lane_of[self.direction][self.lane][0]
                 next_lane          = GD.next_lane_of[self.direction][self.lane][1]
-                #  intersection
+               
                 intersection = GD.FGKJ 
                 if(self.lane == GD.PO ):
                     intersection = GD.NOSR
                 if(len(GD.vehicles_[next_direction][next_lane])<3):
-                        #  intersection    
-                    
-                    
-                    
-                    # if(len(GD.vehicles_[self.direction][self.lane])==1):
-                    #     self.x = self.x + self.speed
-                    #         #add green color check 
+                   
                     vehicle_is_first                = ( GD.vehicles_[self.direction][self.lane].index(self) == 0)
                     vehicle_didnt_reaches_stop_line = (self.x-self.current_image.get_rect().width >= GD.stop_lines[self.direction][intersection])
                     vehicle_crossed_intersection    = (self.crossed == 1 )
@@ -457,10 +436,9 @@ class VehicleClass(pygame.sprite.Sprite):
                                                 vehicle_crossed_intersection    or 
                                                 signal_not_red                
                                             ) and (
-                                                #(self.index == 0)               or 
-                                                vehicle_can_move_without_crash         #((GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1)))
+                                                vehicle_can_move_without_crash        
                                             )
-                    #if red
+                  
                     if(not signal_not_red):
                         if(vehicle_didnt_reaches_stop_line ):
                             if(not vehicle_is_first and ((self.x - self.current_image.get_rect().width - GD.gap - self.speed) > GD.vehicles_[self.direction][self.lane][GD.vehicles_[self.direction][self.lane].index(self) - 1].x) ):
@@ -484,7 +462,6 @@ class VehicleClass(pygame.sprite.Sprite):
                         GD.vehicles_[self.direction][self.lane].pop(0)
                         self.crossed = 1
 
-                        # WE MUST ADD THE LANE ALSO AS PARAM
                         if self.lane == GD.HG:
                             GD.crossed[GD.FGKJ][self.direction]['crossed'] += 1
                         else:
@@ -524,8 +501,6 @@ class VehicleClass(pygame.sprite.Sprite):
                     max_vehicle_number_in_next_lane = 3
                 
                 if(rotation_available and ( GD.vehicles_[self.direction][self.lane].index(self) == 0) ):
-                    # self.current_image = pygame.transform.rotate(self.original_image, 1 * 90)
-                    # self.image = self.current_image.get_rect()
                     if (len(GD.vehicles_[next_direction][next_lane]) > max_vehicle_number_in_next_lane ):
                         if(self.lane == GD.E_C_):
                             if(self.rotate_angle > 30):
@@ -589,13 +564,6 @@ class VehicleClass(pygame.sprite.Sprite):
                     if(self.lane == GD.U_S_ ):
                         intersection = GD.NOSR
                     if(len(GD.vehicles_[next_direction][next_lane])<3):
-                        #  intersection
-                        #  intersection
-                        
-                        
-                        # if(len(GD.vehicles_[self.direction][self.lane])==1):
-                        #     self.x = self.x + self.speed
-                        #         #add green color check 
                         vehicle_is_first                = ( GD.vehicles_[self.direction][self.lane].index(self) == 0)
                         vehicle_didnt_reaches_stop_line = (self.y-self.current_image.get_rect().height >= GD.stop_lines[self.direction][intersection])
                         vehicle_crossed_intersection    = (self.crossed == 1 )
@@ -606,8 +574,7 @@ class VehicleClass(pygame.sprite.Sprite):
                                                     vehicle_crossed_intersection    or 
                                                     signal_not_red                
                                                 ) and (
-                                                    #(self.index == 0)               or 
-                                                    vehicle_can_move_without_crash         #((GD.vehicles_[self.direction][self.lane][self.index - 1].turned == 1)))
+                                                    vehicle_can_move_without_crash  
                                                 )
                         #if red
                         if(not signal_not_red):

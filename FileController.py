@@ -2,7 +2,6 @@ import os
 import shutil
 import matplotlib.pyplot as plt
 import pandas as pd
-import GlobalData as GD
 import openpyxl
 import datetime
 import shutil
@@ -10,15 +9,14 @@ import Simulation as sim
 import numpy as np
 
 
-
+# Copy the file from the source to the destination
 def copy_file(src ,dst):
-  # Copy the file from the source to the destination
   shutil.copy(src, dst)
 
 
 
 def get_current_time():
-  now = datetime.datetime.now()
+  now       = datetime.datetime.now()
   date_time = now.strftime("%d-%m-%Y/%H-%M-%S")
   return date_time
 
@@ -98,21 +96,6 @@ def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating
   return data
 
 
-# def read_xlsx_file(directory = 'configuration' , filename = 'vehicles_generating.xlsx'):
-#   file_path = f"{directory}/{filename}"
-#   xlSheet = "Sheet1"
-#   # Load the data from the xlsx file
-#   df = pd.read_excel(file_path,sheet_name = xlSheet)
-
-#   # Iterate over the rows of the dataframe
-#   for _, row in df.iterrows():
-#       # Access data for each column by column name
-#       vehicle_type = row['vehicle_type']
-#       generating_number = row['generating_number']
-#       GD.vehicles_generating[vehicle_type]=generating_number
-      
-
-
 
 
 def create_directory():
@@ -153,8 +136,6 @@ def append_dict_to_xlsx( filename , data ,path='temp'):
 
     # Write the data back to the xlsx file
     df.to_excel(f"{path}/{filename}", index=False)
-
-
 
 
 

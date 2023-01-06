@@ -2,12 +2,10 @@ import os
 import PyPDF2
 from openpyxl import load_workbook
 from PIL import Image, ImageDraw, ImageFont
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen.canvas import Canvas
 import GlobalData as GD
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+
 
 
 
@@ -24,12 +22,13 @@ def excel_to_image(filename,path):
         table.append([cell.value for cell in row])
 
     # Convert the table to an image
-    font = ImageFont.truetype("arial.ttf", 12)
-    img_width = 500
-    img_height = len(table) * 20
-    image = Image.new("RGB", (img_width, img_height), (255, 255, 255))
-    draw = ImageDraw.Draw(image)
-    y_offset = 0
+    font        = ImageFont.truetype("arial.ttf", 12)
+    img_width   = 500
+    img_height  = len(table) * 20
+    image       = Image.new("RGB", (img_width, img_height), (255, 255, 255))
+    draw        = ImageDraw.Draw(image)
+    y_offset    = 0
+
     for row in table:
         x_offset = 0
         for cell in row:
@@ -295,7 +294,7 @@ def read_pdf_file(path):
 
         # Get the number of pages in the PDF
         num_pages = len(pdf.pages)
-        text = ""
+       
         # Iterate through the pages of the PDF
         for i in range(num_pages):
             # Get the i-th page
