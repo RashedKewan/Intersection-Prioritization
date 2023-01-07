@@ -9,7 +9,6 @@ import GlobalData as GD
 
 
 
-
 # Function to convert a table from an Excel file to an image
 def excel_to_image(filename,path):
     # Open the Excel file

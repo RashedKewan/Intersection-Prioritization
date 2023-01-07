@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import openpyxl
 import datetime
-import shutil
 import Simulation as sim
 import numpy as np
 
