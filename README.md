@@ -129,6 +129,17 @@ Choose program factors and Press the button “Save” in order to update all th
 <br> 
 
 ------------------------------------------
+## Conclusions
+In our research, we proposed a new solution for making traffic signals smarter using detection technologies such as GPS to detect the location, weight, and speed of vehicles. We developed an algorithm that utilizes this data to give priority to heavier vehicles at intersections. Our goals were to reduce traffic jams, fuel consumption, and save time and money. The main success factor was to increase the average speed of each vehicle after implementing our solution.
+
+The results we achieved were:
+* Increased average speed of each vehicle by X% (comparing before and after)
+
+* Fewer traffic jams
+
+Overall, our smart traffic light system shows promise in improving the efficiency and sustainability of traffic management at intersections, with benefits for both individual vehicle owners and society as a whole.
+
+------------------------------------------
 ## Prerequisites
 
 1. [Python 3.7](https://www.python.org/downloads/release/python-370/)
@@ -165,17 +176,6 @@ Choose program factors and Press the button “Save” in order to update all th
       # To run simulation
       $ python main.py
 ```
-
-------------------------------------------
-## Conclusions
-In our research, we proposed a new solution for making traffic signals smarter using detection technologies such as GPS to detect the location, weight, and speed of vehicles. We developed an algorithm that utilizes this data to give priority to heavier vehicles at intersections. Our goals were to reduce traffic jams, fuel consumption, and save time and money. The main success factor was to increase the average speed of each vehicle after implementing our solution.
-
-The results we achieved were:
-* Increased average speed of each vehicle by X% (comparing before and after)
-
-* Fewer traffic jams
-
-Overall, our smart traffic light system shows promise in improving the efficiency and sustainability of traffic management at intersections, with benefits for both individual vehicle owners and society as a whole.
 
 ------------------------------------------
 ## Contributors
