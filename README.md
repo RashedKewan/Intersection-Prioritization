@@ -149,7 +149,7 @@ Overall, our smart traffic light system shows promise in improving the efficienc
 
 * Step I : Clone the Repository
 ```sh
-      $ git clone 
+      $ git clone https://github.com/RashedKewan/Intersection-Prioritization.git
 ```
 
 * Step II : Download Extensions
