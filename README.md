@@ -152,25 +152,16 @@ Overall, our smart traffic light system shows promise in improving the efficienc
       $ git clone https://github.com/RashedKewan/Intersection-Prioritization.git
 ```
 
-* Step II : Download Extensions
-```
-1- Open **extensions.txt** file that contains extensions id
-
-2- Browse for extensions:
-   You can browse and install extensions from within VS Code. Bring up the Extensions 
-   view by clicking on the Extensions icon in the Activity Bar on the side of VS Code or 
-   the View: Extensions command (Ctrl+Shift+X).
-
-3- serch for each id from **extensions.txt** & install it.
-```
-
-
-* Step III : Install Libraries
+* Step II : Download Extensions & Libraries
 ```sh
-      $ python install_libraries.py
+      # Open Terminal(Ex: Git Bash)
+      # Change the permissions of the file
+      $ chmod 755 set_up.sh
+      # Execute the script
+      ./set_up.sh
 ```
 
-* Step IV : Clone the Repository
+* Step III : Clone the Repository
 ```sh
       # To run simulation
       $ python main.py

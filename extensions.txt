@@ -1,3 +1,0 @@
-GrapeCity.gc-excelviewer
-tomoki1207.pdf
-hnw.vscode-auto-open-markdown-preview

@@ -1,6 +1,6 @@
 import subprocess
 import openpyxl
-import GlobalData as GD 
+
 
 def algorithm_is_active(is_active : bool = False):
     # Open the workbook and sheet
