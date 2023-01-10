@@ -161,9 +161,9 @@ Overall, our smart traffic light system shows promise in improving the efficienc
       ./set_up.sh
 ```
 
-* Step III : Clone the Repository
+* Step III : Run Simulation
 ```sh
-      # To run simulation
+     
       $ python main.py
 ```
 
