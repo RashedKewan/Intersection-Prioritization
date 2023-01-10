@@ -37,8 +37,6 @@ non_signal                    = pygame.image.load('images/signals/non.png')
 background                    = pygame.image.load('images/street.png')
 background_white              = pygame.image.load('images/bg-white.png')
 loading                       = pygame.image.load('images/loading.jpg')
-data_analysis                 = pygame.image.load('images/data_analysis.png')
-report                        = pygame.image.load('images/report.png')
 current_config_downloading    = pygame.image.load('images/current_config_downloading.png')
 overall_config_downloading    = pygame.image.load('images/overall_config_downloading.png')
 
