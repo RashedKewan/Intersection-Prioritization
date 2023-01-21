@@ -38,13 +38,6 @@ This project can be broken down into 3 modules:
 ------------------------------------------
 ##  Instructions
 
-<p align="center">
-<video width="600" height="480" controls>
-  <source src="video/simulation.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-</p>
-
 
 * ### Main Screen
 Here as you can see in the picture the user has the ability to choose all the factors before start running the system.
@@ -160,14 +153,14 @@ Overall, our smart traffic light system shows promise in improving the efficienc
 
 * Step I : Clone the Repository
 ```sh
-      $ git clone https://github.com/RashedKewan/Intersection-Prioritization.git
+      git clone https://github.com/RashedKewan/Intersection-Prioritization.git
 ```
 
 * Step II : Download Extensions & Libraries
 ```sh
       # Open Terminal(Ex: Git Bash)
-      # Change the permissions of the file
-      $ chmod 755 set_up.sh
+      # Get Inside The Directory
+      cd Intersection-Prioritization
       # Execute the script
       ./set_up.sh
 ```
@@ -175,7 +168,7 @@ Overall, our smart traffic light system shows promise in improving the efficienc
 * Step III : Run Simulation
 ```sh
      
-      $ python main.py
+      python main.py
 ```
 
 ------------------------------------------
