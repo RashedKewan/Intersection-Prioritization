@@ -28,11 +28,13 @@
 
 This project can be broken down into 3 modules:
 
-1. `Vehicle Detection Module` - This module is responsible for detecting the number of vehicles in the data that received as input from the Waze application. More specifically, it will provide as output the number of vehicles of each vehicle class such as car, bike, bus and truck.
+1. `Vehicle Detection Module` - This module is responsible for detecting the number of vehicles in the data that are received as an input from the Waze application. More specifically, it will provide as an output to the number of vehicles for each vehicle class such as car, bike, bus and truck.
 
-2. `Signal Switching Algorithm` - This algorithm updates the red, green, and yellow times of all signals. These timers are set bases on several factors such as the number of lanes, minimum overall weight of vehicles that detected on the lane, etc. 
 
-3. `Simulation Module` - A simulation is developed from scratch using [Pygame](https://www.pygame.org/news) library to simulate traffic signals and vehicles moving across a traffic intersections.
+2. `Signal Switching Algorithm` - This algorithm updates the red, green, and yellow times of all signals. These timers are set basesd on several factors such as the number of lanes, minimum overall weight of the vehicles that are detected on the lane, etc.
+
+
+3. `Simulation Module` - A simulation is developed from scratch using [Pygame](https://www.pygame.org/news) library to simulate traffic signals and vehicles that are moving across traffic intersections.
 
 
 ------------------------------------------
