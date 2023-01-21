@@ -38,6 +38,14 @@ This project can be broken down into 3 modules:
 ------------------------------------------
 ##  Instructions
 
+<p align="center">
+<video width="600" height="480" controls>
+  <source src="video/simulation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+</p>
+
+
 * ### Main Screen
 Here as you can see in the picture the user has the ability to choose all the factors before start running the system.
 
@@ -90,6 +98,28 @@ Choose program factors and Press the button “Save” in order to update all th
 
 *  The file will be downloaded to your PC's download directory when you click the download button. 
 ------------------------------------------
+## Algorithm and Pseudocode
+
+**Input  :** *Queues of lanes’ vehicles ( each lane has a queue of vehicles )*
+
+**Output :** *The next green lane that has the maximum weight*
+
+
+> *Algorithm  ( queues[ ] ) :*       
+
+> 1. *weights  &larr; [ ]*
+> 1. *for  queue  in  queues[ ] :*
+>    1. *weight &larr; calculate_weight( queue )*
+>    1. *append weight to weights*
+> 1. *max_weight &larr; max( weights )*
+> 1. *if max_weight equals 0 :*
+>    1. *next_green &larr; next signal ( clockwise )* 
+> 1. *else :*
+>    1. *next_green &larr; number of the lane that has max_weight*
+> 1. *return next_green*
+  
+
+------------------------------------------
 
 ## Results
 We conducted simulations using various input sizes, including scenarios with 3 and 12 vehicles of each type, both with and without using the algorithm. The simulation time for each scenario was 30 seconds. The comparison between these scenarios is shown in a graph, the details of which are described in the preceding text.
@@ -102,14 +132,22 @@ In most cases, our algorithm resulted in a significant improvement in average sp
 
 ------------------------------------------
 ## Conclusions
-In our research, we proposed a new solution for making traffic signals smarter using detection technologies such as GPS to detect the location, weight, and speed of vehicles. We developed an algorithm that utilizes this data to give priority to heavier vehicles at intersections. Our goals were to reduce traffic jams, fuel consumption, and save time and money. The main success factor was to increase the average speed of each vehicle after implementing our solution.
+In our research, we proposed a new solution for making traffic signals smarter using detection technologies such as GPS to detect vehicle location, weight, and speed. We developed an algorithm that utilizes this data to give priority to heavier vehicles at intersections. Our goals were to reduce traffic jams, and fuel consumption, and save time and money. After implementing our solution, the main success factor was increasing each vehicle’s average speed.
 
-The results we achieved were:
-* Increased average speed.
+The results we achieved:
+<p align="center">
+ <img height=400px src="./images/results/compGraph.png" alt="Loading Report">
+</p>
+Boosting average speed by 47% in AVG.
 
-* Fewer traffic jams
+As a result, it leads to:
+
+* Reduction in traffic congestion
+
+* Decrease in fuel consumption
 
 Overall, our smart traffic light system shows promise in improving the efficiency and sustainability of traffic management at intersections, with benefits for both individual vehicle owners and society as a whole.
+
 
 ------------------------------------------
 ## Prerequisites
