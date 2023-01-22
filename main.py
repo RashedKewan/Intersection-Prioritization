@@ -320,7 +320,7 @@ def create_start_button():
 
     # Create the Save button
     start_button         = pygame.Rect(TABLE_LEFT+TABLE_HEIGHT+150, TABLE_TOP + TABLE_HEIGHT + 10, CELL_WIDTH , 50)
-    start_button_text    = font.render('Srart', True, (255, 255, 255))
+    start_button_text    = font.render('Start', True, (255, 255, 255))
 
     # Create the surface to display the Start button on
     start_button_surface = pygame.Surface((CELL_WIDTH, 50))
